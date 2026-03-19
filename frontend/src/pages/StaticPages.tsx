@@ -54,7 +54,7 @@ export const Cart = () => {
             <div key={item.id} className="bg-white/5 border border-white/10 p-4 md:p-6 rounded-[32px] md:rounded-full flex items-center justify-between gap-4 md:gap-8 backdrop-blur-2xl transition-all shadow-xl overflow-hidden group">
               {/* Bag Image Preview */}
               <Link to={`/product/${item.id}`} className="w-16 h-20 md:w-24 md:h-28 bg-white/10 rounded-2xl md:rounded-3xl overflow-hidden shrink-0 block">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover scale-150 drop-shadow-2xl transition-transform duration-700" />
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover scale-150 drop-shadow-2xl transition-transform duration-700" loading="lazy" />
               </Link>
               
               <div className="flex-1 flex flex-col md:grid md:grid-cols-12 md:items-center gap-2 md:gap-4">

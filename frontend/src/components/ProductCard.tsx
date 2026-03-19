@@ -40,6 +40,7 @@ const ProductCard = ({ id, image, name, rating, reviews, oldPrice, currentPrice 
             src={image} 
             alt={name} 
             className="w-full h-full object-cover drop-shadow-[0_15px_15px_rgba(0,0,0,0.3)]"
+            loading="lazy"
           />
         </div>
       </Link>

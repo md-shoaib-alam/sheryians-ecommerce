@@ -62,6 +62,7 @@ const ProductDetails = () => {
                 src={product.image} 
                 alt={product.name} 
                 className="w-full h-full object-cover scale-[1.15] md:scale-125 drop-shadow-[0_25px_25px_rgba(0,0,0,0.5)] transition-transform duration-700 md:group-hover:scale-135 md:group-hover:-rotate-3" 
+                loading="lazy"
              />
              
              {/* Gourmet Batch Tag */}

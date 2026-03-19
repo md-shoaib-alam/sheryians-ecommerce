@@ -8,9 +8,10 @@ interface ProductSectionProps {
   products: any[]
   isScrollable?: boolean
   showSort?: boolean
+  showNoMore?: boolean
 }
 
-const ProductSection = ({ title, products, isScrollable = false, showSort = false }: ProductSectionProps) => {
+const ProductSection = ({ title, products, isScrollable = false, showSort = false, showNoMore = false }: ProductSectionProps) => {
   const [sortBy, setSortBy] = useState('featured')
   const [isOpen, setIsOpen] = useState(false)
 
@@ -86,6 +87,17 @@ const ProductSection = ({ title, products, isScrollable = false, showSort = fals
           </div>
         ))}
       </div>
+
+      {/* High-Fidelity "No More Items" Signal */}
+      {showNoMore && products.length > 0 && (
+          <div className="w-full flex flex-col items-center justify-center pt-20 pb-10 gap-4 opacity-30">
+              <div className="h-[1px] w-20 bg-white"></div>
+              <p className="font-syne font-black uppercase tracking-[0.4em] text-[10px] md:text-xs text-center">
+                  no more items found
+              </p>
+              <div className="h-[1px] w-20 bg-white"></div>
+          </div>
+      )}
     </section>
   )
 }

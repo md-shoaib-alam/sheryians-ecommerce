@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { ShoppingCart, Menu, X, Search } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
+import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react'
 import SearchDrawer from './SearchDrawer'
 
 import { useCart } from '../context/CartContext'
@@ -57,12 +58,21 @@ const Navbar = () => {
     return 'bg-transparent border-b border-transparent py-4'
   }
 
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, to: string) => {
+    // If clicking the current path, perform a manual smooth scroll to top
+    if (location.pathname === to) {
+        e.preventDefault()
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
   return (
     <>
       <nav className={`fixed top-0 left-0 right-0 py-3 px-4 md:px-8 z-50 flex items-center justify-between transition-all duration-500 ${getNavBackground()}`}>
         {/* Logo Section - Preserving original mixed-case branding */}
         <Link 
           to="/"
+          onClick={(e) => handleLinkClick(e, '/')}
           className="flex flex-col items-start leading-none group cursor-pointer"
         >
           <span className="text-2xl md:text-3xl font-black italic tracking-tighter text-white group-hover:text-amber-500 transition-colors font-syne">
@@ -78,22 +88,22 @@ const Navbar = () => {
           <div className="relative">
             <ul ref={navRef} className="flex items-center gap-8 text-sm uppercase tracking-widest font-syne">
               <li>
-                <NavLink to="/" className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
+                <NavLink to="/" onClick={(e) => handleLinkClick(e, '/')} className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
                   Home
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/products" className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
+                <NavLink to="/products" onClick={(e) => handleLinkClick(e, '/products')} className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
                   Products
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/about" className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
+                <NavLink to="/about" onClick={(e) => handleLinkClick(e, '/about')} className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
                   About
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/contact" className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
+                <NavLink to="/contact" onClick={(e) => handleLinkClick(e, '/contact')} className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
                   Contact
                 </NavLink>
               </li>
@@ -130,7 +140,7 @@ const Navbar = () => {
             <Search className="w-6 h-6" />
           </button>
           
-          <Link to="/cart" className="p-2 hover:bg-white/20 rounded-full transition-all relative group">
+          <Link to="/cart" onClick={(e) => handleLinkClick(e, '/cart')} className="p-2 hover:bg-white/20 rounded-full transition-all relative group">
             <ShoppingCart className="w-5 md:w-6 h-5 md:h-6 text-white" />
             {cart.length > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 text-red-950 text-[10px] md:text-xs font-black flex items-center justify-center rounded-full shadow-lg border-2 border-red-950 animate-in zoom-in duration-300">
@@ -139,9 +149,19 @@ const Navbar = () => {
             )}
           </Link>
           
-          <button className="hidden md:block bg-black text-white px-6 py-1.5 rounded-full font-bold text-sm hover:bg-white hover:text-black transition-all border-2 border-transparent font-poppins">
-            Login
-          </button>
+          {/* Desktop Auth Section */}
+          <div className="hidden md:flex items-center">
+            <SignedOut>
+                <Link to="/sign-in" className="bg-black text-white px-6 py-1.5 rounded-full font-bold text-sm hover:bg-white hover:text-black transition-all border-2 border-transparent font-poppins cursor-pointer block">
+                    Sign In
+                </Link>
+            </SignedOut>
+            <SignedIn>
+                <div className="scale-110 hover:scale-125 transition-transform">
+                    <UserButton appearance={{ elements: { userButtonAvatarBox: 'w-9 h-9 border-2 border-white/20' } }} />
+                </div>
+            </SignedIn>
+          </div>
           
           {/* Mobile Hamburger Button */}
           <button 
@@ -156,21 +176,32 @@ const Navbar = () => {
         <div className={`fixed top-[65px] left-0 right-0 bottom-0 bg-red-950/95 backdrop-blur-3xl z-40 md:hidden flex flex-col items-center justify-center gap-10 transition-all duration-500 overflow-hidden ${isMenuOpen ? 'opacity-100 h-[calc(100vh-65px)]' : 'opacity-0 h-0'}`}>
           <ul className="flex flex-col items-center gap-8 text-2xl font-black italic tracking-tighter font-syne uppercase text-white">
             <li>
-              <NavLink to="/" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Home</NavLink>
+              <NavLink to="/" onClick={(e) => { setIsMenuOpen(false); handleLinkClick(e, '/'); }} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Home</NavLink>
             </li>
             <li>
-              <NavLink to="/products" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Products</NavLink>
+              <NavLink to="/products" onClick={(e) => { setIsMenuOpen(false); handleLinkClick(e, '/products'); }} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Products</NavLink>
             </li>
             <li>
-              <NavLink to="/about" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>About</NavLink>
+              <NavLink to="/about" onClick={(e) => { setIsMenuOpen(false); handleLinkClick(e, '/about'); }} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>About</NavLink>
             </li>
             <li>
-              <NavLink to="/contact" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Contact</NavLink>
+              <NavLink to="/contact" onClick={(e) => { setIsMenuOpen(false); handleLinkClick(e, '/contact'); }} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Contact</NavLink>
             </li>
           </ul>
-          <button className="bg-white text-black px-12 py-3 rounded-full font-black uppercase text-lg tracking-widest font-syne">
-            Login
-          </button>
+          
+          {/* Mobile Auth Experience */}
+          <div className="scale-125">
+            <SignedOut>
+                <Link to="/sign-in" className="bg-white text-black px-12 py-3 rounded-full font-black uppercase text-lg tracking-widest font-syne cursor-pointer block" onClick={() => setIsMenuOpen(false)}>
+                    Sign In
+                </Link>
+            </SignedOut>
+            <SignedIn>
+                <div className="flex flex-col items-center gap-4">
+                    <UserButton showName appearance={{ elements: { userButtonAvatarBox: 'w-14 h-14 border-2 border-white/20', userButtonOuterIdentifier: 'text-white font-syne font-black uppercase tracking-widest text-sm' } }} />
+                </div>
+            </SignedIn>
+          </div>
         </div>
       </nav>
 
