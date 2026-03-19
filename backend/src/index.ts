@@ -9,6 +9,7 @@ import productRoutes from './routes/products'
 import orderRoutes   from './routes/orders'
 import adminRoutes   from './routes/admin'
 import cartRoutes    from './routes/cart'
+import paymentRoutes from './routes/payment'
 
 dotenv.config()
 
@@ -57,6 +58,7 @@ app.use('/api/products',       productRoutes)
 app.use('/api/orders',         orderRoutes)
 app.use('/api/admin',          adminRoutes)
 app.use('/api/cart',           cartRoutes)
+app.use('/api/payment',        paymentRoutes)
 
 // ─── 404 Handler ──────────────────────────────────────────────────────────
 app.use('*', (_req, res) => {
