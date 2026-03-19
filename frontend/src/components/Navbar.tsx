@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
-import { ShoppingCart, Menu, X } from 'lucide-react'
+import { ShoppingCart, Menu, X, Search } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
+import SearchDrawer from './SearchDrawer'
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 })
   const location = useLocation()
   const navRef = useRef<HTMLUListElement>(null)
@@ -18,9 +20,10 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Close menu on navigation
+  // Close overlays on navigation
   useEffect(() => {
     setIsMenuOpen(false)
+    setIsSearchOpen(false)
   }, [location.pathname])
 
   // Update sliding indicator position
@@ -37,104 +40,130 @@ const Navbar = () => {
     }
   }, [location.pathname])
 
-  // Background and appearance logic
+  // Background and appearance logic - Restoring exact background patterns
   const getNavBackground = () => {
+    if (isSearchOpen) return 'bg-transparent'
     if (isScrolled || isMenuOpen) return 'bg-red-950/90 backdrop-blur-3xl border-b border-white/10 shadow-2xl py-2'
     if (isHome) return 'bg-red-700 shadow-md border-b border-white/10'
     return 'bg-transparent border-b border-transparent py-4'
   }
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 py-3 px-4 md:px-8 z-50 flex items-center justify-between transition-all duration-500 ${getNavBackground()}`}>
-      {/* Logo Section */}
-      <Link 
-        to="/"
-        className="flex flex-col items-start leading-none group cursor-pointer"
-      >
-        <span className="text-2xl md:text-3xl font-black italic tracking-tighter text-white group-hover:text-amber-500 transition-colors font-syne">
-          SHRIYANS
-        </span>
-        <span className="text-[10px] md:text-[12px] font-bold tracking-[0.4em] text-white/70 self-end -mt-1 group-hover:text-white transition-colors uppercase font-poppins">
-          Lotus Seeds
-        </span>
-      </Link>
+    <>
+      <nav className={`fixed top-0 left-0 right-0 py-3 px-4 md:px-8 z-50 flex items-center justify-between transition-all duration-500 ${getNavBackground()}`}>
+        {/* Logo Section - Preserving original mixed-case branding */}
+        <Link 
+          to="/"
+          className="flex flex-col items-start leading-none group cursor-pointer"
+        >
+          <span className="text-2xl md:text-3xl font-black italic tracking-tighter text-white group-hover:text-amber-500 transition-colors font-syne">
+            SHRIYANS
+          </span>
+          <span className="text-[10px] md:text-[12px] font-bold tracking-[0.4em] text-white/70 self-end -mt-1 group-hover:text-white transition-colors uppercase font-poppins">
+            Lotus Seeds
+          </span>
+        </Link>
 
-      {/* Desktop Navigation Links */}
-      <div className="hidden md:flex items-center gap-8">
-        <div className="relative">
-          <ul ref={navRef} className="flex items-center gap-8 text-sm uppercase tracking-widest font-syne">
+        {/* Desktop Navigation Links */}
+        <div className="hidden md:flex items-center gap-8">
+          <div className="relative">
+            <ul ref={navRef} className="flex items-center gap-8 text-sm uppercase tracking-widest font-syne">
+              <li>
+                <NavLink to="/" className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
+                  Home
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/products" className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
+                  Products
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/about" className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
+                  About
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/contact" className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
+                  Contact
+                </NavLink>
+              </li>
+            </ul>
+            {/* Sliding Single Indicator (Desktop only) */}
+            <span 
+              className="absolute bottom-0 h-0.5 bg-white transition-all duration-[800ms] ease-out pointer-events-none"
+              style={{ 
+                left: `${indicatorStyle.left}px`, 
+                width: `${indicatorStyle.width}px` 
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Action Buttons & Mobile Toggle - Optimized with Inline Desktop Search */}
+        <div className="flex items-center gap-2 md:gap-4">
+          {/* Desktop Search Capsule - Matching user pill design */}
+          <div className="hidden md:flex relative group items-center">
+            <input 
+              type="text" 
+              placeholder="Search products..."
+              onFocus={() => setIsSearchOpen(true)}
+              className="bg-white/10 hover:bg-white/20 text-white placeholder:text-white/40 border border-white/20 rounded-full px-6 py-1.5 w-48 lg:w-64 focus:w-80 focus:bg-white focus:text-red-950 focus:placeholder:text-red-950/30 transition-all duration-300 font-syne text-sm font-bold outline-none shadow-xl"
+            />
+            <Search className="absolute right-4 w-4 h-4 text-white group-focus-within:text-red-950 transition-colors pointer-events-none" />
+          </div>
+
+          {/* Mobile Search Button - Keeping icon-only for space */}
+          <button 
+            onClick={() => setIsSearchOpen(true)}
+            className="md:hidden p-2 hover:bg-white/20 rounded-full transition-all text-white group"
+          >
+            <Search className="w-6 h-6" />
+          </button>
+          
+          <Link to="/cart" className="p-2 hover:bg-white/20 rounded-full transition-all relative group">
+            <ShoppingCart className="w-5 md:w-6 h-5 md:h-6 text-white" />
+            <span className="absolute top-0 right-0 w-2 h-2 bg-white rounded-full scale-0 group-hover:scale-100 transition-transform"></span>
+          </Link>
+          
+          <button className="hidden md:block bg-black text-white px-6 py-1.5 rounded-full font-bold text-sm hover:bg-white hover:text-black transition-all border-2 border-transparent font-poppins">
+            Login
+          </button>
+          
+          {/* Mobile Hamburger Button */}
+          <button 
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-2 hover:bg-white/10 rounded-lg text-white transition-all"
+          >
+            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+
+        {/* Mobile Menu Overlay - Restoring top-[65px] layout pattern */}
+        <div className={`fixed top-[65px] left-0 right-0 bottom-0 bg-red-950/95 backdrop-blur-3xl z-40 md:hidden flex flex-col items-center justify-center gap-10 transition-all duration-500 overflow-hidden ${isMenuOpen ? 'opacity-100 h-[calc(100vh-65px)]' : 'opacity-0 h-0'}`}>
+          <ul className="flex flex-col items-center gap-8 text-2xl font-black italic tracking-tighter font-syne uppercase text-white">
             <li>
-              <NavLink to="/" className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
-                Home
-              </NavLink>
+              <NavLink to="/" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Home</NavLink>
             </li>
             <li>
-              <NavLink to="/products" className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
-                Products
-              </NavLink>
+              <NavLink to="/products" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Products</NavLink>
             </li>
             <li>
-              <NavLink to="/about" className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
-                About
-              </NavLink>
+              <NavLink to="/about" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>About</NavLink>
             </li>
             <li>
-              <NavLink to="/contact" className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
-                Contact
-              </NavLink>
+              <NavLink to="/contact" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Contact</NavLink>
             </li>
           </ul>
-          {/* Sliding Single Indicator (Desktop only) */}
-          <span 
-            className="absolute bottom-0 h-0.5 bg-white transition-all duration-[800ms] ease-out pointer-events-none"
-            style={{ 
-              left: `${indicatorStyle.left}px`, 
-              width: `${indicatorStyle.width}px` 
-            }}
-          />
+          <button className="bg-white text-black px-12 py-3 rounded-full font-black uppercase text-lg tracking-widest font-syne">
+            Login
+          </button>
         </div>
-      </div>
+      </nav>
 
-      {/* Action Buttons & Mobile Toggle */}
-      <div className="flex items-center gap-2 md:gap-4">
-        <Link to="/cart" className="p-2 hover:bg-white/20 rounded-full transition-all relative group">
-          <ShoppingCart className="w-5 md:w-6 h-5 md:h-6 text-white" />
-          <span className="absolute top-0 right-0 w-2 h-2 bg-white rounded-full scale-0 group-hover:scale-100 transition-transform"></span>
-        </Link>
-        <button className="hidden md:block bg-black text-white px-6 py-1.5 rounded-full font-bold text-sm hover:bg-white hover:text-black transition-all border-2 border-transparent">
-          Login
-        </button>
-        
-        {/* Mobile Hamburger Button */}
-        <button 
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden p-2 hover:bg-white/10 rounded-lg text-white transition-all"
-        >
-          {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
-      </div>
-
-      {/* Mobile Menu Overlay */}
-      <div className={`fixed top-[65px] left-0 right-0 bottom-0 bg-red-950/95 backdrop-blur-3xl z-40 md:hidden flex flex-col items-center justify-center gap-10 transition-all duration-500 overflow-hidden ${isMenuOpen ? 'opacity-100 h-[calc(100vh-65px)]' : 'opacity-0 h-0'}`}>
-        <ul className="flex flex-col items-center gap-8 text-2xl font-black italic tracking-tighter font-syne uppercase text-white">
-          <li>
-            <NavLink to="/" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Home</NavLink>
-          </li>
-          <li>
-            <NavLink to="/products" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Products</NavLink>
-          </li>
-          <li>
-            <NavLink to="/about" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>About</NavLink>
-          </li>
-          <li>
-            <NavLink to="/contact" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Contact</NavLink>
-          </li>
-        </ul>
-        <button className="bg-white text-black px-12 py-3 rounded-full font-black uppercase text-lg tracking-widest font-syne">
-          Login
-        </button>
-      </div>
-    </nav>
+      {/* Modular Search Drawer Component */}
+      <SearchDrawer isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+    </>
   )
 }
 
