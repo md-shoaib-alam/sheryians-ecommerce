@@ -7,8 +7,6 @@ import {
   Search,
   Mail,
   Calendar,
-  ShoppingBag,
-  Star,
   Shield,
   Loader2,
   MoreVertical,
