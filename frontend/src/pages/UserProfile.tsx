@@ -198,8 +198,10 @@ const PersonalInfoTab = () => {
 // Order History Tab — fetches from backend
 const OrderHistoryTab = () => {
   const { getToken } = useAuth()
+  const navigate = useNavigate()
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -255,7 +257,12 @@ const OrderHistoryTab = () => {
   return (
     <div className="space-y-4">
       {orders.map((order) => (
-        <div key={order.id} className="bg-white border border-gray-100 rounded-3xl p-6 md:p-8 flex flex-col gap-6 shadow-sm hover:shadow-md transition-all cursor-pointer group">
+        <div 
+          key={order.id} 
+          onClick={() => navigate(`/profile/order/${order.id}`)}
+          className="bg-white border border-gray-100 rounded-3xl p-6 md:p-8 flex flex-col gap-6 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+        >
+
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-[#FAF6F6] rounded-2xl flex items-center justify-center shrink-0">
