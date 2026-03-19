@@ -108,7 +108,8 @@ router.post('/addresses', requireAuth, async (req: Request, res: Response) => {
       data: { userId: user.id, label, line1, line2, city, state, zip, isDefault: !!isDefault },
     })
     res.status(201).json(address)
-  } catch {
+  } catch (error) {
+    console.error('Failed to create address:', error)
     res.status(500).json({ error: 'Failed to create address' })
   }
 })
