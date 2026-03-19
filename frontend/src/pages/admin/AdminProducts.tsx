@@ -17,23 +17,37 @@ import {
 
 // ─── Modal Components ──────────────────────────────────────────────────────
 const ProductModal = ({ product, onClose, onSave }: { product?: any; onClose: () => void; onSave: (data: any) => Promise<void> }) => {
-  const [form, setForm] = useState(product || {
+  const [form, setForm] = useState<any>(product || {
     name: '', description: '', price: '', mrp: '', category: 'Makhana',
-    stock: 100, imageUrl: '', tags: '', weight: '', flavour: ''
+    stock: 100, imageUrl: '', images: [], tags: '', weight: '', flavour: ''
   })
+  
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
+  // Sync images if they come as a string (legacy/edge case)
+  useEffect(() => {
+    if (product && typeof product.images === 'string') {
+        setForm((f: any) => ({ ...f, images: product.images.split(',').filter(Boolean) }))
+    }
+  }, [product])
+
   const handleSave = async () => {
     if (!form.name || !form.price || !form.imageUrl || !form.category) {
-      setError('Please fill Name, Price, Category and Image URL.')
+      setError('Please fill Name, Price, Category and Main Image URL.')
       return
     }
     setSaving(true)
     try {
-      // Convert tags string to array if needed
       const data = { ...form }
-      if (typeof data.tags === 'string') data.tags = data.tags.split(',').map((t: string) => t.trim()).filter(Boolean)
+      if (typeof data.tags === 'string') {
+        data.tags = data.tags.split(',').map((t: string) => t.trim()).filter(Boolean)
+      }
+      // Ensure prices are numbers
+      data.price = Number(data.price)
+      data.mrp = Number(data.mrp || data.price)
+      data.stock = Number(data.stock)
+      
       await onSave(data)
       onClose()
     } catch (err: any) {
@@ -43,11 +57,28 @@ const ProductModal = ({ product, onClose, onSave }: { product?: any; onClose: ()
     }
   }
 
+  const addImageField = () => {
+    setForm((f: any) => ({ ...f, images: [...(f.images || []), ''] }))
+  }
+
+  const removeImageField = (index: number) => {
+    setForm((f: any) => ({ 
+        ...f, 
+        images: f.images.filter((_: any, i: number) => i !== index) 
+    }))
+  }
+
+  const updateImageField = (index: number, value: string) => {
+    const newImages = [...form.images]
+    newImages[index] = value
+    setForm((f: any) => ({ ...f, images: newImages }))
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-10 pointer-events-none">
        <div onClick={onClose} className="absolute inset-0 bg-black/80 backdrop-blur-sm pointer-events-auto" />
        
-       <div className="relative w-full max-w-2xl bg-black border border-white/10 rounded-[40px] shadow-3xl overflow-hidden pointer-events-auto flex flex-col max-h-full">
+       <div className="relative w-full max-w-2xl bg-black border border-white/10 rounded-[40px] shadow-3xl overflow-hidden pointer-events-auto flex flex-col max-h-[90vh]">
           <header className="px-8 py-6 border-b border-white/5 flex items-center justify-between shrink-0">
              <div>
                 <h3 className="text-xl font-black font-syne italic uppercase tracking-tighter text-white">{product ? 'Edit Product' : 'Add New Product'}</h3>
@@ -66,38 +97,92 @@ const ProductModal = ({ product, onClose, onSave }: { product?: any; onClose: ()
                 </div>
              )}
 
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+                <div className="md:col-span-2">
+                    <label className="text-white/20 font-black uppercase text-[8px] tracking-[0.3em] font-syne mb-1.5 block ml-4">Product Name</label>
+                    <input
+                        placeholder="Product Name"
+                        value={form.name}
+                        onChange={e => setForm((f: any) => ({ ...f, name: e.target.value }))}
+                        className="w-full bg-white/5 border border-white/10 focus:border-white/40 text-white px-6 py-4 rounded-full outline-none font-syne font-bold text-xs"
+                    />
+                </div>
+                <div className="md:col-span-2">
+                    <label className="text-white/20 font-black uppercase text-[8px] tracking-[0.3em] font-syne mb-1.5 block ml-4">Description</label>
+                    <textarea
+                        placeholder="Description"
+                        value={form.description}
+                        rows={4}
+                        onChange={e => setForm((f: any) => ({ ...f, description: e.target.value }))}
+                        className="w-full bg-white/5 border border-white/10 focus:border-white/40 text-white px-6 py-4 rounded-[28px] outline-none font-syne font-bold text-xs resize-none"
+                    />
+                </div>
+                <div className="md:col-span-2">
+                    <label className="text-amber-400 font-black uppercase text-[8px] tracking-[0.3em] font-syne mb-1.5 block ml-4 italic">Main Product Image (Shows on Cards)</label>
+                    <input
+                        placeholder="Main Hero Image URL"
+                        value={form.imageUrl}
+                        onChange={e => setForm((f: any) => ({ ...f, imageUrl: e.target.value }))}
+                        className="w-full bg-amber-400/5 border border-amber-400/20 focus:border-amber-400/40 text-white px-6 py-4 rounded-full outline-none font-syne font-bold text-xs"
+                    />
+                </div>
+             </div>
+
+             {/* Dynamic Gallery Section */}
+             <div className="mb-10 px-4">
+                <div className="flex items-center justify-between mb-4">
+                    <label className="text-white/40 font-black uppercase text-[10px] tracking-[0.3em] font-syne">Additional Gallery</label>
+                    <button 
+                        onClick={addImageField}
+                        className="flex items-center gap-2 text-amber-400 hover:text-white transition-colors text-[9px] font-black uppercase tracking-widest font-syne"
+                    >
+                        <Plus className="w-3 h-3" />
+                        <span>Add Gallery Image</span>
+                    </button>
+                </div>
+                
+                <div className="flex flex-col gap-3">
+                    {form.images?.map((url: string, index: number) => (
+                        <div key={index} className="flex gap-2">
+                            <input
+                              placeholder={`Gallery Image #${index + 1} URL`}
+                              value={url}
+                              onChange={e => updateImageField(index, e.target.value)}
+                              className="flex-1 bg-white/5 border border-white/10 focus:border-white/40 text-white px-6 py-3 rounded-full outline-none font-syne font-bold text-[10px]"
+                            />
+                            <button 
+                                onClick={() => removeImageField(index)}
+                                className="p-3 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-full transition-all shrink-0"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </button>
+                        </div>
+                    ))}
+                    {(!form.images || form.images.length === 0) && (
+                        <p className="text-white/10 text-[9px] font-bold uppercase tracking-widest text-center py-4 border border-dashed border-white/5 rounded-3xl font-syne">No additional images added</p>
+                    )}
+                </div>
+             </div>
+
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 {[
-                  { key: 'name', placeholder: 'Product Name', span: true },
-                  { key: 'description', placeholder: 'Description (markdown supported)', span: true, area: true },
-                  { key: 'imageUrl', placeholder: 'Primary Image URL (Cloudfront/S3)', span: true },
                   { key: 'price', placeholder: 'Sale Price (₹)', type: 'number' },
                   { key: 'mrp', placeholder: 'MRP (₹)', type: 'number' },
-                  { key: 'category', placeholder: 'Category (e.g. Classic, Flavoured)' },
-                  { key: 'flavour', placeholder: 'Flavour (e.g. Peri Peri, Cheese)' },
-                  { key: 'weight', placeholder: 'Weight (e.g. 100g, 250g)' },
-                  { key: 'stock', placeholder: 'Starting Inventory', type: 'number' },
+                  { key: 'category', placeholder: 'Category' },
+                  { key: 'flavour', placeholder: 'Flavour' },
+                  { key: 'weight', placeholder: 'Weight' },
+                  { key: 'stock', placeholder: 'Inventory', type: 'number' },
                   { key: 'tags', placeholder: 'Tags (comma separated)', span: true },
-                ].map(({ key, placeholder, span, type = 'text', area }) => (
+                ].map(({ key, placeholder, span, type = 'text' }) => (
                   <div key={key} className={span ? 'md:col-span-2' : ''}>
                      <label className="text-white/20 font-black uppercase text-[8px] tracking-[0.3em] font-syne mb-1.5 block ml-4">{placeholder}</label>
-                     {area ? (
-                        <textarea
-                          placeholder={placeholder}
-                          value={form[key]}
-                          rows={4}
-                          onChange={e => setForm((f: any) => ({ ...f, [key]: e.target.value }))}
-                          className="w-full bg-white/5 border border-white/10 focus:border-white/40 text-white placeholder:text-white/10 px-6 py-4 rounded-[28px] outline-none font-syne font-bold text-xs transition-all resize-none"
-                        />
-                     ) : (
-                        <input
-                          type={type}
-                          placeholder={placeholder}
-                          value={form[key]}
-                          onChange={e => setForm((f: any) => ({ ...f, [key]: e.target.value }))}
-                          className="w-full bg-white/5 border border-white/10 focus:border-white/40 text-white placeholder:text-white/10 px-6 py-4 rounded-full outline-none font-syne font-bold text-xs transition-all"
-                        />
-                     )}
+                     <input
+                        type={type}
+                        placeholder={placeholder}
+                        value={form[key]}
+                        onChange={e => setForm((f: any) => ({ ...f, [key]: e.target.value }))}
+                        className="w-full bg-white/5 border border-white/10 focus:border-white/40 text-white px-6 py-4 rounded-full outline-none font-syne font-bold text-xs"
+                     />
                   </div>
                 ))}
              </div>
@@ -119,7 +204,7 @@ const ProductModal = ({ product, onClose, onSave }: { product?: any; onClose: ()
   )
 }
 
-// ─── Main Content Discovery ────────────────────────────────────────────────
+// ─── Main Component ────────────────────────────────────────────────────────
 const AdminProducts = () => {
   const { getToken } = useAuth()
   const [products, setProducts] = useState<any[]>([])
@@ -169,7 +254,6 @@ const AdminProducts = () => {
       {modal.open && <ProductModal product={modal.product} onClose={() => setModal({ open: false })} onSave={handleSave} />}
 
       <div className="flex flex-col gap-10">
-         {/* Page Header Visualization Area */}
          <header className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div>
                <h1 className="text-3xl md:text-5xl font-black font-syne italic uppercase tracking-tighter text-white">Product Inventory</h1>
@@ -197,18 +281,9 @@ const AdminProducts = () => {
             </div>
          </header>
 
-         {/* Grid Content Discovery Visualization */}
          {loading ? (
             <div className="py-40 flex items-center justify-center">
                <Loader2 className="w-10 h-10 text-white/10 animate-spin" />
-            </div>
-         ) : filtered.length === 0 ? (
-            <div className="py-32 border-2 border-dashed border-white/5 rounded-[50px] flex flex-col items-center gap-6 justify-center text-center px-10">
-               <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center text-white/20 animate-pulse"><Archive className="w-8 h-8" /></div>
-               <div>
-                  <h3 className="text-white/80 font-black font-syne uppercase text-xl mb-2">No Products Discovered</h3>
-                  <p className="text-white/30 font-bold uppercase text-[10px] tracking-widest max-w-xs mx-auto">Try refining your search or add a new makhana variety to your store.</p>
-               </div>
             </div>
          ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -216,41 +291,17 @@ const AdminProducts = () => {
                   <div key={p.id} className={`group bg-white/5 border border-white/10 rounded-[44px] overflow-hidden transition-all backdrop-blur-3xl hover:bg-white/10 hover:border-white/20 shadow-xl ${!p.isActive ? 'opacity-50 grayscale' : ''}`}>
                      <div className="relative h-56 overflow-hidden bg-black/40">
                         <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover scale-150 transition-transform duration-700 group-hover:scale-[1.65]" loading="lazy" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        
-                        <div className="absolute top-5 left-5 flex gap-2">
-                           <span className="bg-black/60 backdrop-blur-xl border border-white/20 px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest font-syne">{p.category}</span>
-                           {!p.isActive && <span className="bg-red-500/20 backdrop-blur-xl border border-red-500/30 px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest font-syne text-red-400">Archived</span>}
-                        </div>
-                        
                         <div className="absolute top-5 right-5 flex gap-2 translate-x-10 group-hover:translate-x-0 transition-transform duration-500">
                            <button onClick={() => setModal({ open: true, product: p })} className="w-10 h-10 bg-white hover:bg-amber-400 text-black rounded-full flex items-center justify-center shadow-2xl transition-all active:scale-90"><Edit2 className="w-4 h-4" /></button>
                            <button onClick={() => handleDelete(p.id)} className="w-10 h-10 bg-red-600 hover:bg-red-500 text-white rounded-full flex items-center justify-center shadow-2xl transition-all active:scale-90"><Trash2 className="w-4 h-4" /></button>
                         </div>
-
-                        <div className="absolute bottom-5 left-8 flex items-end gap-3 translate-y-20 group-hover:translate-y-0 transition-transform duration-500">
-                             <p className="text-3xl font-black font-poppins text-white">₹{p.price}</p>
-                             <p className="text-sm font-bold text-white/30 line-through pb-1">₹{p.mrp}</p>
-                        </div>
                      </div>
-
                      <div className="p-8">
                         <h3 className="text-xl font-black font-syne italic uppercase tracking-tight text-white/90 mb-2 truncate">{p.name}</h3>
-                        <p className="text-white/40 font-bold uppercase text-[10px] tracking-widest font-syne mb-6 flex items-center gap-2">
-                           {p.flavour || 'Organic'} 
-                           <span className="w-1 h-1 bg-white/20 rounded-full" /> 
-                           {p.weight || '100g'}
-                        </p>
-
+                        <p className="text-white/40 font-bold uppercase text-[10px] tracking-widest font-syne mb-6">₹{p.price} • {p.category}</p>
                         <div className="flex items-center justify-between pt-6 border-t border-white/5">
-                           <div className="flex items-center gap-3">
-                              <div className={`w-2 h-2 rounded-full ${p.stock < 10 ? 'bg-red-500 animate-pulse' : 'bg-green-500'}`} />
-                              <span className="text-[10px] font-black text-white/60 uppercase tracking-widest font-syne">{p.stock} In Stock</span>
-                           </div>
-                           <div className="flex items-center gap-1.5 text-white/20">
-                              <TrendingUp className="w-4 h-4" />
-                              <span className="text-[9px] font-bold font-poppins">{p._count?.orderItems || 0}</span>
-                           </div>
+                            <span className="text-[10px] font-black text-white/60 uppercase tracking-widest font-syne">{p.stock} In Stock</span>
+                            <TrendingUp className="w-4 h-4 text-white/20" />
                         </div>
                      </div>
                   </div>

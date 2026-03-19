@@ -39,8 +39,22 @@ const strictLimiter = rateLimit({
 app.use(globalLimiter)
 
 // ─── CORS ──────────────────────────────────────────────────────────────────
+// Relaxed CORS for dev to allow testing from mobile/multiple hostnames
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // In dev, allow all to stop preflight "Failed to fetch" errors.
+    // Replace with explicit list in production.
+    if (!origin || process.env.NODE_ENV === 'development') {
+      callback(null, true)
+    } else {
+      const allowed = [process.env.CORS_ORIGIN || 'http://localhost:5173']
+      if (allowed.includes(origin)) {
+        callback(null, true)
+      } else {
+        callback(new Error('CORS blocked: ' + origin))
+      }
+    }
+  },
   credentials: true,
 }))
 

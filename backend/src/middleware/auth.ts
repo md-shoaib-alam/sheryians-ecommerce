@@ -26,7 +26,8 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
     ;(req as any).clerkId = payload.sub
     ;(req as any).email   = (payload as any).email || ''
     next()
-  } catch {
+  } catch (error) {
+    console.error('JWT Verification Error:', error)
     return res.status(401).json({ error: 'Unauthorized: Token verification failed' })
   }
 }
