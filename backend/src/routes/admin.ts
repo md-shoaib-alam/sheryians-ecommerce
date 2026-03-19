@@ -1,7 +1,11 @@
 import { Router, Request, Response } from 'express'
 import { prisma } from '../lib/prisma'
+import { requireAuth, isAdmin } from '../middleware/auth'
 
 const router = Router()
+
+// All admin routes require a verified JWT + admin role
+router.use(requireAuth, isAdmin)
 
 // Admin: GET /api/admin/products
 router.get('/products', async (_req: Request, res: Response) => {
@@ -37,8 +41,22 @@ router.post('/products', async (req: Request, res: Response) => {
 
 // Admin: PATCH /api/admin/products/:id
 router.patch('/products/:id', async (req: Request, res: Response) => {
-  const { id } = req.params
-  const data = req.body
+  const id = req.params.id as string
+  // Whitelist only safe, updatable fields — prevents mass assignment
+  const { name, description, price, mrp, stock, imageUrl, images, category, tags, weight, flavour, isActive } = req.body
+  const data: Record<string, any> = {}
+  if (name        !== undefined) data.name        = name
+  if (description !== undefined) data.description = description
+  if (price       !== undefined) data.price       = Number(price)
+  if (mrp         !== undefined) data.mrp         = Number(mrp)
+  if (stock       !== undefined) data.stock       = Number(stock)
+  if (imageUrl    !== undefined) data.imageUrl    = imageUrl
+  if (images      !== undefined) data.images      = images
+  if (category    !== undefined) data.category    = category
+  if (tags        !== undefined) data.tags        = tags
+  if (weight      !== undefined) data.weight      = weight
+  if (flavour     !== undefined) data.flavour     = flavour
+  if (isActive    !== undefined) data.isActive    = isActive
 
   try {
     const product = await prisma.product.update({ where: { id }, data })
@@ -50,7 +68,7 @@ router.patch('/products/:id', async (req: Request, res: Response) => {
 
 // Admin: DELETE /api/admin/products/:id
 router.delete('/products/:id', async (req: Request, res: Response) => {
-  const { id } = req.params
+  const id = req.params.id as string
   try {
     await prisma.product.update({ where: { id }, data: { isActive: false } })
     res.json({ success: true })
@@ -62,8 +80,8 @@ router.delete('/products/:id', async (req: Request, res: Response) => {
 // Admin: GET /api/admin/orders
 router.get('/orders', async (req: Request, res: Response) => {
   const { status, page = '1', limit = '20' } = req.query
-  const skip = (parseInt(page as string) - 1) * parseInt(limit as string)
-  const take = parseInt(limit as string)
+  const skip = (parseInt(page as string) - 1) * Math.min(parseInt(limit as string) || 20, 100)
+  const take = Math.min(parseInt(limit as string) || 20, 100)
 
   const where: any = {}
   if (status) where.status = status
@@ -73,7 +91,7 @@ router.get('/orders', async (req: Request, res: Response) => {
       prisma.order.findMany({
         where,
         include: {
-          user: { select: { firstName: true, lastName: true, email: true } },
+          user: { select: { name: true, email: true } },
           items: true,
           address: true,
         },
@@ -91,7 +109,7 @@ router.get('/orders', async (req: Request, res: Response) => {
 
 // Admin: PATCH /api/admin/orders/:id/status
 router.patch('/orders/:id/status', async (req: Request, res: Response) => {
-  const { id } = req.params
+  const id = req.params.id as string
   const { status } = req.body
 
   const validStatuses = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'REFUNDED']
@@ -118,7 +136,7 @@ router.get('/stats', async (_req: Request, res: Response) => {
       prisma.order.findMany({
         take: 5,
         orderBy: { createdAt: 'desc' },
-        include: { user: { select: { firstName: true, lastName: true, email: true } } },
+        include: { user: { select: { name: true, email: true } } },
       }),
     ])
 

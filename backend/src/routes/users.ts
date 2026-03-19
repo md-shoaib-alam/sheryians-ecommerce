@@ -47,7 +47,7 @@ router.get('/me', requireAuth, async (req: Request, res: Response) => {
 
     // Auto-sync if user exists in Clerk but not yet in our DB
     if (!user && clerkEmail) {
-      user = await syncCurrentUser({ clerkUserId: clerkId, email: clerkEmail })
+      await syncCurrentUser({ clerkUserId: clerkId, email: clerkEmail })
       // Re-fetch with relations
       user = await prisma.user.findUnique({
         where: { clerkUserId: clerkId },
@@ -116,7 +116,7 @@ router.post('/addresses', requireAuth, async (req: Request, res: Response) => {
 // PATCH /api/users/addresses/:id/default — set as default
 router.patch('/addresses/:id/default', requireAuth, async (req: Request, res: Response) => {
   const clerkId = (req as any).clerkId
-  const { id } = req.params
+  const id = req.params.id as string
 
   try {
     const user = await prisma.user.findUnique({ where: { clerkUserId: clerkId } })
@@ -133,7 +133,7 @@ router.patch('/addresses/:id/default', requireAuth, async (req: Request, res: Re
 // DELETE /api/users/addresses/:id
 router.delete('/addresses/:id', requireAuth, async (req: Request, res: Response) => {
   const clerkId = (req as any).clerkId
-  const { id } = req.params
+  const id = req.params.id as string
 
   try {
     const user = await prisma.user.findUnique({ where: { clerkUserId: clerkId } })

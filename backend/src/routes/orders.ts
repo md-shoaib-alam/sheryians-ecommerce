@@ -92,8 +92,8 @@ router.get('/', requireAuth, async (req: Request, res: Response) => {
   const clerkId = (req as any).clerkId
   const { page = '1', limit = '10' } = req.query
 
-  const skip = (parseInt(page as string) - 1) * parseInt(limit as string)
-  const take = parseInt(limit as string)
+  const skip = (parseInt(page as string) - 1) * Math.min(parseInt(limit as string) || 10, 50)
+  const take = Math.min(parseInt(limit as string) || 10, 50)
 
   try {
     const user = await prisma.user.findUnique({ where: { clerkUserId: clerkId } })
@@ -122,7 +122,7 @@ router.get('/', requireAuth, async (req: Request, res: Response) => {
 // GET /api/orders/:id — Get single order
 router.get('/:id', requireAuth, async (req: Request, res: Response) => {
   const clerkId = (req as any).clerkId
-  const { id } = req.params
+  const id = req.params.id as string
 
   try {
     const user = await prisma.user.findUnique({ where: { clerkUserId: clerkId } })
@@ -146,7 +146,7 @@ router.get('/:id', requireAuth, async (req: Request, res: Response) => {
 // PATCH /api/orders/:id/cancel — Cancel a pending order
 router.patch('/:id/cancel', requireAuth, async (req: Request, res: Response) => {
   const clerkId = (req as any).clerkId
-  const { id } = req.params
+  const id = req.params.id as string
 
   try {
     const user = await prisma.user.findUnique({ where: { clerkUserId: clerkId } })

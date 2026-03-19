@@ -56,7 +56,7 @@ router.post('/', requireAuth, async (req: Request, res: Response) => {
 // PATCH /api/cart/:id — Update quantity
 router.patch('/:id', requireAuth, async (req: Request, res: Response) => {
   const clerkId = (req as any).clerkId
-  const { id } = req.params
+  const id = req.params.id as string
   const { quantity } = req.body
 
   if (!quantity || quantity < 1) return res.status(400).json({ error: 'Quantity must be at least 1' })
@@ -83,7 +83,7 @@ router.patch('/:id', requireAuth, async (req: Request, res: Response) => {
 // DELETE /api/cart/:id — Remove item from cart
 router.delete('/:id', requireAuth, async (req: Request, res: Response) => {
   const clerkId = (req as any).clerkId
-  const { id } = req.params
+  const id = req.params.id as string
 
   try {
     const user = await prisma.user.findUnique({ where: { clerkUserId: clerkId } })

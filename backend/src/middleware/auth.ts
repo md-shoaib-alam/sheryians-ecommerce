@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
+import { verifyToken } from '@clerk/backend'
+import { prisma } from '../lib/prisma'
 
-// Verify Clerk JWT token - the userId comes from Clerk's session token
-// In production, use @clerk/backend to verify the token properly
+// ─── requireAuth ───────────────────────────────────────────────────────────
+// Cryptographically verifies the Clerk JWT using CLERK_SECRET_KEY.
+// Sets req.clerkId and req.email on success.
 export const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization
 
@@ -12,34 +15,51 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
   const token = authHeader.split(' ')[1]
 
   try {
-    // Decode the JWT to extract the sub (Clerk user ID)
-    // For proper verification use @clerk/backend verifyToken
-    const base64Payload = token.split('.')[1]
-    const payload = JSON.parse(Buffer.from(base64Payload, 'base64').toString('utf8'))
+    const payload = await verifyToken(token, {
+      secretKey: process.env.CLERK_SECRET_KEY,
+    })
 
     if (!payload.sub) {
       return res.status(401).json({ error: 'Unauthorized: Invalid token' })
     }
 
-    // Attach clerkId to request
     ;(req as any).clerkId = payload.sub
-    ;(req as any).email   = payload.email || ''
+    ;(req as any).email   = (payload as any).email || ''
     next()
   } catch {
     return res.status(401).json({ error: 'Unauthorized: Token verification failed' })
   }
 }
 
-// Optional auth — doesn't reject, just sets clerkId if token present
+// ─── optionalAuth ──────────────────────────────────────────────────────────
+// Verifies the JWT if present but does not reject if missing or invalid.
 export const optionalAuth = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization
   if (authHeader?.startsWith('Bearer ')) {
     try {
       const token = authHeader.split(' ')[1]
-      const base64Payload = token.split('.')[1]
-      const payload = JSON.parse(Buffer.from(base64Payload, 'base64').toString('utf8'))
+      const payload = await verifyToken(token, {
+        secretKey: process.env.CLERK_SECRET_KEY,
+      })
       ;(req as any).clerkId = payload.sub
     } catch {}
   }
   next()
+}
+
+// ─── isAdmin ───────────────────────────────────────────────────────────────
+// Must run AFTER requireAuth. Checks the user's role in the database.
+export const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
+  const clerkId = (req as any).clerkId
+  if (!clerkId) return res.status(403).json({ error: 'Forbidden' })
+
+  try {
+    const user = await prisma.user.findUnique({ where: { clerkUserId: clerkId } })
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ error: 'Forbidden: Admin access required' })
+    }
+    next()
+  } catch {
+    return res.status(500).json({ error: 'Authorization check failed' })
+  }
 }

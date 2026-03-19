@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express'
 import { prisma } from '../lib/prisma'
-import { optionalAuth } from '../middleware/auth'
+import { optionalAuth, requireAuth } from '../middleware/auth'
 
 const router = Router()
 
@@ -8,8 +8,8 @@ const router = Router()
 router.get('/', optionalAuth, async (req: Request, res: Response) => {
   const { category, search, page = '1', limit = '12', tags } = req.query
 
-  const skip = (parseInt(page as string) - 1) * parseInt(limit as string)
-  const take = parseInt(limit as string)
+  const skip = (parseInt(page as string) - 1) * Math.min(parseInt(limit as string) || 12, 50)
+  const take = Math.min(parseInt(limit as string) || 12, 50)
 
   const where: any = { isActive: true }
 
@@ -52,14 +52,14 @@ router.get('/', optionalAuth, async (req: Request, res: Response) => {
 
 // GET /api/products/:id
 router.get('/:id', async (req: Request, res: Response) => {
-  const { id } = req.params
+  const id = req.params.id as string
 
   try {
     const product = await prisma.product.findUnique({
       where: { id },
       include: {
         reviews: {
-          include: { user: { select: { firstName: true, lastName: true, imageUrl: true } } },
+          include: { user: { select: { name: true, image: true } } },
           orderBy: { createdAt: 'desc' },
           take: 20,
         },
@@ -89,26 +89,27 @@ router.get('/category/list', async (_req: Request, res: Response) => {
 })
 
 // POST /api/products/:id/review
-router.post('/:id/review', async (req: Request, res: Response) => {
+router.post('/:id/review', requireAuth, async (req: Request, res: Response) => {
   const clerkId = (req as any).clerkId
-  if (!clerkId) return res.status(401).json({ error: 'Login required to review' })
 
   const { rating, comment } = req.body
-  const { id: productId } = req.params
+  const productId = req.params.id as string
 
   if (!rating || rating < 1 || rating > 5) {
     return res.status(400).json({ error: 'Rating must be between 1 and 5' })
   }
 
   try {
-    const user = await prisma.user.findUnique({ where: { clerkId } })
+    // ✅ Fixed: was incorrectly using clerkId — field is clerkUserId
+    const user = await prisma.user.findUnique({ where: { clerkUserId: clerkId } })
     if (!user) return res.status(404).json({ error: 'User not found' })
 
-    const review = await prisma.review.upsert({
-      where: { id: `${user.id}-${productId}` },
-      update: { rating, comment },
-      create: { userId: user.id, productId, rating, comment },
-    })
+    // Use userId+productId compound lookup via updateMany/create instead of fabricated id
+    const existing = await prisma.review.findFirst({ where: { userId: user.id, productId } })
+    const review = existing
+      ? await prisma.review.update({ where: { id: existing.id }, data: { rating, comment } })
+      : await prisma.review.create({ data: { userId: user.id, productId, rating, comment } })
+
     res.status(201).json(review)
   } catch (error) {
     res.status(500).json({ error: 'Failed to submit review' })
