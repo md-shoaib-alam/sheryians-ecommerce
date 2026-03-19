@@ -18,12 +18,14 @@ body {
   color: #2A0D0E;
 }
 
-/* Elite Scrollbar Hiding Utility */
-.scrollbar-hide::-webkit-scrollbar {
+/* Ultimate Scrollbar Hiding Utilities */
+.scrollbar-hide::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
-.scrollbar-hide {
+.scrollbar-hide,
+.no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }

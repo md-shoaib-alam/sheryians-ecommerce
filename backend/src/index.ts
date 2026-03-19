@@ -4,16 +4,16 @@ import dotenv from 'dotenv'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 
-import userRoutes    from './routes/users'
+import userRoutes from './routes/users'
 import productRoutes from './routes/products'
-import orderRoutes   from './routes/orders'
-import adminRoutes   from './routes/admin'
-import cartRoutes    from './routes/cart'
+import orderRoutes from './routes/orders'
+import adminRoutes from './routes/admin'
+import cartRoutes from './routes/cart'
 import paymentRoutes from './routes/payment'
 
 dotenv.config()
 
-const app  = express()
+const app = express()
 const PORT = process.env.PORT || 5000
 
 // ─── Security Headers ──────────────────────────────────────────────────────
@@ -67,12 +67,12 @@ app.get('/health', (_req, res) => {
 })
 
 // ─── Routes ───────────────────────────────────────────────────────────────
-app.use('/api/users',          strictLimiter, userRoutes)
-app.use('/api/products',       productRoutes)
-app.use('/api/orders',         orderRoutes)
-app.use('/api/admin',          adminRoutes)
-app.use('/api/cart',           cartRoutes)
-app.use('/api/payment',        paymentRoutes)
+app.use('/api/users', strictLimiter, userRoutes)
+app.use('/api/products', productRoutes)
+app.use('/api/orders', orderRoutes)
+app.use('/api/admin', adminRoutes)
+app.use('/api/cart', cartRoutes)
+app.use('/api/payment', paymentRoutes)
 
 // ─── 404 Handler ──────────────────────────────────────────────────────────
 app.use('*', (_req, res) => {
