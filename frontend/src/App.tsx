@@ -10,21 +10,27 @@ import SignInPage from './pages/auth/SignInPage'
 import SignUpPage from './pages/auth/SignUpPage'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
 import UserProfilePage from './pages/UserProfile'
+import Checkout from './pages/Checkout'
 import { About, Contact, Cart } from './pages/StaticPages'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminProducts from './pages/admin/AdminProducts'
+import AdminOrders from './pages/admin/AdminOrders'
+import AdminUsers from './pages/admin/AdminUsers'
 
 const AUTH_ROUTES = ['/sign-in', '/sign-up', '/forgot-password']
 
 function App() {
   const location = useLocation()
-  const isAuthPage = AUTH_ROUTES.some(route => location.pathname.startsWith(route))
+  const isAdminPage = location.pathname.startsWith('/admin')
+  const isAuthPage = AUTH_ROUTES.some(route => location.pathname.startsWith(route)) || isAdminPage
 
   return (
     <div className="min-h-screen bg-transparent">
       <ScrollToTop />
       <UserSync />
-      <Navbar />
+      {!isAdminPage && <Navbar />}
 
-      <main className="min-h-screen">
+      <main className={isAdminPage ? '' : 'min-h-screen'}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
@@ -36,6 +42,13 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/products" element={<AdminProducts />} />
+          <Route path="/admin/orders" element={<AdminOrders />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
         </Routes>
       </main>
 

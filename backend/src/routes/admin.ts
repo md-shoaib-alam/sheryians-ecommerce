@@ -125,15 +125,29 @@ router.patch('/orders/:id/status', async (req: Request, res: Response) => {
   }
 })
 
+// Admin: GET /api/admin/users
+router.get('/users', async (_req: Request, res: Response) => {
+  try {
+    const users = await prisma.user.findMany({
+      include: { _count: { select: { orders: true, reviews: true } } },
+      orderBy: { createdAt: 'desc' },
+    })
+    res.json(users)
+  } catch {
+    res.status(500).json({ error: 'Failed to fetch users' })
+  }
+})
+
 // Admin: GET /api/admin/stats
 router.get('/stats', async (_req: Request, res: Response) => {
   try {
     const [totalOrders, totalRevenue, totalUsers, totalProducts, recentOrders] = await Promise.all([
-      prisma.order.count(),
-      prisma.order.aggregate({ _sum: { total: true }, where: { status: { not: 'CANCELLED' } } }),
+      prisma.order.count({ where: { status: { notIn: ['PENDING', 'CANCELLED'] } } }),
+      prisma.order.aggregate({ _sum: { total: true }, where: { status: { notIn: ['PENDING', 'CANCELLED'] } } }),
       prisma.user.count(),
       prisma.product.count({ where: { isActive: true } }),
       prisma.order.findMany({
+        where: { status: { not: 'PENDING' } }, // Only show meaningful orders in recent list
         take: 5,
         orderBy: { createdAt: 'desc' },
         include: { user: { select: { name: true, email: true } } },

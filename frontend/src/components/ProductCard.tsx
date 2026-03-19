@@ -29,44 +29,48 @@ const ProductCard = ({ id, image, name, rating, reviews, oldPrice, currentPrice 
 
   return (
     <div className="group flex flex-col items-start gap-3 md:gap-4 transition-all duration-300 w-full max-w-[275px]">
-      {/* Container with Glassmorphism (Responsive Aspect Ratio) */}
+      {/* Container with Glassmorphism (Stable Aspect Ratio) */}
       <Link 
         to={`/product/${id}`}
-        className="relative w-full aspect-[275/400] rounded-[24px] md:rounded-[40px] shadow-2xl cursor-pointer flex items-center justify-center p-4 md:p-8 border border-white/20 bg-white/10 backdrop-blur-xl transition-transform duration-300 md:group-hover:scale-[1.03] overflow-hidden"
+        className="relative w-full aspect-[3/4] rounded-[32px] md:rounded-[40px] shadow-2xl cursor-pointer flex items-center justify-center p-2 border border-white/20 bg-white/10 backdrop-blur-3xl transition-transform duration-500 md:group-hover:scale-[1.02] overflow-hidden"
       >
-        {/* Product Image - Zoomed to Cover (Desktop only) */}
-        <div className="w-full h-full transform md:scale-110 md:group-hover:scale-130 transition-transform duration-500">
+        {/* Product Image - Fixed scaling and centering */}
+        <div className="w-full h-full relative overflow-hidden flex items-center justify-center rounded-[26px] md:rounded-[34px]">
           <img 
             src={image} 
             alt={name} 
-            className="w-full h-full object-cover drop-shadow-[0_15px_15px_rgba(0,0,0,0.3)]"
+            className="w-full h-full object-cover transition-transform duration-700 md:group-hover:scale-110"
             loading="lazy"
           />
+          {/* Subtle overlay on hover */}
+          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
       </Link>
 
-      {/* Product Info below the card - Left Aligned */}
+      {/* Product Info below the card - Fixed Heights for stability */}
       <div className="flex flex-col items-start text-left w-full px-1">
         <Link to={`/product/${id}`} className="block w-full">
-            <h3 className="text-white font-bold text-sm md:text-xl mb-1 leading-tight font-poppins uppercase tracking-tight truncate w-full hover:text-amber-400 transition-colors">
-            {name}
-            </h3>
+            <div className="h-10 md:h-9 flex items-start">
+              <h3 className="text-white font-bold text-sm md:text-lg leading-tight font-syne uppercase tracking-tight line-clamp-2 w-full hover:text-amber-400 transition-colors">
+                {name}
+              </h3>
+            </div>
         </Link>
         
-        <div className="flex items-center gap-1 mb-2">
+        <div className="flex items-center gap-1 mb-2 md:mb-1 h-4">
           {[...Array(5)].map((_, i) => (
             <Star 
               key={i} 
               strokeWidth={1}
-              className={`w-[14px] h-[14px] md:w-4 md:h-4 ${i < rating ? 'fill-amber-400 text-amber-400' : 'text-slate-500'}`} 
+              className={`w-3.5 h-3.5 md:w-3.5 md:h-3.5 ${i < rating ? 'fill-amber-400 text-amber-400' : 'text-white/20'}`} 
             />
           ))}
-          <span className="text-white/60 text-[9px] md:text-[10px] ml-1 font-poppins font-normal">({reviews})</span>
+          <span className="text-white/40 text-[9px] md:text-[9px] ml-1 font-poppins font-bold tracking-widest">({reviews})</span>
         </div>
         
-        <div className="flex items-center gap-2 md:gap-3 mb-4 font-bold tracking-widest font-poppins">
-            <span className="text-white/50 line-through text-xs md:text-lg">₹{oldPrice}</span>
-            <span className="text-amber-400 text-xl md:text-2xl font-black tracking-tighter md:tracking-normal">₹{currentPrice}</span>
+        <div className="flex items-center gap-2 md:gap-3 mb-4 font-bold tracking-widest font-poppins h-8">
+            {oldPrice && <span className="text-white/30 line-through text-[10px] md:text-sm">₹{oldPrice}</span>}
+            <span className="text-amber-400 text-lg md:text-xl font-black tracking-tighter">₹{currentPrice}</span>
         </div>
         
         <button 
@@ -81,7 +85,7 @@ const ProductCard = ({ id, image, name, rating, reviews, oldPrice, currentPrice 
         >
           {isAdded ? (
             <>
-                <Check className="w-4 h-4 md:w-5 md:h-5 " />
+                <Check className="w-3.5 h-3.5" />
                 <span>Added to cart</span>
             </>
           ) : (

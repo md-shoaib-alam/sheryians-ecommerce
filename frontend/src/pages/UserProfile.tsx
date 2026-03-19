@@ -1,5 +1,5 @@
 import { useUser, useClerk, useAuth } from '@clerk/clerk-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import {
   User, Mail, ShieldCheck, LogOut, Package, Settings,
@@ -194,7 +194,8 @@ const OrderHistoryTab = () => {
       try {
         const token = await getToken()
         const data = await api('/api/orders', { token })
-        setOrders(data.orders || [])
+        // Only show confirmed or completed orders, hide pending ones
+        setOrders((data.orders || []).filter((o: Order) => o.status !== 'PENDING'))
       } catch {
         // user may not exist in DB yet
       } finally {
@@ -496,12 +497,27 @@ const tabs: { id: Tab; label: string; icon: typeof User }[] = [
 ]
 
 const UserProfilePage = () => {
-  const { isLoaded, user } = useUser()
+  const { isLoaded, user: clerkUser } = useUser()
+  const { getToken } = useAuth()
   const { signOut } = useClerk()
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<Tab>('personal')
+  const [dbUser, setDbUser] = useState<any>(null)
 
-  if (!isLoaded || !user) return null
+  useEffect(() => {
+    const fetchDbUser = async () => {
+      if (clerkUser) {
+        try {
+          const token = await getToken()
+          const data = await api('/api/users/me', { token })
+          setDbUser(data)
+        } catch {}
+      }
+    }
+    fetchDbUser()
+  }, [clerkUser, getToken])
+
+  if (!isLoaded || !clerkUser) return null
 
   const handleSignOut = async () => {
     await signOut()
@@ -518,19 +534,24 @@ const UserProfilePage = () => {
         <aside className="lg:col-span-4">
           <div className="bg-white/5 border border-white/10 backdrop-blur-3xl rounded-[40px] p-8 flex flex-col items-center text-center sticky top-28">
             <div className="w-24 h-24 md:w-28 md:h-28 rounded-full border-4 border-white/20 overflow-hidden shadow-2xl mb-4">
-              {user.imageUrl
-                ? <img src={user.imageUrl} alt="Profile" className="w-full h-full object-cover" />
+              {clerkUser.imageUrl
+                ? <img src={clerkUser.imageUrl} alt="Profile" className="w-full h-full object-cover" />
                 : <div className="w-full h-full bg-amber-500 flex items-center justify-center text-black font-black text-3xl font-syne">
-                    {(user.firstName?.[0] || user.emailAddresses?.[0]?.emailAddress?.[0] || 'U').toUpperCase()}
+                    {(clerkUser.firstName?.[0] || clerkUser.emailAddresses?.[0]?.emailAddress?.[0] || 'U').toUpperCase()}
                   </div>
               }
             </div>
             <h2 className="text-xl font-black italic tracking-tighter text-white uppercase font-syne mb-0.5">
-              {user.fullName || user.username || 'Explorer'}
+              {clerkUser.fullName || clerkUser.username || 'Explorer'}
             </h2>
-            <p className="text-white/30 font-poppins text-[10px] tracking-widest uppercase mb-8">
-              {user.primaryEmailAddress?.emailAddress}
-            </p>
+            <div className="flex items-center gap-2 mb-8">
+              <p className="text-white/30 font-poppins text-[10px] tracking-widest uppercase">
+                {clerkUser.primaryEmailAddress?.emailAddress}
+              </p>
+              {dbUser?.role === 'admin' && (
+                <span className="bg-amber-400/20 text-amber-400 text-[7px] font-black uppercase px-2 py-0.5 rounded-full border border-amber-400/20">Admin</span>
+              )}
+            </div>
 
             <nav className="w-full flex flex-col gap-1.5">
               {tabs.map(({ id, label, icon: Icon }) => (
@@ -544,6 +565,17 @@ const UserProfilePage = () => {
                   {label}
                 </button>
               ))}
+
+              {dbUser?.role === 'admin' && (
+                <Link
+                  to="/admin"
+                  className="flex items-center gap-4 px-5 py-3.5 hover:bg-amber-400/10 text-amber-400 rounded-2xl font-syne font-black uppercase text-[10px] tracking-widest transition-all mt-2 border border-amber-400/20 group"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  Admin Dashboard
+                </Link>
+              )}
+
               <button
                 onClick={handleSignOut}
                 className="flex items-center gap-4 px-5 py-3.5 hover:bg-red-500/10 text-red-400/60 hover:text-red-400 rounded-2xl font-syne font-black uppercase text-[10px] tracking-widest transition-all mt-4 border-t border-white/5 pt-6"

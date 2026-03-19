@@ -19,11 +19,11 @@ const ProductSection = ({ title, products, isScrollable = false, showSort = fals
   const sortedProducts = useMemo(() => {
     let result = [...products]
     if (sortBy === 'price-low') {
-      result.sort((a, b) => parseInt(a.currentPrice) - parseInt(b.currentPrice))
+      result.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0))
     } else if (sortBy === 'price-high') {
-      result.sort((a, b) => parseInt(b.currentPrice) - parseInt(a.currentPrice))
+      result.sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0))
     } else if (sortBy === 'rating') {
-      result.sort((a, b) => b.rating - a.rating)
+      result.sort((a, b) => (b.rating || 0) - (a.rating || 0))
     }
     return result
   }, [products, sortBy])
@@ -83,7 +83,15 @@ const ProductSection = ({ title, products, isScrollable = false, showSort = fals
       `}>
         {sortedProducts.map((product) => (
           <div key={product.id} className={isScrollable ? 'w-[43vw] max-w-[275px] flex-shrink-0 md:w-auto' : ''}>
-            <ProductCard {...product} />
+            <ProductCard 
+              id={product.id}
+              name={product.name}
+              image={product.imageUrl || product.image}
+              currentPrice={product.price?.toString()}
+              oldPrice={product.mrp?.toString()}
+              rating={product.rating || 5}
+              reviews={product._count?.reviews || 0}
+            />
           </div>
         ))}
       </div>

@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { ShoppingCart, Menu, X, Search } from 'lucide-react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
 import { SignedIn, SignedOut, useUser } from '@clerk/clerk-react'
 import SearchDrawer from './SearchDrawer'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 
 import { useCart } from '../context/CartContext'
 
