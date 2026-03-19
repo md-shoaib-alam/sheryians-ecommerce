@@ -63,7 +63,7 @@ const SignInPage = () => {
                         Welcome Back
                     </h1>
                     <p className="text-white/40 font-poppins text-[10px] md:text-xs tracking-widest uppercase font-bold">
-                        Continue your flavorsome journey
+                        Sign in to your account
                     </p>
                 </div>
 
@@ -80,7 +80,7 @@ const SignInPage = () => {
                         <input 
                             type="email" 
                             placeholder="Email address"
-                            className="w-full bg-white/5 border border-white/10 focus:border-white focus:bg-white text-white focus:text-black placeholder:text-white/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm uppercase tracking-widest"
+                            className="w-full bg-white/5 border border-white/10 focus:border-white/40 text-white placeholder:text-white/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm lowercase tracking-widest [&:-webkit-autofill]:[filter:none] [&:-webkit-autofill]:[transition:background-color_5000000s_ease-in-out_0s] [&:-webkit-autofill]:[-webkit-text-fill-color:white]"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
@@ -93,7 +93,7 @@ const SignInPage = () => {
                         <input 
                             type={showPassword ? "text" : "password"}
                             placeholder="Password"
-                            className="w-full bg-white/5 border border-white/10 focus:border-white focus:bg-white text-white focus:text-black placeholder:text-white/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm uppercase tracking-widest"
+                            className="w-full bg-white/5 border border-white/10 focus:border-white/40 text-white placeholder:text-white/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm uppercase tracking-widest [&:-webkit-autofill]:[filter:none] [&:-webkit-autofill]:[transition:background-color_5000000s_ease-in-out_0s] [&:-webkit-autofill]:[-webkit-text-fill-color:white]"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
@@ -112,7 +112,7 @@ const SignInPage = () => {
                         disabled={loading}
                         className="w-full bg-white text-black hover:bg-amber-400 py-5 rounded-full font-black uppercase tracking-[0.3em] font-syne text-xs shadow-2xl transition-all flex items-center justify-center gap-3 disabled:opacity-50"
                     >
-                        {loading ? "Authenticating..." : "Enter Shop"}
+                        {loading ? "Signing in..." : "Sign In"}
                         {!loading && <ArrowRight className="w-4 h-4" />}
                     </button>
                 </form>
@@ -148,7 +148,10 @@ const SignInPage = () => {
                     </button>
                 </div>
 
-                <div className="mt-10 text-center">
+                <div className="mt-10 text-center flex flex-col gap-4">
+                    <Link to="/forgot-password" className="text-white/20 hover:text-white transition-colors font-syne font-black uppercase text-[10px] tracking-widest block underline-offset-4 hover:underline">
+                        Forgot Password?
+                    </Link>
                     <p className="text-white/40 font-poppins text-[10px] tracking-[0.2em] font-bold uppercase">
                         New taste explorer? <Link to="/sign-up" className="text-white hover:text-amber-400 underline underline-offset-4 transition-colors font-black">Register Now</Link>
                     </p>

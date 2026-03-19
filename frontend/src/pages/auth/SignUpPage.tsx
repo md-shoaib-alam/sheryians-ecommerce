@@ -85,10 +85,10 @@ const SignUpPage = () => {
                 {/* Brand Header */}
                 <div className="mb-10 text-center">
                     <h1 className="text-3xl md:text-4xl font-black italic tracking-tighter text-white uppercase font-syne mb-2">
-                        {verifying ? "Verify Email" : "Join The Family"}
+                        {verifying ? "Verify Email" : "Create Account"}
                     </h1>
                     <p className="text-white/40 font-poppins text-[10px] md:text-xs tracking-widest uppercase font-bold">
-                        {verifying ? "Check your inbox for a magic code" : "Start your boutique makhana journey"}
+                        {verifying ? "Check your inbox for a magic code" : "Sign up to start shopping"}
                     </p>
                 </div>
 
@@ -107,7 +107,7 @@ const SignUpPage = () => {
                                 <input 
                                     type="text" 
                                     placeholder="Username (optional)"
-                                    className="w-full bg-white/5 border border-white/10 focus:border-white focus:bg-white text-white focus:text-black placeholder:text-white/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm uppercase tracking-widest"
+                                    className="w-full bg-white/5 border border-white/10 focus:border-white/40 text-white placeholder:text-white/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm uppercase tracking-widest [&:-webkit-autofill]:[filter:none] [&:-webkit-autofill]:[transition:background-color_5000000s_ease-in-out_0s] [&:-webkit-autofill]:[-webkit-text-fill-color:white]"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                 />
@@ -119,7 +119,7 @@ const SignUpPage = () => {
                                 <input 
                                     type="email" 
                                     placeholder="Email address"
-                                    className="w-full bg-white/5 border border-white/10 focus:border-white focus:bg-white text-white focus:text-black placeholder:text-white/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm uppercase tracking-widest"
+                                    className="w-full bg-white/5 border border-white/10 focus:border-white/40 text-white placeholder:text-white/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm lowercase tracking-widest [&:-webkit-autofill]:[filter:none] [&:-webkit-autofill]:[transition:background-color_5000000s_ease-in-out_0s] [&:-webkit-autofill]:[-webkit-text-fill-color:white]"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -132,7 +132,7 @@ const SignUpPage = () => {
                                 <input 
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Password"
-                                    className="w-full bg-white/5 border border-white/10 focus:border-white focus:bg-white text-white focus:text-black placeholder:text-white/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm uppercase tracking-widest"
+                                    className="w-full bg-white/5 border border-white/10 focus:border-white/40 text-white placeholder:text-white/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm uppercase tracking-widest [&:-webkit-autofill]:[filter:none] [&:-webkit-autofill]:[transition:background-color_5000000s_ease-in-out_0s] [&:-webkit-autofill]:[-webkit-text-fill-color:white]"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
@@ -151,7 +151,7 @@ const SignUpPage = () => {
                                 disabled={loading}
                                 className="w-full bg-white text-black hover:bg-amber-400 py-5 rounded-full font-black uppercase tracking-[0.3em] font-syne text-xs shadow-2xl transition-all flex items-center justify-center gap-3 disabled:opacity-50"
                             >
-                                {loading ? "Preparing catalog..." : "Create Account"}
+                                {loading ? "Creating account..." : "Sign Up"}
                                 {!loading && <ArrowRight className="w-4 h-4" />}
                             </button>
                         </form>
