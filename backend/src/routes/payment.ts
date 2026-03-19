@@ -144,6 +144,15 @@ router.post('/verify', requireAuth, async (req: Request, res: Response) => {
 
     if (!order) return res.status(404).json({ error: 'Order not found' })
 
+    // Idempotency: if already confirmed (e.g. network retry), return success immediately
+    if (order.status === 'CONFIRMED' && order.paymentStatus === 'PAID') {
+      return res.json({ success: true, order })
+    }
+
+    if (order.status !== 'PENDING') {
+      return res.status(400).json({ error: 'Order is not in a payable state' })
+    }
+
     // Transaction: update order + decrement stock + clear cart
     const updatedOrder = await prisma.$transaction(async (tx) => {
       const updated = await tx.order.update({

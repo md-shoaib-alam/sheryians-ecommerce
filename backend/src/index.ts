@@ -9,7 +9,6 @@ import productRoutes from './routes/products'
 import orderRoutes   from './routes/orders'
 import adminRoutes   from './routes/admin'
 import cartRoutes    from './routes/cart'
-import paymentRoutes from './routes/payment'
 
 dotenv.config()
 
@@ -21,21 +20,23 @@ app.use(helmet())
 
 // ─── Rate Limiting ─────────────────────────────────────────────────────────
 const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
-  max: 10000,                // Massive limit for development/testing
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 200,                  // max 200 requests per IP per window
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: 'API Limit Reached (Development settings allow 10k requests per 15min)' },
+  message: { error: 'Too many requests, please try again later.' },
 })
 
 const strictLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 1000,                 // Increased for testing auth/payment flows
+  max: 30,                   // stricter limit for auth-adjacent routes
   standardHeaders: true,
   legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' },
 })
 
 app.use(globalLimiter)
+
 // ─── CORS ──────────────────────────────────────────────────────────────────
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
@@ -51,12 +52,11 @@ app.get('/health', (_req, res) => {
 })
 
 // ─── Routes ───────────────────────────────────────────────────────────────
-app.use('/api/users',          userRoutes)
+app.use('/api/users',          strictLimiter, userRoutes)
 app.use('/api/products',       productRoutes)
 app.use('/api/orders',         orderRoutes)
 app.use('/api/admin',          adminRoutes)
 app.use('/api/cart',           cartRoutes)
-app.use('/api/payment',        paymentRoutes)
 
 // ─── 404 Handler ──────────────────────────────────────────────────────────
 app.use('*', (_req, res) => {
