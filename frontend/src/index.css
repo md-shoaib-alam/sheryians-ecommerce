@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Syne:wght@400;500;600;700;800&display=swap');
+
+@theme {
+  --color-brand-red: #AC0404;
+  --color-brand-pink: #F28989;
+  --color-brand-dark: #2F0303;
+  --font-sans: "Poppins", sans-serif;
+  --font-syne: "Syne", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+}
+
+:root {
+  font-family: var(--font-poppins); /* Base font = Poppins */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-syne); /* Headings = Syne */
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #F28989 0%, #AC0404 22%, #2F0303 71%);
+  background-attachment: fixed;
+  color: #fff;
+}
