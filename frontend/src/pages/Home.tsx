@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import HeroBanner from '../components/HeroBanner'
 import ProductSection from '../components/ProductSection'
+import Features from '../components/Features'
 import { api } from '../lib/api'
 
 const Home = () => {
@@ -28,10 +29,12 @@ const Home = () => {
     <div className="pb-20">
       <HeroBanner />
       
+      <Features />
+      
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         {/* New Arrivals with Scrolling mobile row */}
         {loading ? (
-             <div className="py-20 flex justify-center"><div className="w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin" /></div>
+             <div className="py-20 flex justify-center"><div className="w-8 h-8 border-4 border-brand-red/20 border-t-brand-red rounded-full animate-spin" /></div>
         ) : (
           <ProductSection 
             title="NEW ARRIVALS" 

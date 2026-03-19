@@ -12,7 +12,7 @@ const ProfileAvatar = ({ size = 'sm' }: { size?: 'sm' | 'lg' }) => {
   return (
     <Link
       to="/profile"
-      className={`${sizeClass} rounded-full border-2 border-white/30 hover:border-white transition-all overflow-hidden flex items-center justify-center bg-amber-500 font-black font-syne text-black hover:scale-110 scale-100 duration-200`}
+      className={`${sizeClass} rounded-full border-2 border-brand-red/20 hover:border-brand-red transition-all overflow-hidden flex items-center justify-center bg-brand-red font-black font-syne text-white hover:scale-110 scale-100 duration-200`}
     >
       {user?.imageUrl
         ? <img src={user.imageUrl} alt={user?.firstName || 'Profile'} className="w-full h-full object-cover" />
@@ -69,9 +69,9 @@ const Navbar = () => {
   // Background and appearance logic - Restoring exact background patterns
   const getNavBackground = () => {
     if (isSearchOpen) return 'bg-transparent'
-    if (isScrolled || isMenuOpen) return 'bg-red-950/90 backdrop-blur-3xl border-b border-white/10 shadow-2xl py-2'
-    if (isHome) return 'bg-red-700 shadow-md border-b border-white/10'
-    return 'bg-transparent border-b border-transparent py-4'
+    if (isScrolled || isMenuOpen) return 'bg-white/80 backdrop-blur-3xl border-b border-brand-red/10 shadow-sm py-2'
+    if (isHome) return 'bg-transparent py-4'
+    return 'bg-white/50 border-b border-brand-red/5 py-4'
   }
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, to: string) => {
@@ -91,10 +91,10 @@ const Navbar = () => {
           onClick={(e) => handleLinkClick(e, '/')}
           className="flex flex-col items-start leading-none group cursor-pointer"
         >
-          <span className="text-2xl md:text-3xl font-black italic tracking-tighter text-white group-hover:text-amber-500 transition-colors font-syne">
+          <span className="text-xl md:text-2xl font-black tracking-tight text-brand-red group-hover:text-brand-red/80 transition-colors font-syne">
             SHRIYANS
           </span>
-          <span className="text-[10px] md:text-[12px] font-bold tracking-[0.4em] text-white/70 self-end -mt-1 group-hover:text-white transition-colors uppercase font-poppins">
+          <span className="text-[10px] md:text-[12px] font-bold tracking-[0.4em] text-brand-dark/50 self-end -mt-1 group-hover:text-brand-dark transition-colors uppercase font-poppins">
             Lotus Seeds
           </span>
         </Link>
@@ -104,29 +104,29 @@ const Navbar = () => {
           <div className="relative">
             <ul ref={navRef} className="flex items-center gap-8 text-sm uppercase tracking-widest font-syne">
               <li>
-                <NavLink to="/" onClick={(e) => handleLinkClick(e, '/')} className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
+                <NavLink to="/" onClick={(e) => handleLinkClick(e, '/')} className={({ isActive }) => `relative py-2 font-bold transition-colors duration-300 ${isActive ? 'text-brand-red active' : 'text-brand-dark/70 hover:text-brand-red'}`}>
                   Home
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/products" onClick={(e) => handleLinkClick(e, '/products')} className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
+                <NavLink to="/products" onClick={(e) => handleLinkClick(e, '/products')} className={({ isActive }) => `relative py-2 font-bold transition-colors duration-300 ${isActive ? 'text-brand-red active' : 'text-brand-dark/70 hover:text-brand-red'}`}>
                   Products
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/about" onClick={(e) => handleLinkClick(e, '/about')} className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
+                <NavLink to="/about" onClick={(e) => handleLinkClick(e, '/about')} className={({ isActive }) => `relative py-2 font-bold transition-colors duration-300 ${isActive ? 'text-brand-red active' : 'text-brand-dark/70 hover:text-brand-red'}`}>
                   About
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/contact" onClick={(e) => handleLinkClick(e, '/contact')} className={({ isActive }) => `relative py-2 font-normal transition-colors duration-300 ${isActive ? 'text-white active' : 'text-white/60 hover:text-white'}`}>
+                <NavLink to="/contact" onClick={(e) => handleLinkClick(e, '/contact')} className={({ isActive }) => `relative py-2 font-bold transition-colors duration-300 ${isActive ? 'text-brand-red active' : 'text-brand-dark/70 hover:text-brand-red'}`}>
                   Contact
                 </NavLink>
               </li>
             </ul>
             {/* Sliding Single Indicator (Desktop only) */}
             <span 
-              className="absolute bottom-0 h-0.5 bg-white transition-all duration-[800ms] ease-out pointer-events-none"
+              className="absolute bottom-0 h-0.5 bg-brand-red transition-all duration-[800ms] ease-out pointer-events-none"
               style={{ 
                 left: `${indicatorStyle.left}px`, 
                 width: `${indicatorStyle.width}px` 
@@ -143,23 +143,23 @@ const Navbar = () => {
               type="text" 
               placeholder="Search products..."
               onFocus={() => setIsSearchOpen(true)}
-              className="bg-white/10 hover:bg-white/20 text-white placeholder:text-white/40 border border-white/20 rounded-full px-6 py-1.5 w-48 lg:w-64 focus:w-80 focus:bg-white focus:text-red-950 focus:placeholder:text-red-950/30 transition-all duration-300 font-syne text-sm font-bold outline-none shadow-xl"
+              className="bg-brand-pink hover:bg-brand-red/5 text-brand-dark placeholder:text-brand-dark/40 border border-brand-red/10 rounded-full px-6 py-1.5 w-48 lg:w-64 focus:w-80 focus:bg-white focus:text-brand-red focus:placeholder:text-brand-red/30 transition-all duration-300 font-syne text-sm font-bold outline-none shadow-sm"
             />
-            <Search className="absolute right-4 w-4 h-4 text-white group-focus-within:text-red-950 transition-colors pointer-events-none" />
+            <Search className="absolute right-4 w-4 h-4 text-brand-dark/40 group-focus-within:text-brand-red transition-colors pointer-events-none" />
           </div>
 
           {/* Mobile Search Button - Keeping icon-only for space */}
           <button 
             onClick={() => setIsSearchOpen(true)}
-            className="md:hidden p-2 hover:bg-white/20 rounded-full transition-all text-white group"
+            className="md:hidden p-2 hover:bg-brand-pink rounded-full transition-all text-brand-red group"
           >
             <Search className="w-6 h-6" />
           </button>
           
-          <Link to="/cart" onClick={(e) => handleLinkClick(e, '/cart')} className="p-2 hover:bg-white/20 rounded-full transition-all relative group">
-            <ShoppingCart className="w-5 md:w-6 h-5 md:h-6 text-white" />
+          <Link to="/cart" onClick={(e) => handleLinkClick(e, '/cart')} className="p-2 hover:bg-brand-pink rounded-full transition-all relative group">
+            <ShoppingCart className="w-5 md:w-6 h-5 md:h-6 text-brand-red" />
             {cart.length > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 text-red-950 text-[10px] md:text-xs font-black flex items-center justify-center rounded-full shadow-lg border-2 border-red-950 animate-in zoom-in duration-300">
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-brand-red text-white text-[10px] md:text-xs font-black flex items-center justify-center rounded-full shadow-lg border-2 border-white animate-in zoom-in duration-300">
                 {cart.reduce((total, item) => total + item.quantity, 0)}
               </span>
             )}
@@ -168,7 +168,7 @@ const Navbar = () => {
           {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center">
             <Show when="signed-out">
-                <Link to="/sign-in" className="bg-black text-white px-6 py-1.5 rounded-full font-bold text-sm hover:bg-white hover:text-black transition-all border-2 border-transparent font-poppins cursor-pointer block">
+                <Link to="/sign-in" className="bg-brand-red text-white px-6 py-1.5 rounded-full font-bold text-sm hover:bg-brand-dark transition-all border-2 border-transparent font-poppins cursor-pointer block shadow-lg shadow-brand-red/20">
                     Sign In
                 </Link>
             </Show>
@@ -180,33 +180,33 @@ const Navbar = () => {
           {/* Mobile Hamburger Button */}
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 hover:bg-white/10 rounded-lg text-white transition-all"
+            className="md:hidden p-2 hover:bg-brand-pink rounded-lg text-brand-red transition-all"
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
         {/* Mobile Menu Overlay - Restoring top-[65px] layout pattern */}
-        <div className={`fixed top-[65px] left-0 right-0 bottom-0 bg-red-950/95 backdrop-blur-3xl z-40 md:hidden flex flex-col items-center justify-center gap-10 transition-all duration-500 overflow-hidden ${isMenuOpen ? 'opacity-100 h-[calc(100vh-65px)]' : 'opacity-0 h-0'}`}>
-          <ul className="flex flex-col items-center gap-8 text-2xl font-black italic tracking-tighter font-syne uppercase text-white">
+        <div className={`fixed top-[65px] left-0 right-0 bottom-0 bg-white/95 backdrop-blur-3xl z-40 md:hidden flex flex-col items-center justify-center gap-10 transition-all duration-500 overflow-hidden ${isMenuOpen ? 'opacity-100 h-[calc(100vh-65px)]' : 'opacity-0 h-0'}`}>
+          <ul className="flex flex-col items-center gap-6 text-lg font-black font-syne uppercase text-brand-dark">
             <li>
-              <NavLink to="/" onClick={(e) => { setIsMenuOpen(false); handleLinkClick(e, '/'); }} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Home</NavLink>
+              <NavLink to="/" onClick={(e) => { setIsMenuOpen(false); handleLinkClick(e, '/'); }} className={({ isActive }) => isActive ? 'text-brand-red' : 'text-brand-dark hover:text-brand-red transition-colors'}>Home</NavLink>
             </li>
             <li>
-              <NavLink to="/products" onClick={(e) => { setIsMenuOpen(false); handleLinkClick(e, '/products'); }} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Products</NavLink>
+              <NavLink to="/products" onClick={(e) => { setIsMenuOpen(false); handleLinkClick(e, '/products'); }} className={({ isActive }) => isActive ? 'text-brand-red' : 'text-brand-dark hover:text-brand-red transition-colors'}>Products</NavLink>
             </li>
             <li>
-              <NavLink to="/about" onClick={(e) => { setIsMenuOpen(false); handleLinkClick(e, '/about'); }} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>About</NavLink>
+              <NavLink to="/about" onClick={(e) => { setIsMenuOpen(false); handleLinkClick(e, '/about'); }} className={({ isActive }) => isActive ? 'text-brand-red' : 'text-brand-dark hover:text-brand-red transition-colors'}>About</NavLink>
             </li>
             <li>
-              <NavLink to="/contact" onClick={(e) => { setIsMenuOpen(false); handleLinkClick(e, '/contact'); }} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Contact</NavLink>
+              <NavLink to="/contact" onClick={(e) => { setIsMenuOpen(false); handleLinkClick(e, '/contact'); }} className={({ isActive }) => isActive ? 'text-brand-red' : 'text-brand-dark hover:text-brand-red transition-colors'}>Contact</NavLink>
             </li>
           </ul>
           
           {/* Mobile Auth Experience */}
           <div className="scale-125">
             <Show when="signed-out">
-                <Link to="/sign-in" className="bg-white text-black px-12 py-3 rounded-full font-black uppercase text-lg tracking-widest font-syne cursor-pointer block" onClick={() => setIsMenuOpen(false)}>
+                <Link to="/sign-in" className="bg-brand-red text-white px-12 py-3 rounded-full font-black uppercase text-lg tracking-widest font-syne cursor-pointer block" onClick={() => setIsMenuOpen(false)}>
                     Sign In
                 </Link>
             </Show>
@@ -214,7 +214,7 @@ const Navbar = () => {
                 <div className="flex flex-col items-center gap-4">
                     <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex flex-col items-center gap-2 group">
                         <ProfileAvatar size="lg" />
-                        <span className="text-white/60 font-syne font-black uppercase text-[10px] tracking-widest group-hover:text-white transition-colors">My Profile</span>
+                        <span className="text-brand-dark/60 font-syne font-black uppercase text-[10px] tracking-widest group-hover:text-brand-dark transition-colors">My Profile</span>
                     </Link>
                 </div>
             </Show>

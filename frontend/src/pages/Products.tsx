@@ -24,7 +24,7 @@ const Products = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center pt-32">
-        <Loader2 className="w-10 h-10 text-white/20 animate-spin" />
+        <Loader2 className="w-10 h-10 text-brand-red/20 animate-spin" />
       </div>
     )
   }

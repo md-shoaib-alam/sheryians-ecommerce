@@ -87,10 +87,10 @@ router.get('/addresses', requireAuth, async (req: Request, res: Response) => {
 // POST /api/users/addresses
 router.post('/addresses', requireAuth, async (req: Request, res: Response) => {
   const clerkId = (req as any).clerkId
-  const { label, line1, line2, city, state, zip, isDefault } = req.body
+  const { label, firstName, lastName, line1, line2, city, state, zip, country, phone, isDefault } = req.body
 
-  if (!label || !line1 || !city || !state || !zip) {
-    return res.status(400).json({ error: 'label, line1, city, state, zip are required' })
+  if (!label || !firstName || !lastName || !line1 || !city || !state || !zip || !country || !phone) {
+    return res.status(400).json({ error: 'All required fields must be filled' })
   }
 
   try {
@@ -105,7 +105,20 @@ router.post('/addresses', requireAuth, async (req: Request, res: Response) => {
     }
 
     const address = await prisma.address.create({
-      data: { userId: user.id, label, line1, line2, city, state, zip, isDefault: !!isDefault },
+      data: { 
+        userId: user.id, 
+        label, 
+        firstName, 
+        lastName, 
+        line1, 
+        line2, 
+        city, 
+        state, 
+        zip, 
+        country, 
+        phone, 
+        isDefault: !!isDefault 
+      },
     })
     res.status(201).json(address)
   } catch {

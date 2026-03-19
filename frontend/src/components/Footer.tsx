@@ -3,15 +3,15 @@ import { Instagram, Facebook, Twitter, Mail } from 'lucide-react'
 
 const Footer = () => {
   return (
-    <footer className="bg-transparent border-t border-white/5 pt-24 pb-12 px-6">
+    <footer className="bg-brand-dark border-t border-white/5 pt-24 pb-12 px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
         {/* Brand Section */}
         <div className="col-span-1 md:col-span-1">
           <Link to="/" className="flex flex-col items-start leading-none group mb-6">
-            <span className="text-3xl font-black italic tracking-tighter text-white font-syne group-hover:text-red-500 transition-colors">
+            <span className="text-3xl font-black italic tracking-tighter text-white font-syne group-hover:text-brand-red transition-colors">
               SHRIYANS
             </span>
-            <span className="text-[11px] font-bold tracking-[0.3em] text-white/60 self-end -mt-1 group-hover:text-white transition-colors uppercase font-poppins">
+            <span className="text-[11px] font-bold tracking-[0.3em] text-white/50 self-end -mt-1 group-hover:text-white transition-colors uppercase font-poppins">
               Lotus Seeds
             </span>
           </Link>
@@ -52,8 +52,8 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto border-t border-white/5 pt-10 text-center">
-        <p className="text-white/30 text-xs font-poppins tracking-[0.2em] uppercase">
+      <div className="max-w-7xl mx-auto border-t border-white/10 pt-10 text-center">
+        <p className="text-white/20 text-xs font-poppins tracking-[0.2em] uppercase">
           &copy; 2026 Shriyans Lotus Seeds. Crafting the perfect crunch.
         </p>
       </div>

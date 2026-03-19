@@ -11,7 +11,7 @@ const HeroBanner = () => {
           className="w-full h-auto object-cover"
           loading="eager"
         />
-        <div className="absolute bottom-2 md:bottom-6 right-4 md:right-10 text-white text-[8px] md:text-sm uppercase tracking-[0.2em] md:tracking-[0.3em] font-bold opacity-70 font-poppins">
+        <div className="absolute bottom-2 md:bottom-6 right-4 md:right-10 text-brand-dark text-[8px] md:text-sm uppercase tracking-[0.2em] md:tracking-[0.3em] font-bold opacity-70 font-poppins">
           EXPLODE WITH FLAVOR #FLAVINGHOT
         </div>
       </Link>

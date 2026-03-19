@@ -89,7 +89,7 @@ router.post('/create-order', requireAuth, async (req: Request, res: Response) =>
           }),
         },
       },
-      include: { items: true },
+      include: { items: { include: { product: { select: { name: true, imageUrl: true } } } } },
     })
 
     res.json({
@@ -139,7 +139,7 @@ router.post('/verify', requireAuth, async (req: Request, res: Response) => {
     // Signature valid → update order
     const order = await prisma.order.findFirst({
       where: { id: orderId, userId: user.id },
-      include: { items: true },
+      include: { items: { include: { product: { select: { name: true, imageUrl: true } } } } },
     })
 
     if (!order) return res.status(404).json({ error: 'Order not found' })
@@ -162,7 +162,7 @@ router.post('/verify', requireAuth, async (req: Request, res: Response) => {
           paymentStatus: 'PAID',
           status: 'CONFIRMED',
         },
-        include: { items: true },
+        include: { items: { include: { product: { select: { name: true, imageUrl: true } } } } },
       })
 
       // Decrement stock
@@ -270,7 +270,7 @@ router.post('/cod', requireAuth, async (req: Request, res: Response) => {
             }),
           },
         },
-        include: { items: true },
+        include: { items: { include: { product: { select: { name: true, imageUrl: true } } } } },
       })
 
       for (const item of items) {

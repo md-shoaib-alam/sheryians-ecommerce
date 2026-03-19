@@ -48,14 +48,14 @@ const ProductSection = ({ title, products, isScrollable = false, showSort = fals
           <div className="relative md:mb-2 z-20 self-end md:self-auto">
             <div 
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center gap-3 border border-white px-5 py-1.5 rounded-full cursor-pointer hover:bg-white/10 transition-all font-syne"
+              className="flex items-center gap-3 border border-brand-red/20 px-5 py-1.5 rounded-full cursor-pointer hover:bg-brand-pink transition-all font-syne"
             >
-              <span className="text-white text-sm font-bold lowercase tracking-tighter">sort by</span>
-              <ChevronDown className={`w-4 h-4 text-white transition-transform ${isOpen ? 'rotate-180' : ''}`} strokeWidth={2} />
+              <span className="text-brand-dark text-sm font-bold lowercase tracking-tighter">sort by</span>
+              <ChevronDown className={`w-4 h-4 text-brand-dark transition-transform ${isOpen ? 'rotate-180' : ''}`} strokeWidth={2} />
             </div>
             
             {isOpen && (
-              <div className="absolute top-full right-0 mt-2 w-44 bg-red-950/95 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in slide-in-from-top-1 duration-200">
+              <div className="absolute top-full right-0 mt-2 w-44 bg-white backdrop-blur-2xl border border-brand-red/10 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in slide-in-from-top-1 duration-200">
                 {sortOptions.map((option) => (
                   <div 
                     key={option.value}
@@ -64,7 +64,7 @@ const ProductSection = ({ title, products, isScrollable = false, showSort = fals
                       setIsOpen(false)
                     }}
                     className={`px-5 py-3 text-[10px] md:text-xs uppercase font-black font-syne cursor-pointer transition-colors whitespace-nowrap
-                      ${sortBy === option.value ? 'bg-white text-red-950' : 'text-white hover:bg-white/10'}
+                      ${sortBy === option.value ? 'bg-brand-red text-white' : 'text-brand-dark hover:bg-brand-pink'}
                     `}
                   >
                     {option.label}
@@ -98,12 +98,12 @@ const ProductSection = ({ title, products, isScrollable = false, showSort = fals
 
       {/* High-Fidelity "No More Items" Signal */}
       {showNoMore && products.length > 0 && (
-          <div className="w-full flex flex-col items-center justify-center pt-20 pb-10 gap-4 opacity-30">
-              <div className="h-[1px] w-20 bg-white"></div>
+          <div className="w-full flex flex-col items-center justify-center pt-20 pb-10 gap-4 opacity-30 text-brand-dark">
+              <div className="h-[1px] w-20 bg-brand-dark"></div>
               <p className="font-syne font-black uppercase tracking-[0.4em] text-[10px] md:text-xs text-center">
                   no more items found
               </p>
-              <div className="h-[1px] w-20 bg-white"></div>
+              <div className="h-[1px] w-20 bg-brand-dark"></div>
           </div>
       )}
     </section>

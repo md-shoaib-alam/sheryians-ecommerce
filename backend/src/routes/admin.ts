@@ -92,7 +92,7 @@ router.get('/orders', async (req: Request, res: Response) => {
         where,
         include: {
           user: { select: { name: true, email: true } },
-          items: true,
+          items: { include: { product: { select: { name: true, imageUrl: true } } } },
           address: true,
         },
         orderBy: { createdAt: 'desc' },
@@ -136,7 +136,10 @@ router.get('/stats', async (_req: Request, res: Response) => {
       prisma.order.findMany({
         take: 5,
         orderBy: { createdAt: 'desc' },
-        include: { user: { select: { name: true, email: true } } },
+        include: { 
+          user: { select: { name: true, email: true } },
+          items: { include: { product: { select: { name: true, imageUrl: true } } } } 
+        },
       }),
     ])
 

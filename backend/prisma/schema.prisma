@@ -52,11 +52,15 @@ model Address {
   id        String   @id @default(uuid())
   userId    String
   label     String
+  firstName String   @default("Admin")
+  lastName  String   @default("Doe")
   line1     String
   line2     String?
   city      String
   state     String
   zip       String
+  country   String   @default("India")
+  phone     String   @default("")
   isDefault Boolean  @default(false)
   createdAt DateTime @default(now())
 
