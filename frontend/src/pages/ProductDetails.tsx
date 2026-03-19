@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Star, Check, ShoppingBag, ArrowLeft, ShieldCheck, Zap, Leaf, Loader2 } from 'lucide-react'
 import { api } from '../lib/api'
@@ -11,7 +11,6 @@ const ProductDetails = () => {
     const { id } = useParams()
     const { addToCart } = useCart()
     const navigate = useNavigate()
-    const scrollContainerRef = useRef<HTMLDivElement>(null)
     const [product, setProduct] = useState<any>(null)
     const [recommendations, setRecommendations] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
@@ -49,17 +48,17 @@ const ProductDetails = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#FAF6F6] pt-32">
-                <Loader2 className="w-10 h-10 text-brand-red/30 animate-spin" />
+            <div className="min-h-screen flex items-center justify-center bg-black pt-32">
+                <Loader2 className="w-10 h-10 text-white/20 animate-spin" />
             </div>
         )
     }
 
     if (!product) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-                <h1 className="text-4xl font-black font-syne uppercase italic mb-6 text-brand-dark">Flavor Not Found</h1>
-                <Link to="/products" className="bg-brand-red text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest hover:bg-brand-dark transition-all">
+            <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-black">
+                <h1 className="text-4xl font-black font-syne uppercase italic mb-6 text-white">Flavor Not Found</h1>
+                <Link to="/products" className="bg-white text-black px-8 py-3 rounded-full font-bold uppercase tracking-widest hover:bg-amber-400 transition-all">
                     Back to Shop
                 </Link>
             </div>
@@ -80,7 +79,6 @@ const ProductDetails = () => {
 
     const handleDirectBuy = () => {
         if (!product) return
-        // Direct buy bypasses the cart and goes straight to checkout
         navigate('/checkout', { 
             state: { 
                 directBuyItem: {
@@ -94,173 +92,185 @@ const ProductDetails = () => {
         })
     }
 
-    // Combine hero image with gallery images if any
     const allImages = [product.imageUrl, ...(product.images || [])].filter(Boolean)
 
     return (
-        <div className="min-h-screen pt-24 pb-20 md:pt-40 px-5 md:px-8 max-w-7xl mx-auto overflow-hidden">
+        <div className="min-h-screen bg-black pt-24 pb-20 md:pt-40 px-5 md:px-12 lg:px-20 overflow-hidden">
             {/* Dynamic Back Navigation */}
             <Link 
                 to="/products" 
-                className="inline-flex items-center gap-2 text-brand-dark/40 hover:text-brand-red mb-8 md:mb-16 transition-all group tracking-widest text-[10px] md:text-xs font-black"
+                className="inline-flex items-center gap-2 text-white/30 hover:text-white mb-12 transition-all group tracking-widest text-[10px] uppercase font-black font-syne"
             >
-                <ArrowLeft className="w-3 h-3 md:w-4 md:h-4 group-hover:-translate-x-1 transition-transform" />
-                Back to Discover
+                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                Back to Collection
             </Link>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-20 items-start mb-20">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start mb-32">
                 
-                {/* Cinematic Product Gallery Sidebar (Left - 5 Columns) */}
-                <div className="lg:col-span-5 relative group px-2 md:px-0">
-                    {/* Main Backdrop Glow matching product color */}
-                    <div 
-                        className="absolute inset-0 blur-[80px] md:blur-[120px] opacity-10 -z-10 rounded-full"
-                        style={{ backgroundColor: product.bgColor || '#5D1A1E' }}
-                    ></div>
-                    
-                    <div className="relative aspect-square md:aspect-[4/5] bg-brand-pink/30 border border-brand-red/5 rounded-[40px] md:rounded-[100px] overflow-hidden backdrop-blur-sm shadow-xl flex items-center justify-center p-8 md:p-12 transition-all group-hover:bg-brand-pink/50 duration-700">
-                         <AnimatePresence mode="wait">
-                            <motion.img 
-                                key={selectedImage}
-                                src={selectedImage} 
-                                alt={product.name} 
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1.15 }}
-                                exit={{ opacity: 0, scale: 1.2 }}
-                                transition={{ duration: 0.5 }}
-                                className="w-full h-full object-cover drop-shadow-[0_25px_25px_rgba(93,26,30,0.2)]" 
-                                loading="lazy"
-                            />
-                         </AnimatePresence>
-                         
-                         {/* Gourmet Batch Tag */}
-                         <div className="absolute top-5 left-5 md:top-10 md:left-10 bg-white/60 border border-brand-red/10 backdrop-blur-md px-4 md:px-5 py-1.5 md:py-2 rounded-full flex items-center gap-2">
-                             <Leaf className="w-3 h-3 md:w-4 md:h-4 text-brand-red" />
-                             <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-brand-dark">Pure Handpicked</span>
-                         </div>
-                    </div>
-
-                    {/* Thumbnails row if multiple images */}
+                {/* ─ Cinematic Gallery System ────────────────────────────── */}
+                <div className="lg:col-span-6 flex items-start gap-8">
+                    {/* Thumbnails Sidebar (Desktop) */}
                     {allImages.length > 1 && (
-                        <div className="flex gap-4 mt-6 overflow-x-auto no-scrollbar pb-2">
+                        <div className="hidden lg:flex flex-col gap-4 overflow-y-auto no-scrollbar shrink-0 w-24">
                             {allImages.map((img, idx) => (
                                 <button 
                                     key={idx}
                                     onClick={() => setSelectedImage(img)}
-                                    className={`relative w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all shrink-0 ${selectedImage === img ? 'border-brand-red scale-105' : 'border-brand-red/5 opacity-60 hover:opacity-100'}`}
+                                    className={`relative w-24 h-24 rounded-[32px] overflow-hidden border-2 transition-all shrink-0
+                                        ${selectedImage === img ? 'border-amber-400 bg-white/10' : 'border-white/5 bg-white/5 hover:border-white/20'}
+                                    `}
                                 >
-                                    <img src={img} className="w-full h-full object-cover" />
+                                    <img src={img} loading="lazy" className="w-full h-full object-cover opacity-80" />
                                 </button>
                             ))}
                         </div>
                     )}
+
+                    <div className="relative flex-1">
+                        {/* Main Backdrop Glow */}
+                        <div 
+                            className="absolute inset-0 blur-[120px] opacity-20 -z-10 rounded-full"
+                            style={{ backgroundColor: product.bgColor || '#5D1A1E' }}
+                        ></div>
+                        
+                        <div className="relative aspect-[4/5] bg-white/5 border border-white/10 rounded-[60px] md:rounded-[100px] overflow-hidden backdrop-blur-3xl shadow-3xl flex items-center justify-center p-12 transition-all hover:bg-white/[0.07] duration-700">
+                             <AnimatePresence mode="wait">
+                                <motion.img 
+                                    key={selectedImage}
+                                    src={selectedImage} 
+                                    alt={product.name} 
+                                    initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+                                    animate={{ opacity: 1, scale: 1.1, rotate: 0 }}
+                                    exit={{ opacity: 0, scale: 1.2, rotate: 5 }}
+                                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                                    className="w-full h-full object-cover drop-shadow-[0_45px_45px_rgba(0,0,0,0.5)]" 
+                                    loading="lazy"
+                                />
+                             </AnimatePresence>
+                             
+                             <div className="absolute top-10 left-10 bg-white/10 border border-white/10 backdrop-blur-2xl px-5 py-2 rounded-full flex items-center gap-2">
+                                 <Leaf className="w-3.5 h-3.5 text-amber-400" />
+                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white">Pure Handpicked</span>
+                             </div>
+                        </div>
+
+                        {/* Mobile Dynamic Thumbnails Row */}
+                        {allImages.length > 1 && (
+                            <div className="flex lg:hidden gap-3 mt-8 overflow-x-auto no-scrollbar pb-2">
+                                {allImages.map((img, idx) => (
+                                    <button 
+                                        key={idx}
+                                        onClick={() => setSelectedImage(img)}
+                                        className={`relative w-20 h-20 rounded-3xl overflow-hidden border-2 transition-all shrink-0
+                                            ${selectedImage === img ? 'border-amber-400' : 'border-white/10 opacity-60'}
+                                        `}
+                                    >
+                                        <img src={img} className="w-full h-full object-cover" />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
 
-                {/* Brand-Focused Product Information Panel (Right - 7 Columns) */}
-                <div className="lg:col-span-7 flex flex-col gap-6 md:gap-12 py-2 md:py-4">
-                    
-                    {/* Header & Identification */}
+                {/* ─ Product Information Architecture ─────────────────────── */}
+                <div className="lg:col-span-6 flex flex-col gap-10">
                     <div>
-                        <div className="flex items-center gap-4 mb-4 md:mb-6">
-                             <div className="flex items-center gap-1 bg-brand-red text-white px-2.5 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-black">
-                                    <Star className="w-2.5 h-2.5 md:w-3 md:h-3 fill-white" />
-                                    <span>{product.rating || '4.9'}</span>
-                             </div>
-                             <span className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.3em] font-bold text-brand-dark/30">{product._count?.reviews || 0} Feedbacks</span>
-                             {product.category && (
-                                <span className="text-[9px] md:text-[10px] bg-brand-pink text-brand-red px-3 py-1 rounded-full font-black uppercase tracking-widest italic">{product.category}</span>
-                             )}
+                        <div className="flex items-center gap-3 mb-6">
+                            <span className="bg-white text-black px-4 py-1.5 rounded-full text-[8px] font-black uppercase tracking-[0.2em] font-syne italic shrink-0">
+                                {product.category}
+                            </span>
+                            <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-1.5 rounded-full backdrop-blur-xl">
+                                <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                                <span className="text-[10px] font-black font-syne text-white">4.9</span>
+                                <div className="w-[1px] h-3 bg-white/10 mx-1" />
+                                <span className="text-[8px] font-black text-white/30 uppercase tracking-widest font-syne">{product._count?.reviews || 0} REVIEWS</span>
+                            </div>
                         </div>
-                        
-                        <h1 className="text-3xl md:text-7xl font-black uppercase italic tracking-tighter text-brand-dark leading-[0.95] md:leading-[0.9] mb-4">
-                                {product.name}
+
+                        <h1 className="text-3xl md:text-6xl font-black font-syne uppercase italic tracking-tighter text-white leading-none mb-6">
+                            {product.name}
                         </h1>
-                        <p className="text-brand-dark/60 text-sm md:text-xl font-medium max-w-xl leading-relaxed md:leading-relaxed">
-                                {product.description || `Elevate your snacking experience with our signature ${product.name.toLowerCase()} blend. Hand-crafted using ancient techniques and the finest lotus seeds from natural ponds.`}
+
+                        <div className="flex items-end gap-5 mb-10">
+                             <span className="text-4xl md:text-6xl font-black font-poppins text-white leading-none">₹{product.price}</span>
+                             <div className="flex flex-col">
+                                 {product.mrp > product.price && (
+                                     <span className="text-white/20 line-through font-bold text-lg font-poppins">₹{product.mrp}</span>
+                                 )}
+                                 <span className="text-amber-400 text-[8px] font-black uppercase tracking-widest font-syne">Limited Drop</span>
+                             </div>
+                        </div>
+
+                        <p className="text-white/40 text-sm md:text-base font-medium font-poppins max-w-xl leading-relaxed">
+                            {product.description || "Discover the essence of pure snacking perfection. Slow-roasted and infused with premium ingredients, our makhana offers a crunch that's as healthy as it is satisfying."}
                         </p>
                     </div>
 
-                    {/* Pricing & High-Velocity Purchase Actions */}
-                    <div className="bg-brand-pink/50 border border-brand-red/10 p-6 md:p-12 rounded-[40px] md:rounded-[50px] shadow-sm">
-                            <div className="flex items-end gap-4 md:gap-6 mb-8 md:mb-10 text-brand-dark">
-                                    <span className="text-4xl md:text-8xl font-black leading-none text-brand-red">₹{product.price}</span>
-                                    <div className="flex flex-col mb-1 md:mb-2 text-brand-dark/30">
-                                            {product.mrp > product.price && (
-                                                <span className="line-through font-bold text-lg md:text-2xl tracking-tighter whitespace-nowrap">₹{product.mrp}</span>
-                                            )}
-                                            <span className="text-brand-red text-[8px] md:text-[10px] font-black uppercase tracking-widest whitespace-nowrap">Launch Offer</span>
-                                    </div>
+                    {/* Quick Specs Grid */}
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 p-6 bg-white/5 border border-white/10 rounded-[32px] backdrop-blur-3xl">
+                        {[
+                            { label: 'Weight', value: product.weight || '100g', icon: Zap },
+                            { label: 'Flavour', value: product.flavour || 'Organic', icon: Leaf },
+                            { label: 'Quality', value: 'Prime', icon: ShieldCheck }
+                        ].map((spec, i) => (
+                            <div key={i} className="flex flex-col gap-1.5">
+                                <span className="text-white/20 uppercase text-[7px] font-black font-syne tracking-widest">{spec.label}</span>
+                                <div className="flex items-center gap-2 text-white">
+                                    <spec.icon className="w-3 h-3 text-amber-400" />
+                                    <span className="text-[10px] font-bold uppercase tracking-wider font-syne">{spec.value}</span>
+                                </div>
                             </div>
-
-                            <div className="flex flex-col md:flex-row gap-4">
-                                    <button 
-                                        onClick={handleAddToCart}
-                                        disabled={isAdded || product.stock <= 0}
-                                        className={`flex-1 py-4 md:py-7 rounded-full font-black uppercase tracking-[0.2em] md:tracking-[0.3em] text-sm md:text-xl transition-all duration-500 shadow-xl shadow-brand-red/10 flex items-center justify-center gap-2 md:gap-3 active:scale-95
-                                                ${isAdded 
-                                                        ? 'bg-green-600 text-white scale-[1.02]' 
-                                                        : 'bg-brand-red text-white hover:bg-brand-dark hover:scale-[1.02]'
-                                                }
-                                                ${product.stock <= 0 ? 'opacity-50 cursor-not-allowed' : ''}
-                                        `}
-                                    >
-                                        {product.stock <= 0 ? (
-                                            <span>Sold Out</span>
-                                        ) : isAdded ? (
-                                            <>
-                                                    <Check className="w-5 h-5 md:w-6 md:h-6" />
-                                                    <span>Added to bag</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                    <ShoppingBag className="w-5 h-5 md:w-6 md:h-6" />
-                                                    <span>Bag this flavor</span>
-                                            </>
-                                        )}
-                                    </button>
-                                    
-                                    <button 
-                                        onClick={handleDirectBuy}
-                                        disabled={product.stock <= 0}
-                                        className="flex-1 py-4 md:py-7 rounded-full border-2 border-brand-red text-brand-red hover:bg-brand-red hover:text-white transition-all font-black uppercase tracking-[0.2em] text-sm md:text-xl active:scale-95 disabled:opacity-50"
-                                    >
-                                            Direct Buy
-                                    </button>
-                            </div>
+                        ))}
                     </div>
 
-                    {/* Boutique Brand Value Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 border-t border-brand-red/5 pt-8 md:pt-4">
-                            <div className="flex items-center md:flex-col gap-3 group">
-                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-brand-pink/50 border border-brand-red/5 flex items-center justify-center group-hover:bg-brand-red group-hover:text-white transition-all duration-500 shrink-0 text-brand-red">
-                                            <ShieldCheck className="w-5 h-5 md:w-6 md:h-6" />
-                                    </div>
-                                    <span className="text-[8px] md:text-xs font-black uppercase tracking-widest font-syne text-brand-dark/60">{product.flavour || '100% Organic'}</span>
-                            </div>
-                            <div className="flex items-center md:flex-col gap-3 group">
-                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-brand-pink/50 border border-brand-red/5 flex items-center justify-center group-hover:bg-brand-red group-hover:text-white transition-all duration-500 shrink-0 text-brand-red">
-                                            <Zap className="w-5 h-5 md:w-6 md:h-6" />
-                                    </div>
-                                    <span className="text-[8px] md:text-xs font-black uppercase tracking-widest font-syne text-brand-dark/60">{product.weight || 'High Protein'}</span>
-                            </div>
-                            <div className="flex items-center md:flex-col gap-3 group">
-                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-brand-pink/50 border border-brand-red/5 flex items-center justify-center group-hover:bg-brand-red group-hover:text-white transition-all duration-500 shrink-0 text-brand-red">
-                                            <Leaf className="w-5 h-5 md:w-6 md:h-6" />
-                                    </div>
-                                    <span className="text-[8px] md:text-xs font-black uppercase tracking-widest font-syne text-brand-dark/60">Eco-Crafted</span>
-                            </div>
+                    {/* Purchase Logic */}
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <button 
+                            onClick={handleAddToCart}
+                            disabled={isAdded || product.stock <= 0}
+                            className={`flex-1 py-5 md:py-7 rounded-full font-black uppercase tracking-[0.2em] text-[10px] md:text-xs font-syne transition-all duration-500 shadow-2xl flex items-center justify-center gap-3 active:scale-95
+                                ${isAdded 
+                                    ? 'bg-green-500 text-white border-green-500' 
+                                    : 'bg-white text-black hover:bg-amber-400'
+                                }
+                                ${product.stock <= 0 ? 'opacity-50 cursor-not-allowed' : ''}
+                            `}
+                        >
+                            {product.stock <= 0 ? (
+                                <span>Sold Out</span>
+                            ) : isAdded ? (
+                                <>
+                                    <Check className="w-4 h-4" />
+                                    <span>Added to Bag</span>
+                                </>
+                            ) : (
+                                <>
+                                    <ShoppingBag className="w-4 h-4" />
+                                    <span>Add to Bag</span>
+                                </>
+                            )}
+                        </button>
+
+                        <button 
+                            onClick={handleDirectBuy}
+                            disabled={product.stock <= 0}
+                            className="flex-1 py-5 md:py-7 rounded-full bg-amber-400 text-black font-black uppercase tracking-[0.2em] text-[10px] md:text-xs font-syne transition-all duration-500 shadow-2xl hover:bg-white hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Direct Buy
+                        </button>
                     </div>
                 </div>
             </div>
 
             {/* ─ Recommendations Discovery Section ─────────────────────────── */}
             {recommendations.length > 0 && (
-                <div className="pt-20 border-t border-brand-red/5">
+                <div className="pt-20 border-t border-white/5">
                     <SectionHeading 
                         title="Flavor Discoveries" 
                         subtitle={`More from the ${product.category} collection`} 
                     />
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mt-16">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 mt-16">
                         {recommendations.map((rec: any) => (
                             <ProductCard 
                                 key={rec.id}
@@ -279,6 +289,5 @@ const ProductDetails = () => {
         </div>
     )
 }
-
 
 export default ProductDetails
