@@ -3,7 +3,10 @@ import { ShoppingCart, Menu, X, Search } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import SearchDrawer from './SearchDrawer'
 
+import { useCart } from '../context/CartContext'
+
 const Navbar = () => {
+  const { cart } = useCart()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -123,7 +126,11 @@ const Navbar = () => {
           
           <Link to="/cart" className="p-2 hover:bg-white/20 rounded-full transition-all relative group">
             <ShoppingCart className="w-5 md:w-6 h-5 md:h-6 text-white" />
-            <span className="absolute top-0 right-0 w-2 h-2 bg-white rounded-full scale-0 group-hover:scale-100 transition-transform"></span>
+            {cart.length > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 text-red-950 text-[10px] md:text-xs font-black flex items-center justify-center rounded-full shadow-lg border-2 border-red-950 animate-in zoom-in duration-300">
+                {cart.reduce((total, item) => total + item.quantity, 0)}
+              </span>
+            )}
           </Link>
           
           <button className="hidden md:block bg-black text-white px-6 py-1.5 rounded-full font-bold text-sm hover:bg-white hover:text-black transition-all border-2 border-transparent font-poppins">

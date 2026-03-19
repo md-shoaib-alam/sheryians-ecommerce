@@ -1,6 +1,9 @@
-import { Star } from 'lucide-react'
+import { useState } from 'react'
+import { Star, Check } from 'lucide-react'
+import { useCart } from '../context/CartContext'
 
 interface ProductCardProps {
+  id: number
   image: string
   name: string
   rating: number
@@ -9,7 +12,20 @@ interface ProductCardProps {
   currentPrice: string
 }
 
-const ProductCard = ({ image, name, rating, reviews, oldPrice, currentPrice }: ProductCardProps) => {
+const ProductCard = ({ id, image, name, rating, reviews, oldPrice, currentPrice }: ProductCardProps) => {
+  const { addToCart } = useCart()
+  const [isAdded, setIsAdded] = useState(false)
+
+  const handleAddToCart = () => {
+    addToCart({ id, image, name, currentPrice })
+    setIsAdded(true)
+    
+    // Reset back to "Add to cart" after 2 seconds for a fresh look
+    setTimeout(() => {
+        setIsAdded(false)
+    }, 2000)
+  }
+
   return (
     <div className="group flex flex-col items-start gap-3 md:gap-4 transition-all duration-300 w-full max-w-[275px]">
       {/* Container with Glassmorphism (Responsive Aspect Ratio) */}
@@ -48,8 +64,24 @@ const ProductCard = ({ image, name, rating, reviews, oldPrice, currentPrice }: P
             <span className="text-amber-400 text-xl md:text-2xl font-black tracking-tighter md:tracking-normal">₹{currentPrice}</span>
         </div>
         
-        <button className="w-full md:w-auto px-4 md:px-8 py-2.5 md:py-2.5 bg-white md:bg-transparent text-black md:text-white border-2 border-white font-extrabold rounded-full md:hover:bg-white md:hover:text-black md:hover:scale-105 transition-all duration-300 uppercase tracking-widest text-[11px] md:text-sm font-poppins whitespace-nowrap shadow-xl md:shadow-none active:scale-95">
-          Add to cart
+        <button 
+          onClick={handleAddToCart}
+          disabled={isAdded}
+          className={`w-full md:w-auto px-4 md:px-8 py-2.5 md:py-2.5 border-2 rounded-full font-extrabold transition-all duration-300 uppercase tracking-widest text-[11px] md:text-sm font-poppins whitespace-nowrap shadow-xl flex items-center justify-center gap-2 active:scale-95
+            ${isAdded 
+              ? 'bg-amber-400 border-amber-400 text-red-950 scale-105' 
+              : 'bg-white md:bg-transparent text-black md:text-white border-white md:hover:bg-white md:hover:text-black md:hover:scale-105'
+            }
+          `}
+        >
+          {isAdded ? (
+            <>
+                <Check className="w-4 h-4 md:w-5 md:h-5 " />
+                <span>Added to cart</span>
+            </>
+          ) : (
+            <span>Add to cart</span>
+          )}
         </button>
       </div>
     </div>
