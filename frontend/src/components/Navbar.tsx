@@ -1,10 +1,26 @@
 import { useState, useEffect, useRef } from 'react'
 import { ShoppingCart, Menu, X, Search } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react'
+import { SignedIn, SignedOut, useUser } from '@clerk/clerk-react'
 import SearchDrawer from './SearchDrawer'
 
 import { useCart } from '../context/CartContext'
+
+const ProfileAvatar = ({ size = 'sm' }: { size?: 'sm' | 'lg' }) => {
+  const { user } = useUser()
+  const sizeClass = size === 'lg' ? 'w-14 h-14 text-xl' : 'w-9 h-9 text-sm'
+  return (
+    <Link
+      to="/profile"
+      className={`${sizeClass} rounded-full border-2 border-white/30 hover:border-white transition-all overflow-hidden flex items-center justify-center bg-amber-500 font-black font-syne text-black hover:scale-110 scale-100 duration-200`}
+    >
+      {user?.imageUrl
+        ? <img src={user.imageUrl} alt={user?.firstName || 'Profile'} className="w-full h-full object-cover" />
+        : <span>{(user?.firstName?.[0] || user?.emailAddresses?.[0]?.emailAddress?.[0] || 'U').toUpperCase()}</span>
+      }
+    </Link>
+  )
+}
 
 const Navbar = () => {
   const { cart } = useCart()
@@ -157,9 +173,7 @@ const Navbar = () => {
                 </Link>
             </SignedOut>
             <SignedIn>
-                <div className="scale-110 hover:scale-125 transition-transform">
-                    <UserButton appearance={{ elements: { userButtonAvatarBox: 'w-9 h-9 border-2 border-white/20' } }} />
-                </div>
+                <ProfileAvatar />
             </SignedIn>
           </div>
           
@@ -198,7 +212,10 @@ const Navbar = () => {
             </SignedOut>
             <SignedIn>
                 <div className="flex flex-col items-center gap-4">
-                    <UserButton showName appearance={{ elements: { userButtonAvatarBox: 'w-14 h-14 border-2 border-white/20', userButtonOuterIdentifier: 'text-white font-syne font-black uppercase tracking-widest text-sm' } }} />
+                    <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex flex-col items-center gap-2 group">
+                        <ProfileAvatar size="lg" />
+                        <span className="text-white/60 font-syne font-black uppercase text-[10px] tracking-widest group-hover:text-white transition-colors">My Profile</span>
+                    </Link>
                 </div>
             </SignedIn>
           </div>
