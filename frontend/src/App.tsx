@@ -10,12 +10,15 @@ import SignInPage from './pages/auth/SignInPage'
 import SignUpPage from './pages/auth/SignUpPage'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
 import UserProfilePage from './pages/UserProfile'
+
 import Checkout from './pages/Checkout'
 import { About, Contact, Cart } from './pages/StaticPages'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders'
 import AdminUsers from './pages/admin/AdminUsers'
+import OrderDetails from './pages/OrderDetails'
+
 
 const AUTH_ROUTES = ['/sign-in', '/sign-up', '/forgot-password']
 
@@ -49,6 +52,8 @@ function App() {
           <Route path="/admin/products" element={<AdminProducts />} />
           <Route path="/admin/orders" element={<AdminOrders />} />
           <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/profile/order/:id" element={<OrderDetails />} />
+
         </Routes>
       </main>
 
