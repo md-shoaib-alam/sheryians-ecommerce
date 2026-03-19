@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
-import { ShoppingCart } from 'lucide-react'
+import { ShoppingCart, Menu, X } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 })
   const location = useLocation()
   const navRef = useRef<HTMLUListElement>(null)
@@ -16,6 +17,11 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  // Close menu on navigation
+  useEffect(() => {
+    setIsMenuOpen(false)
+  }, [location.pathname])
 
   // Update sliding indicator position
   useEffect(() => {
@@ -33,26 +39,28 @@ const Navbar = () => {
 
   // Background and appearance logic
   const getNavBackground = () => {
-    if (isScrolled) return 'bg-red-950/80 backdrop-blur-3xl border-b border-white/10 shadow-2xl py-2'
+    if (isScrolled || isMenuOpen) return 'bg-red-950/90 backdrop-blur-3xl border-b border-white/10 shadow-2xl py-2'
     if (isHome) return 'bg-red-700 shadow-md border-b border-white/10'
     return 'bg-transparent border-b border-transparent py-4'
   }
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 py-3 px-8 z-50 flex items-center justify-between transition-all duration-500 ${getNavBackground()}`}>
+    <nav className={`fixed top-0 left-0 right-0 py-3 px-4 md:px-8 z-50 flex items-center justify-between transition-all duration-500 ${getNavBackground()}`}>
+      {/* Logo Section */}
       <Link 
         to="/"
         className="flex flex-col items-start leading-none group cursor-pointer"
       >
-        <span className="text-3xl font-black italic tracking-tighter text-white group-hover:text-amber-500 transition-colors font-syne">
+        <span className="text-2xl md:text-3xl font-black italic tracking-tighter text-white group-hover:text-amber-500 transition-colors font-syne">
           SHRIYANS
         </span>
-        <span className="text-[12px] font-bold tracking-[0.4em] text-white/70 self-end -mt-1 group-hover:text-white transition-colors uppercase font-poppins">
+        <span className="text-[10px] md:text-[12px] font-bold tracking-[0.4em] text-white/70 self-end -mt-1 group-hover:text-white transition-colors uppercase font-poppins">
           Lotus Seeds
         </span>
       </Link>
 
-      <div className="flex items-center gap-8">
+      {/* Desktop Navigation Links */}
+      <div className="hidden md:flex items-center gap-8">
         <div className="relative">
           <ul ref={navRef} className="flex items-center gap-8 text-sm uppercase tracking-widest font-syne">
             <li>
@@ -76,7 +84,7 @@ const Navbar = () => {
               </NavLink>
             </li>
           </ul>
-          {/* Sliding Single Indicator */}
+          {/* Sliding Single Indicator (Desktop only) */}
           <span 
             className="absolute bottom-0 h-0.5 bg-white transition-all duration-[800ms] ease-out pointer-events-none"
             style={{ 
@@ -87,12 +95,42 @@ const Navbar = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      {/* Action Buttons & Mobile Toggle */}
+      <div className="flex items-center gap-2 md:gap-4">
         <Link to="/cart" className="p-2 hover:bg-white/20 rounded-full transition-all relative group">
-          <ShoppingCart className="w-6 h-6" />
+          <ShoppingCart className="w-5 md:w-6 h-5 md:h-6 text-white" />
           <span className="absolute top-0 right-0 w-2 h-2 bg-white rounded-full scale-0 group-hover:scale-100 transition-transform"></span>
         </Link>
-        <button className="bg-black text-white px-6 py-1.5 rounded-full font-bold text-sm hover:bg-white hover:text-black transition-all border-2 border-transparent">
+        <button className="hidden md:block bg-black text-white px-6 py-1.5 rounded-full font-bold text-sm hover:bg-white hover:text-black transition-all border-2 border-transparent">
+          Login
+        </button>
+        
+        {/* Mobile Hamburger Button */}
+        <button 
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="md:hidden p-2 hover:bg-white/10 rounded-lg text-white transition-all"
+        >
+          {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      <div className={`fixed top-[65px] left-0 right-0 bottom-0 bg-red-950/95 backdrop-blur-3xl z-40 md:hidden flex flex-col items-center justify-center gap-10 transition-all duration-500 overflow-hidden ${isMenuOpen ? 'opacity-100 h-[calc(100vh-65px)]' : 'opacity-0 h-0'}`}>
+        <ul className="flex flex-col items-center gap-8 text-2xl font-black italic tracking-tighter font-syne uppercase text-white">
+          <li>
+            <NavLink to="/" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Home</NavLink>
+          </li>
+          <li>
+            <NavLink to="/products" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Products</NavLink>
+          </li>
+          <li>
+            <NavLink to="/about" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>About</NavLink>
+          </li>
+          <li>
+            <NavLink to="/contact" onClick={() => setIsMenuOpen(false)} className={({ isActive }) => isActive ? 'text-amber-500' : 'text-white hover:text-amber-500 transition-colors'}>Contact</NavLink>
+          </li>
+        </ul>
+        <button className="bg-white text-black px-12 py-3 rounded-full font-black uppercase text-lg tracking-widest font-syne">
           Login
         </button>
       </div>

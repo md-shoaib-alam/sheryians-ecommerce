@@ -7,18 +7,17 @@ interface ProductCardProps {
   reviews: number
   oldPrice: string
   currentPrice: string
-  bgColor: string // Kept in props for theoretical future use, but ignored for glass style
 }
 
 const ProductCard = ({ image, name, rating, reviews, oldPrice, currentPrice }: ProductCardProps) => {
   return (
-    <div className="group flex flex-col items-start gap-4 transition-all duration-300">
-      {/* 275x400 Card Container with Glassmorphism (Transparent Blur) */}
+    <div className="group flex flex-col items-start gap-3 md:gap-4 transition-all duration-300 w-full max-w-[275px]">
+      {/* Container with Glassmorphism (Responsive Aspect Ratio) */}
       <div 
-        className="relative w-[275px] h-[400px] rounded-[40px] shadow-2xl cursor-pointer flex items-center justify-center p-8 border border-white/20 bg-white/10 backdrop-blur-xl transition-transform duration-300 group-hover:scale-[1.03] overflow-hidden"
+        className="relative w-full aspect-[275/400] rounded-[24px] md:rounded-[40px] shadow-2xl cursor-pointer flex items-center justify-center p-4 md:p-8 border border-white/20 bg-white/10 backdrop-blur-xl transition-transform duration-300 md:group-hover:scale-[1.03] overflow-hidden"
       >
-        {/* Product Image - Zoomed to Cover (Persistent User Preference) */}
-        <div className="w-full h-full transform scale-110 group-hover:scale-130 transition-transform duration-500">
+        {/* Product Image - Zoomed to Cover (Desktop only) */}
+        <div className="w-full h-full transform md:scale-110 md:group-hover:scale-130 transition-transform duration-500">
           <img 
             src={image} 
             alt={name} 
@@ -28,8 +27,8 @@ const ProductCard = ({ image, name, rating, reviews, oldPrice, currentPrice }: P
       </div>
 
       {/* Product Info below the card - Left Aligned */}
-      <div className="flex flex-col items-start text-left w-full pl-1">
-        <h3 className="text-white font-bold text-xl mb-1 leading-tight font-poppins uppercase tracking-tight">
+      <div className="flex flex-col items-start text-left w-full px-1">
+        <h3 className="text-white font-bold text-sm md:text-xl mb-1 leading-tight font-poppins uppercase tracking-tight truncate w-full">
           {name}
         </h3>
         
@@ -38,18 +37,18 @@ const ProductCard = ({ image, name, rating, reviews, oldPrice, currentPrice }: P
             <Star 
               key={i} 
               strokeWidth={1}
-              className={`w-4 h-4 ${i < rating ? 'fill-amber-400 text-amber-400' : 'text-slate-500'}`} 
+              className={`w-[14px] h-[14px] md:w-4 md:h-4 ${i < rating ? 'fill-amber-400 text-amber-400' : 'text-slate-500'}`} 
             />
           ))}
-          <span className="text-white/60 text-[10px] ml-1 font-poppins font-normal">({reviews})</span>
+          <span className="text-white/60 text-[9px] md:text-[10px] ml-1 font-poppins font-normal">({reviews})</span>
         </div>
         
-        <div className="flex items-center gap-3 mb-4 font-bold tracking-widest font-poppins">
-            <span className="text-white/50 line-through text-lg">₹{oldPrice}</span>
-            <span className="text-amber-400 text-2xl font-black">₹{currentPrice}</span>
+        <div className="flex items-center gap-2 md:gap-3 mb-4 font-bold tracking-widest font-poppins">
+            <span className="text-white/50 line-through text-xs md:text-lg">₹{oldPrice}</span>
+            <span className="text-amber-400 text-xl md:text-2xl font-black tracking-tighter md:tracking-normal">₹{currentPrice}</span>
         </div>
         
-        <button className="px-8 py-2 bg-transparent border-2 border-white text-white font-extrabold rounded-full hover:bg-white hover:text-black transition-all duration-300 uppercase tracking-widest text-sm font-poppins">
+        <button className="w-full md:w-auto px-4 md:px-8 py-2.5 md:py-2.5 bg-white md:bg-transparent text-black md:text-white border-2 border-white font-extrabold rounded-full md:hover:bg-white md:hover:text-black md:hover:scale-105 transition-all duration-300 uppercase tracking-widest text-[11px] md:text-sm font-poppins whitespace-nowrap shadow-xl md:shadow-none active:scale-95">
           Add to cart
         </button>
       </div>
