@@ -22,7 +22,7 @@ const Features = () => {
   return (
     <section className="py-20 bg-brand-pink/50">
       <div className="max-w-7xl mx-auto px-4 md:px-6 text-center">
-        <h2 className="text-xl md:text-3xl font-black tracking-tight text-brand-red mb-12 font-syne uppercase">
+        <h2 className="text-xl md:text-3xl font-black tracking-tight text-brand-red mb-12 uppercase">
           The Shriyans Difference
         </h2>
         
@@ -32,10 +32,10 @@ const Features = () => {
               <div className="mb-6">
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-bold text-brand-dark mb-4 font-syne uppercase tracking-wider">
+              <h3 className="text-xl font-bold text-brand-dark mb-4 uppercase tracking-wider">
                 {feature.title}
               </h3>
-              <p className="text-brand-dark/60 leading-relaxed font-poppins">
+              <p className="text-brand-dark/60 leading-relaxed">
                 {feature.description}
               </p>
             </div>

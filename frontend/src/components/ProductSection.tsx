@@ -48,7 +48,7 @@ const ProductSection = ({ title, products, isScrollable = false, showSort = fals
           <div className="relative md:mb-2 z-20 self-end md:self-auto">
             <div 
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center gap-3 border border-brand-red/20 px-5 py-1.5 rounded-full cursor-pointer hover:bg-brand-pink transition-all font-syne"
+              className="flex items-center gap-3 border border-brand-red/20 px-5 py-1.5 rounded-full cursor-pointer hover:bg-brand-pink transition-all"
             >
               <span className="text-brand-dark text-sm font-bold lowercase tracking-tighter">sort by</span>
               <ChevronDown className={`w-4 h-4 text-brand-dark transition-transform ${isOpen ? 'rotate-180' : ''}`} strokeWidth={2} />
@@ -63,7 +63,7 @@ const ProductSection = ({ title, products, isScrollable = false, showSort = fals
                       setSortBy(option.value)
                       setIsOpen(false)
                     }}
-                    className={`px-5 py-3 text-[10px] md:text-xs uppercase font-black font-syne cursor-pointer transition-colors whitespace-nowrap
+                    className={`px-5 py-3 text-[10px] md:text-xs uppercase font-black cursor-pointer transition-colors whitespace-nowrap
                       ${sortBy === option.value ? 'bg-brand-red text-white' : 'text-brand-dark hover:bg-brand-pink'}
                     `}
                   >
@@ -100,7 +100,7 @@ const ProductSection = ({ title, products, isScrollable = false, showSort = fals
       {showNoMore && products.length > 0 && (
           <div className="w-full flex flex-col items-center justify-center pt-20 pb-10 gap-4 opacity-30 text-brand-dark">
               <div className="h-[1px] w-20 bg-brand-dark"></div>
-              <p className="font-syne font-black uppercase tracking-[0.4em] text-[10px] md:text-xs text-center">
+               <p className="font-black uppercase tracking-[0.4em] text-[10px] md:text-xs text-center">
                   no more items found
               </p>
               <div className="h-[1px] w-20 bg-brand-dark"></div>

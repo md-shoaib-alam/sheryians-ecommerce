@@ -12,7 +12,7 @@ const ProfileAvatar = ({ size = 'sm' }: { size?: 'sm' | 'lg' }) => {
   return (
     <Link
       to="/profile"
-      className={`${sizeClass} rounded-full border-2 border-brand-red/20 hover:border-brand-red transition-all overflow-hidden flex items-center justify-center bg-brand-red font-black font-syne text-white hover:scale-110 scale-100 duration-200`}
+      className={`${sizeClass} rounded-full border-2 border-brand-red/20 hover:border-brand-red transition-all overflow-hidden flex items-center justify-center bg-brand-red font-black text-white hover:scale-110 scale-100 duration-200`}
     >
       {user?.imageUrl
         ? <img src={user.imageUrl} alt={user?.firstName || 'Profile'} className="w-full h-full object-cover" />
@@ -91,10 +91,10 @@ const Navbar = () => {
           onClick={(e) => handleLinkClick(e, '/')}
           className="flex flex-col items-start leading-none group cursor-pointer"
         >
-          <span className="text-xl md:text-2xl font-black tracking-tight text-brand-red group-hover:text-brand-red/80 transition-colors font-syne">
+          <span className="text-xl md:text-2xl font-black tracking-tight text-brand-red group-hover:text-brand-red/80 transition-colors">
             SHRIYANS
           </span>
-          <span className="text-[10px] md:text-[12px] font-bold tracking-[0.4em] text-brand-dark/50 self-end -mt-1 group-hover:text-brand-dark transition-colors uppercase font-poppins">
+          <span className="text-[10px] md:text-[12px] font-bold tracking-[0.4em] text-brand-dark/50 self-end -mt-1 group-hover:text-brand-dark transition-colors uppercase">
             Lotus Seeds
           </span>
         </Link>
@@ -102,7 +102,7 @@ const Navbar = () => {
         {/* Desktop Navigation Links */}
         <div className="hidden md:flex items-center gap-8">
           <div className="relative">
-            <ul ref={navRef} className="flex items-center gap-8 text-sm uppercase tracking-widest font-syne">
+            <ul ref={navRef} className="flex items-center gap-8 text-sm uppercase tracking-widest">
               <li>
                 <NavLink to="/" onClick={(e) => handleLinkClick(e, '/')} className={({ isActive }) => `relative py-2 font-bold transition-colors duration-300 ${isActive ? 'text-brand-red active' : 'text-brand-dark/70 hover:text-brand-red'}`}>
                   Home
@@ -143,7 +143,7 @@ const Navbar = () => {
               type="text" 
               placeholder="Search products..."
               onFocus={() => setIsSearchOpen(true)}
-              className="bg-brand-pink hover:bg-brand-red/5 text-brand-dark placeholder:text-brand-dark/40 border border-brand-red/10 rounded-full px-6 py-1.5 w-48 lg:w-64 focus:w-80 focus:bg-white focus:text-brand-red focus:placeholder:text-brand-red/30 transition-all duration-300 font-syne text-sm font-bold outline-none shadow-sm"
+              className="bg-brand-pink hover:bg-brand-red/5 text-brand-dark placeholder:text-brand-dark/40 border border-brand-red/10 rounded-full px-6 py-1.5 w-48 lg:w-64 focus:w-80 focus:bg-white focus:text-brand-red focus:placeholder:text-brand-red/30 transition-all duration-300 text-sm font-bold outline-none shadow-sm"
             />
             <Search className="absolute right-4 w-4 h-4 text-brand-dark/40 group-focus-within:text-brand-red transition-colors pointer-events-none" />
           </div>
@@ -168,7 +168,7 @@ const Navbar = () => {
           {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center">
             <Show when="signed-out">
-                <Link to="/sign-in" className="bg-brand-red text-white px-6 py-1.5 rounded-full font-bold text-sm hover:bg-brand-dark transition-all border-2 border-transparent font-poppins cursor-pointer block shadow-lg shadow-brand-red/20">
+                <Link to="/sign-in" className="bg-brand-red text-white px-6 py-1.5 rounded-full font-bold text-sm hover:bg-brand-dark transition-all border-2 border-transparent cursor-pointer block shadow-lg shadow-brand-red/20">
                     Sign In
                 </Link>
             </Show>
@@ -188,7 +188,7 @@ const Navbar = () => {
 
         {/* Mobile Menu Overlay - Restoring top-[65px] layout pattern */}
         <div className={`fixed top-[65px] left-0 right-0 bottom-0 bg-white/95 backdrop-blur-3xl z-40 md:hidden flex flex-col items-center justify-center gap-10 transition-all duration-500 overflow-hidden ${isMenuOpen ? 'opacity-100 h-[calc(100vh-65px)]' : 'opacity-0 h-0'}`}>
-          <ul className="flex flex-col items-center gap-6 text-lg font-black font-syne uppercase text-brand-dark">
+          <ul className="flex flex-col items-center gap-6 text-lg font-black uppercase text-brand-dark">
             <li>
               <NavLink to="/" onClick={(e) => { setIsMenuOpen(false); handleLinkClick(e, '/'); }} className={({ isActive }) => isActive ? 'text-brand-red' : 'text-brand-dark hover:text-brand-red transition-colors'}>Home</NavLink>
             </li>
@@ -206,7 +206,7 @@ const Navbar = () => {
           {/* Mobile Auth Experience */}
           <div className="scale-125">
             <Show when="signed-out">
-                <Link to="/sign-in" className="bg-brand-red text-white px-12 py-3 rounded-full font-black uppercase text-lg tracking-widest font-syne cursor-pointer block" onClick={() => setIsMenuOpen(false)}>
+                <Link to="/sign-in" className="bg-brand-red text-white px-12 py-3 rounded-full font-black uppercase text-lg tracking-widest cursor-pointer block" onClick={() => setIsMenuOpen(false)}>
                     Sign In
                 </Link>
             </Show>
@@ -214,7 +214,7 @@ const Navbar = () => {
                 <div className="flex flex-col items-center gap-4">
                     <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex flex-col items-center gap-2 group">
                         <ProfileAvatar size="lg" />
-                        <span className="text-brand-dark/60 font-syne font-black uppercase text-[10px] tracking-widest group-hover:text-brand-dark transition-colors">My Profile</span>
+                        <span className="text-brand-dark/60 font-black uppercase text-[10px] tracking-widest group-hover:text-brand-dark transition-colors">My Profile</span>
                     </Link>
                 </div>
             </Show>

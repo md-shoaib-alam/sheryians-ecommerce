@@ -139,12 +139,12 @@ export const Cart = () => {
   if (cart.length === 0) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-40 text-center">
-        <h1 className="text-4xl md:text-6xl font-extrabold uppercase italic font-syne mb-10 tracking-tighter text-brand-dark">Your Cart</h1>
-        <div className="py-20 bg-brand-pink rounded-3xl border border-brand-red/5 font-syne italic text-2xl opacity-50 uppercase tracking-widest flex flex-col items-center gap-6 text-brand-dark">
+        <h1 className="text-4xl md:text-6xl font-extrabold uppercase italic mb-10 tracking-tighter text-brand-dark">Your Cart</h1>
+        <div className="py-20 bg-brand-pink rounded-3xl border border-brand-red/5 italic text-2xl opacity-50 uppercase tracking-widest flex flex-col items-center gap-6 text-brand-dark">
           <ShoppingBag className="w-16 h-16 opacity-20" />
           <span>Your cart is empty</span>
         </div>
-        <Link to="/products" className="inline-block mt-12 bg-brand-red text-white px-12 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-brand-dark transition-all shadow-xl font-syne">
+        <Link to="/products" className="inline-block mt-12 bg-brand-red text-white px-12 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-brand-dark transition-all shadow-xl">
           Back to Shopping
         </Link>
       </div>

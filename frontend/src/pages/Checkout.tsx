@@ -41,7 +41,7 @@ function loadRazorpayScript(): Promise<boolean> {
 
 // ─── Banner Component ──────────────────────────────────────────────────────
 const Banner = ({ type, msg }: { type: 'success' | 'error'; msg: string }) => (
-  <div className={`flex items-center gap-3 px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest font-syne border
+  <div className={`flex items-center gap-3 px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest border
     ${type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
     {type === 'success' ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
     {msg}
@@ -285,13 +285,30 @@ const Checkout = () => {
   // ─── Order Success View ─────────────────────────────────────────────────
   if (orderSuccess) {
     return (
-      <div className="min-h-screen flex text-center flex-col items-center justify-center px-4">
-        <CheckCircle2 className="w-20 h-20 text-green-500 mb-6" />
-        <h1 className="text-3xl font-bold text-brand-dark mb-2">Order Placed Successfully!</h1>
-        <p className="text-brand-dark/60 mb-8">Order #{successOrderId.slice(0, 8)} • {paymentMethod === 'RAZORPAY' ? 'Paid Online' : 'Cash on Delivery'}</p>
-        <div className="flex gap-4">
-          <Link to="/profile" className="bg-brand-red text-white px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-all shadow-sm">View Orders</Link>
-          <Link to="/products" className="bg-[#FAF6F6] text-brand-dark border border-brand-red/10 px-6 py-3 rounded-md font-semibold hover:bg-brand-red/5 transition-all">Continue Shopping</Link>
+      <div className="min-h-screen flex text-center flex-col items-center justify-center px-4 md:px-6 bg-[#fdfaf9]">
+        <div className="max-w-md w-full bg-white p-8 md:p-12 rounded-[40px] md:rounded-[50px] shadow-xl shadow-brand-red/[0.05] border border-gray-50 flex flex-col items-center">
+            <div className="w-20 h-20 md:w-24 md:h-24 bg-green-50 rounded-full flex items-center justify-center mb-6 md:mb-8">
+                <CheckCircle2 className="w-10 h-10 md:w-12 md:h-12 text-green-500" strokeWidth={1.5} />
+            </div>
+            <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tighter text-brand-dark mb-3 md:mb-4">You're All Set!</h1>
+            <p className="text-gray-500 font-medium text-xs md:text-sm mb-8 md:mb-10 leading-relaxed px-2">
+                Your order <span className="text-brand-red font-black">#{successOrderId.slice(0, 8).toUpperCase()}</span> has been placed. 
+                We're already getting things ready for you, buddy!
+            </p>
+            <div className="flex flex-col w-full gap-3 md:gap-4">
+              <Link 
+                to="/profile" 
+                className="w-full bg-brand-dark text-white py-4 md:py-5 rounded-2xl md:rounded-3xl font-black uppercase text-[10px] tracking-widest hover:bg-brand-red transition-all shadow-lg shadow-brand-dark/10"
+              >
+                Track Your Box
+              </Link>
+              <Link 
+                to="/products" 
+                className="w-full bg-[#FAF6F6] text-brand-dark border border-gray-100 py-4 md:py-5 rounded-2xl md:rounded-3xl font-black uppercase text-[10px] tracking-widest hover:bg-gray-100 transition-all"
+              >
+                Continue Shopping
+              </Link>
+            </div>
         </div>
       </div>
     )
@@ -308,19 +325,19 @@ const Checkout = () => {
 
   // ─── Main Checkout ──────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen pt-28 pb-20 px-4 md:px-8 bg-[#FAF6F6]/50">
+    <div className="min-h-screen pt-20 md:pt-28 pb-20 px-4 md:px-8 bg-[#FAF6F6]/50">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
           <Link to="/cart" className="p-2 border border-brand-red/10 rounded-md hover:bg-white bg-[#FAF6F6] transition-all">
-            <ArrowLeft className="w-5 h-5 text-brand-dark" />
+            <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-brand-dark" />
           </Link>
-          <h1 className="text-3xl font-bold text-brand-dark">Checkout</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-brand-dark">Checkout</h1>
         </div>
 
         {banner && <div className="mb-6"><Banner type={banner.type} msg={banner.msg} /></div>}
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-start">
           {/* ─── Left Column ─────────────────────────────────────────── */}
           <div className="lg:col-span-8 space-y-6">
             {/* ── Delivery Address Section ──────────────────────────── */}

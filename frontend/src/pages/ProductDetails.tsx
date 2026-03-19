@@ -41,7 +41,7 @@ const ProductDetails = () => {
       {/* Dynamic Back Navigation */}
       <Link 
         to="/products" 
-        className="inline-flex items-center gap-2 text-brand-dark/40 hover:text-brand-red mb-8 md:mb-16 transition-all group font-syne uppercase tracking-widest text-[10px] md:text-xs font-black"
+        className="inline-flex items-center gap-2 text-brand-dark/40 hover:text-brand-red mb-8 md:mb-16 transition-all group tracking-widest text-[10px] md:text-xs font-black"
       >
         <ArrowLeft className="w-3 h-3 md:w-4 md:h-4 group-hover:-translate-x-1 transition-transform" />
         Back to Discover
@@ -68,7 +68,7 @@ const ProductDetails = () => {
              {/* Gourmet Batch Tag */}
              <div className="absolute top-5 left-5 md:top-10 md:left-10 bg-white/60 border border-brand-red/10 backdrop-blur-md px-4 md:px-5 py-1.5 md:py-2 rounded-full flex items-center gap-2">
                  <Leaf className="w-3 h-3 md:w-4 md:h-4 text-brand-red" />
-                 <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] font-syne text-brand-dark">Pure Handpicked</span>
+                 <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-brand-dark">Pure Handpicked</span>
              </div>
           </div>
         </div>
@@ -83,13 +83,13 @@ const ProductDetails = () => {
                     <Star className="w-2.5 h-2.5 md:w-3 md:h-3 fill-white" />
                     <span>{product.rating}</span>
                </div>
-               <span className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.3em] font-bold text-brand-dark/30 font-poppins">{product.reviews} Feedbacks</span>
+               <span className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.3em] font-bold text-brand-dark/30">{product.reviews} Feedbacks</span>
             </div>
             
-            <h1 className="text-3xl md:text-7xl font-black font-syne uppercase italic tracking-tighter text-brand-dark leading-[0.95] md:leading-[0.9] mb-4">
+            <h1 className="text-3xl md:text-7xl font-black uppercase italic tracking-tighter text-brand-dark leading-[0.95] md:leading-[0.9] mb-4">
                 {product.name}
             </h1>
-            <p className="text-brand-dark/60 text-sm md:text-xl font-medium font-poppins max-w-xl leading-relaxed md:leading-relaxed">
+            <p className="text-brand-dark/60 text-sm md:text-xl font-medium max-w-xl leading-relaxed md:leading-relaxed">
                 Elevate your snacking experience with our signature {product.name.toLowerCase()} blend. Hand-crafted using ancient techniques and the finest lotus seeds from natural ponds.
             </p>
           </div>
@@ -97,10 +97,10 @@ const ProductDetails = () => {
           {/* Pricing & High-Velocity Purchase Actions */}
           <div className="bg-brand-pink/50 border border-brand-red/10 p-6 md:p-12 rounded-[40px] md:rounded-[50px] shadow-sm">
               <div className="flex items-end gap-4 md:gap-6 mb-8 md:mb-10 text-brand-dark">
-                  <span className="text-4xl md:text-8xl font-black font-poppins leading-none text-brand-red">₹{product.currentPrice}</span>
+                  <span className="text-4xl md:text-8xl font-black leading-none text-brand-red">₹{product.currentPrice}</span>
                   <div className="flex flex-col mb-1 md:mb-2 text-brand-dark/30">
-                      <span className="line-through font-bold text-lg md:text-2xl font-poppins tracking-tighter whitespace-nowrap">₹{product.oldPrice}</span>
-                      <span className="text-brand-red text-[8px] md:text-[10px] font-black uppercase tracking-widest font-syne whitespace-nowrap">Launch Offer</span>
+                      <span className="line-through font-bold text-lg md:text-2xl tracking-tighter whitespace-nowrap">₹{product.oldPrice}</span>
+                      <span className="text-brand-red text-[8px] md:text-[10px] font-black uppercase tracking-widest whitespace-nowrap">Launch Offer</span>
                   </div>
               </div>
 
@@ -108,7 +108,7 @@ const ProductDetails = () => {
                   <button 
                     onClick={handleAddToCart}
                     disabled={isAdded}
-                    className={`flex-[2] py-4 md:py-7 rounded-full font-black uppercase tracking-[0.2em] md:tracking-[0.3em] text-sm md:text-xl font-syne transition-all duration-500 shadow-xl shadow-brand-red/10 flex items-center justify-center gap-2 md:gap-3 active:scale-95
+                    className={`flex-[2] py-4 md:py-7 rounded-full font-black uppercase tracking-[0.2em] md:tracking-[0.3em] text-sm md:text-xl transition-all duration-500 shadow-xl shadow-brand-red/10 flex items-center justify-center gap-2 md:gap-3 active:scale-95
                         ${isAdded 
                             ? 'bg-brand-red text-white scale-[1.02]' 
                             : 'bg-brand-red text-white hover:bg-brand-dark hover:scale-[1.02]'
@@ -128,7 +128,7 @@ const ProductDetails = () => {
                     )}
                   </button>
                   
-                  <button className="flex-1 py-4 md:py-7 rounded-full border border-brand-red/10 hover:border-brand-red transition-all text-brand-dark font-black uppercase tracking-[0.2em] text-[10px] md:text-xs font-syne hover:bg-brand-pink">
+                  <button className="flex-1 py-4 md:py-7 rounded-full border border-brand-red/10 hover:border-brand-red transition-all text-brand-dark font-black uppercase tracking-[0.2em] text-[10px] md:text-xs hover:bg-brand-pink">
                       Save for Later
                   </button>
               </div>

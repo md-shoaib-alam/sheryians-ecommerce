@@ -2,7 +2,7 @@ import { useUser, useClerk, useAuth } from "@clerk/react"
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
 import {
-  User, LogOut, Package, MapPin, Plus, Trash2, CheckCircle2, AlertCircle, ChevronRight, Loader2, Settings
+  User, LogOut, Package, MapPin, Plus, Trash2, CheckCircle2, AlertCircle, ChevronRight, Loader2, Settings, Calendar
 } from 'lucide-react'
 import { api } from '../lib/api'
 
@@ -40,7 +40,7 @@ interface Order {
 
 // Feedback Banner
 const Banner = ({ type, msg }: { type: 'success' | 'error'; msg: string }) => (
-  <div className={`flex items-center gap-3 px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest font-syne border mb-6
+  <div className={`flex items-center gap-3 px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest border mb-6
     ${type === 'success' ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-red-500/10 border-red-500/20 text-red-400'}`}>
     {type === 'success' ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
     {msg}
@@ -230,27 +230,27 @@ const OrderHistoryTab = () => {
   if (orders.length === 0) {
     return (
       <div className="bg-[#FAF6F6] rounded-[40px] py-20 px-6 flex flex-col items-center text-center">
-        <div className="w-20 h-20 rounded-full bg-brand-red/5 flex items-center justify-center mb-6">
-          <Package className="w-8 h-8 text-brand-dark/20" strokeWidth={1.5} />
+          <div className="w-20 h-20 rounded-full bg-brand-red/5 flex items-center justify-center mb-6">
+            <Package className="w-8 h-8 text-brand-dark/20" strokeWidth={1.5} />
+          </div>
+          <h3 className="text-brand-dark font-black text-2xl uppercase mb-4 tracking-tight pb-1">NO ORDERS YET</h3>
+          <p className="text-brand-dark/40 font-medium text-[10px] tracking-[0.2em] uppercase mb-10">
+            Your order history will appear here once you make a purchase.
+          </p>
+          <a href="/products" className="bg-[#4A1D20] text-white hover:opacity-90 py-3.5 px-10 rounded-full font-bold uppercase text-xs tracking-widest transition-all">
+            START SHOPPING
+          </a>
         </div>
-        <h3 className="text-brand-dark font-black text-2xl uppercase mb-4 tracking-tight pb-1">NO ORDERS YET</h3>
-        <p className="text-brand-dark/40 font-medium text-[10px] tracking-[0.2em] uppercase mb-10">
-          Your order history will appear here once you make a purchase.
-        </p>
-        <a href="/products" className="bg-[#4A1D20] text-white hover:opacity-90 py-3.5 px-10 rounded-full font-bold uppercase text-xs tracking-widest transition-all">
-          START SHOPPING
-        </a>
-      </div>
     )
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'DELIVERED': return 'bg-green-100 text-green-700 border-green-200'
-      case 'SHIPPED': return 'bg-blue-100 text-blue-700 border-blue-200'
-      case 'CANCELLED': return 'bg-red-100 text-red-700 border-red-200'
-      case 'PROCESSING': return 'bg-brand-pink text-brand-red border-brand-red/20'
-      default: return 'bg-brand-pink text-brand-dark/60 border-brand-red/10'
+      case 'DELIVERED': return 'bg-green-50 text-green-600 border-green-100'
+      case 'SHIPPED': return 'bg-blue-50 text-blue-600 border-blue-100'
+      case 'CANCELLED': return 'bg-red-50 text-red-600 border-red-100'
+      case 'PROCESSING': return 'bg-amber-50 text-amber-600 border-amber-100'
+      default: return 'bg-gray-50 text-gray-500 border-gray-100'
     }
   }
 
@@ -260,36 +260,47 @@ const OrderHistoryTab = () => {
         <div 
           key={order.id} 
           onClick={() => navigate(`/profile/order/${order.id}`)}
-          className="bg-white border border-gray-100 rounded-3xl p-6 md:p-8 flex flex-col gap-6 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+          className="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col gap-4 shadow-sm hover:shadow-md transition-all cursor-pointer group"
         >
-
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-[#FAF6F6] rounded-2xl flex items-center justify-center shrink-0">
-                <Package className="w-6 h-6 text-brand-dark/40" />
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-[#FAF6F6] rounded-xl flex items-center justify-center shrink-0 border border-gray-50 group-hover:border-brand-red/20 transition-colors">
+                <Package className="w-5 h-5 text-brand-dark/30 group-hover:text-brand-red transition-colors" />
               </div>
               <div>
-                <h4 className="text-brand-dark font-bold uppercase tracking-tight text-base">ORDER #{order.id.slice(0, 8).toUpperCase()}</h4>
-                <p className="text-gray-400 font-medium text-[11px] uppercase tracking-widest">
-                  {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase()}
+                <div className="flex items-center gap-2 mb-0.5">
+                  <h4 className="text-brand-dark font-black uppercase tracking-tight text-sm">Order #{order.id.slice(0, 8).toUpperCase()}</h4>
+                  <span className={`text-[8px] font-black uppercase px-3 py-1 rounded-full border ${getStatusColor(order.status)} tracking-widest`}>
+                    {order.status}
+                  </span>
+                </div>
+                <p className="text-gray-400 font-medium text-[9px] uppercase tracking-widest flex items-center gap-1.5">
+                  <Calendar className="w-2.5 h-2.5" />
+                  {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-6 ml-auto lg:ml-0">
-              <span className={`text-[10px] font-bold uppercase px-4 py-1.5 rounded-full border ${getStatusColor(order.status)} tracking-widest`}>
-                {order.status}
-              </span>
-              <span className="text-brand-dark font-bold text-xl">₹{order.total}</span>
-              <ChevronRight className="w-5 h-5 text-gray-200 group-hover:text-brand-red transition-all transform group-hover:translate-x-1" />
+            <div className="flex items-center justify-between md:justify-end gap-5 border-t md:border-t-0 pt-3 md:pt-0 border-gray-50">
+              <div className="text-right">
+                <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0">Total Amount</p>
+                <p className="text-brand-red font-black text-lg italic tracking-tighter">₹{order.total}</p>
+              </div>
+              <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-brand-red group-hover:text-white transition-all">
+                <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              </div>
             </div>
           </div>
 
           <div className="flex flex-wrap gap-2 pt-2">
             {order.items.map(item => (
-              <span key={item.id} className="bg-[#FAF6F6] text-brand-dark/60 text-[10px] font-bold px-4 py-1.5 rounded-full border border-gray-50">
-                {item.product?.name || item.name} × {item.quantity}
-              </span>
+              <div key={item.id} className="flex items-center gap-2 bg-[#FAF6F6] text-brand-dark/70 text-[9px] font-bold px-4 py-2 rounded-xl border border-gray-50/50">
+                <div className="w-4 h-4 rounded-md bg-white border border-gray-100 overflow-hidden">
+                   <img src={item.product?.imageUrl} className="w-full h-full object-cover" />
+                </div>
+                {item.product?.name || item.name}
+                <span className="opacity-40 ml-1">× {item.quantity}</span>
+              </div>
             ))}
           </div>
         </div>
@@ -400,13 +411,13 @@ const SavedAddressesTab = () => {
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <p className="text-brand-dark font-syne font-black uppercase text-sm tracking-tight">{addr.label}</p>
+                <p className="text-brand-dark font-black uppercase text-sm tracking-tight">{addr.label}</p>
                 {addr.isDefault && <span className="bg-brand-red/10 text-brand-red text-[7px] font-black uppercase px-2 py-0.5 rounded-full border border-brand-red/20">Default</span>}
               </div>
               <p className="text-brand-dark font-bold text-xs uppercase mb-1">{addr.firstName} {addr.lastName}</p>
-              <p className="text-brand-dark/50 font-poppins text-xs">{addr.line1}{addr.line2 ? `, ${addr.line2}` : ''}</p>
-              <p className="text-brand-dark/50 font-poppins text-xs">{addr.city}, {addr.state} {addr.zip}</p>
-              <p className="text-brand-dark/50 font-poppins text-[10px] mt-1 font-bold">Phone: {addr.phone}</p>
+              <p className="text-brand-dark/50 text-xs">{addr.line1}{addr.line2 ? `, ${addr.line2}` : ''}</p>
+              <p className="text-brand-dark/50 text-xs">{addr.city}, {addr.state} {addr.zip}</p>
+              <p className="text-brand-dark/50 text-[10px] mt-1 font-bold">Phone: {addr.phone}</p>
             </div>
           </div>
           <button onClick={() => handleDelete(addr.id)} className="text-brand-red/30 hover:text-brand-red transition-colors p-2">
@@ -417,7 +428,7 @@ const SavedAddressesTab = () => {
 
       {showForm ? (
         <div className="bg-brand-pink border border-brand-red/10 rounded-[40px] p-8 shadow-sm">
-          <h3 className="text-brand-dark font-black font-syne uppercase tracking-tighter text-lg mb-6">New Address</h3>
+          <h3 className="text-brand-dark font-black uppercase tracking-tighter text-lg mb-6">New Address</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             {[
               { key: 'label', placeholder: 'Label (Home, Work..)', span: true },
@@ -435,13 +446,13 @@ const SavedAddressesTab = () => {
                 placeholder={placeholder}
                 value={(form as any)[key]}
                 onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                className={`bg-white border border-brand-red/10 focus:border-brand-red/40 text-brand-dark placeholder:text-brand-dark/20 px-5 py-3 rounded-full outline-none font-syne font-bold text-sm transition-all ${span ? 'md:col-span-2' : ''}`}
+                className={`bg-white border border-brand-red/10 focus:border-brand-red/40 text-brand-dark placeholder:text-brand-dark/20 px-5 py-3 rounded-full outline-none font-bold text-sm transition-all ${span ? 'md:col-span-2' : ''}`}
               />
             ))}
             <select 
               value={form.country} 
               onChange={e => setForm(f => ({ ...f, country: e.target.value }))}
-              className="md:col-span-2 bg-white border border-brand-red/10 focus:border-brand-red/40 text-brand-dark px-5 py-3 rounded-full outline-none font-syne font-bold text-sm"
+              className="md:col-span-2 bg-white border border-brand-red/10 focus:border-brand-red/40 text-brand-dark px-5 py-3 rounded-full outline-none font-bold text-sm"
             >
               <option value="India">India</option>
               <option value="USA">USA</option>
@@ -572,18 +583,18 @@ const UserProfilePage = () => {
           </div>
 
           {/* Menu */}
-          <nav className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
-             <div className="flex flex-col">
+          <nav className="bg-white border border-gray-100 rounded-xl md:rounded-2xl overflow-hidden shadow-sm">
+             <div className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-visible scrollbar-hide">
                 {tabs.map(({ id, label, icon: Icon }) => (
                   <button
                     key={id}
                     onClick={() => setActiveTab(id)}
-                    className={`flex items-center gap-3 px-6 py-4 transition-all text-sm border-b border-gray-50 last:border-0
+                    className={`flex items-center gap-2 md:gap-3 px-4 md:px-6 py-3 md:py-4 transition-all text-[11px] md:text-sm border-r lg:border-r-0 lg:border-b border-gray-50 last:border-0 whitespace-nowrap
                       ${activeTab === id ? 'text-brand-red font-bold bg-[#FAF6F6]' : 'text-gray-500 hover:bg-gray-50 hover:text-brand-dark'}`}
                   >
-                    <Icon className={`w-4 h-4 shrink-0 ${activeTab === id ? 'text-brand-red' : 'text-gray-300'}`} />
+                    <Icon className={`w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 ${activeTab === id ? 'text-brand-red' : 'text-gray-300'}`} />
                     <span className="flex-1 text-left">{label}</span>
-                    {activeTab === id && <div className="w-1.5 h-1.5 rounded-full bg-brand-red" />}
+                    {activeTab === id && <div className="hidden lg:block w-1.5 h-1.5 rounded-full bg-brand-red" />}
                   </button>
                 ))}
              </div>
