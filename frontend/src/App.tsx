@@ -2,6 +2,7 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
+import UserSync from './components/UserSync'
 import Home from './pages/Home'
 import Products from './pages/Products'
 import ProductDetails from './pages/ProductDetails'
@@ -20,6 +21,7 @@ function App() {
   return (
     <div className="min-h-screen bg-transparent">
       <ScrollToTop />
+      <UserSync />
       <Navbar />
 
       <main className="min-h-screen">

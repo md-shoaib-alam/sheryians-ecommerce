@@ -1,0 +1,137 @@
+import { Router, Request, Response } from 'express'
+import { prisma } from '../lib/prisma'
+
+const router = Router()
+
+// Admin: GET /api/admin/products
+router.get('/products', async (_req: Request, res: Response) => {
+  try {
+    const products = await prisma.product.findMany({
+      include: { _count: { select: { orderItems: true, reviews: true } } },
+      orderBy: { createdAt: 'desc' },
+    })
+    res.json(products)
+  } catch {
+    res.status(500).json({ error: 'Failed to fetch products' })
+  }
+})
+
+// Admin: POST /api/admin/products
+router.post('/products', async (req: Request, res: Response) => {
+  const { name, description, price, mrp, imageUrl, images, category, tags, stock, weight, flavour } = req.body
+
+  if (!name || !description || !price || !imageUrl || !category) {
+    return res.status(400).json({ error: 'Missing required product fields' })
+  }
+
+  try {
+    const product = await prisma.product.create({
+      data: { name, description, price: Number(price), mrp: Number(mrp || price), imageUrl, images: images || [], category, tags: tags || [], stock: Number(stock || 100), weight, flavour },
+    })
+    res.status(201).json(product)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Failed to create product' })
+  }
+})
+
+// Admin: PATCH /api/admin/products/:id
+router.patch('/products/:id', async (req: Request, res: Response) => {
+  const { id } = req.params
+  const data = req.body
+
+  try {
+    const product = await prisma.product.update({ where: { id }, data })
+    res.json(product)
+  } catch {
+    res.status(500).json({ error: 'Failed to update product' })
+  }
+})
+
+// Admin: DELETE /api/admin/products/:id
+router.delete('/products/:id', async (req: Request, res: Response) => {
+  const { id } = req.params
+  try {
+    await prisma.product.update({ where: { id }, data: { isActive: false } })
+    res.json({ success: true })
+  } catch {
+    res.status(500).json({ error: 'Failed to delete product' })
+  }
+})
+
+// Admin: GET /api/admin/orders
+router.get('/orders', async (req: Request, res: Response) => {
+  const { status, page = '1', limit = '20' } = req.query
+  const skip = (parseInt(page as string) - 1) * parseInt(limit as string)
+  const take = parseInt(limit as string)
+
+  const where: any = {}
+  if (status) where.status = status
+
+  try {
+    const [orders, total] = await Promise.all([
+      prisma.order.findMany({
+        where,
+        include: {
+          user: { select: { firstName: true, lastName: true, email: true } },
+          items: true,
+          address: true,
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take,
+      }),
+      prisma.order.count({ where }),
+    ])
+    res.json({ orders, total, page: parseInt(page as string), pages: Math.ceil(total / take) })
+  } catch {
+    res.status(500).json({ error: 'Failed to fetch orders' })
+  }
+})
+
+// Admin: PATCH /api/admin/orders/:id/status
+router.patch('/orders/:id/status', async (req: Request, res: Response) => {
+  const { id } = req.params
+  const { status } = req.body
+
+  const validStatuses = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'REFUNDED']
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ error: 'Invalid status' })
+  }
+
+  try {
+    const order = await prisma.order.update({ where: { id }, data: { status } })
+    res.json(order)
+  } catch {
+    res.status(500).json({ error: 'Failed to update order status' })
+  }
+})
+
+// Admin: GET /api/admin/stats
+router.get('/stats', async (_req: Request, res: Response) => {
+  try {
+    const [totalOrders, totalRevenue, totalUsers, totalProducts, recentOrders] = await Promise.all([
+      prisma.order.count(),
+      prisma.order.aggregate({ _sum: { total: true }, where: { status: { not: 'CANCELLED' } } }),
+      prisma.user.count(),
+      prisma.product.count({ where: { isActive: true } }),
+      prisma.order.findMany({
+        take: 5,
+        orderBy: { createdAt: 'desc' },
+        include: { user: { select: { firstName: true, lastName: true, email: true } } },
+      }),
+    ])
+
+    res.json({
+      totalOrders,
+      totalRevenue: totalRevenue._sum.total || 0,
+      totalUsers,
+      totalProducts,
+      recentOrders,
+    })
+  } catch {
+    res.status(500).json({ error: 'Failed to fetch stats' })
+  }
+})
+
+export default router
