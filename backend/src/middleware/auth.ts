@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { verifyToken } from '@clerk/backend'
+import { verify } from '@clerk/backend'
 import { prisma } from '../lib/prisma'
 
 // ─── requireAuth ───────────────────────────────────────────────────────────

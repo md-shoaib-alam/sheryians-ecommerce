@@ -1,4 +1,4 @@
-import { useSignUp } from '@clerk/clerk-react'
+import { useSignUp } from "@clerk/react/legacy"
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Mail, Lock, ArrowRight, Eye, EyeOff, User, CheckCircle2 } from 'lucide-react'

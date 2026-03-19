@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { useUser, useAuth } from '@clerk/clerk-react'
+import { useUser, useAuth } from "@clerk/react"
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 

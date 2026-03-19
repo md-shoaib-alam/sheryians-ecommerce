@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useAuth, useUser } from '@clerk/clerk-react'
+import { useAuth, useUser } from "@clerk/react"
 import { useNavigate, Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { api } from '../lib/api'

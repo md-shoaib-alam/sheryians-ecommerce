@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
-import { useAuth, useUser } from '@clerk/clerk-react'
+import { useAuth, useUser } from "@clerk/react"
 import { api } from '../lib/api'
 
 interface CartItem {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { ShoppingCart, Menu, X, Search } from 'lucide-react'
-import { SignedIn, SignedOut, useUser } from '@clerk/clerk-react'
+import { Show, useUser } from "@clerk/react";
 import SearchDrawer from './SearchDrawer'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 
@@ -167,14 +167,14 @@ const Navbar = () => {
           
           {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center">
-            <SignedOut>
+            <Show when="signed-out">
                 <Link to="/sign-in" className="bg-black text-white px-6 py-1.5 rounded-full font-bold text-sm hover:bg-white hover:text-black transition-all border-2 border-transparent font-poppins cursor-pointer block">
                     Sign In
                 </Link>
-            </SignedOut>
-            <SignedIn>
+            </Show>
+            <Show when="signed-in">
                 <ProfileAvatar />
-            </SignedIn>
+            </Show>
           </div>
           
           {/* Mobile Hamburger Button */}
@@ -205,27 +205,26 @@ const Navbar = () => {
           
           {/* Mobile Auth Experience */}
           <div className="scale-125">
-            <SignedOut>
+            <Show when="signed-out">
                 <Link to="/sign-in" className="bg-white text-black px-12 py-3 rounded-full font-black uppercase text-lg tracking-widest font-syne cursor-pointer block" onClick={() => setIsMenuOpen(false)}>
                     Sign In
                 </Link>
-            </SignedOut>
-            <SignedIn>
+            </Show>
+            <Show when="signed-in">
                 <div className="flex flex-col items-center gap-4">
                     <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex flex-col items-center gap-2 group">
                         <ProfileAvatar size="lg" />
                         <span className="text-white/60 font-syne font-black uppercase text-[10px] tracking-widest group-hover:text-white transition-colors">My Profile</span>
                     </Link>
                 </div>
-            </SignedIn>
+            </Show>
           </div>
         </div>
       </nav>
-
       {/* Modular Search Drawer Component */}
       <SearchDrawer isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
-  )
+  );
 }
 
 export default Navbar
