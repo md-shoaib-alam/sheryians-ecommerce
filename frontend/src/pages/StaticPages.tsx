@@ -51,16 +51,18 @@ export const Cart = () => {
         {/* Left Side: Product List Content - High energy standard scroll */}
         <div className="lg:col-span-8 space-y-4 md:space-y-6">
           {cart.map((item) => (
-            <div key={item.id} className="bg-white/5 border border-white/10 p-4 md:p-6 rounded-[32px] md:rounded-full flex items-center justify-between gap-4 md:gap-8 backdrop-blur-2xl transition-all hover:bg-white/10 shadow-xl overflow-hidden group">
+            <div key={item.id} className="bg-white/5 border border-white/10 p-4 md:p-6 rounded-[32px] md:rounded-full flex items-center justify-between gap-4 md:gap-8 backdrop-blur-2xl transition-all shadow-xl overflow-hidden group">
               {/* Bag Image Preview */}
-              <div className="w-16 h-20 md:w-24 md:h-28 bg-white/10 rounded-2xl md:rounded-3xl overflow-hidden shrink-0">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover scale-150 drop-shadow-2xl group-hover:scale-175 transition-transform duration-700" />
-              </div>
+              <Link to={`/product/${item.id}`} className="w-16 h-20 md:w-24 md:h-28 bg-white/10 rounded-2xl md:rounded-3xl overflow-hidden shrink-0 block">
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover scale-150 drop-shadow-2xl transition-transform duration-700" />
+              </Link>
               
               <div className="flex-1 flex flex-col md:grid md:grid-cols-12 md:items-center gap-2 md:gap-4">
                 {/* Name Display */}
                 <div className="md:col-span-6">
-                  <h3 className="text-sm md:text-xl font-black font-syne uppercase tracking-tight">{item.name}</h3>
+                  <Link to={`/product/${item.id}`}>
+                    <h3 className="text-sm md:text-xl font-black font-syne uppercase tracking-tight hover:text-amber-400 transition-colors">{item.name}</h3>
+                  </Link>
                   <p className="text-[9px] md:text-[10px] text-white/50 font-bold tracking-[0.2em] uppercase mt-1">Gourmet Selection</p>
                 </div>
                 

@@ -40,6 +40,12 @@ const Navbar = () => {
         left: activeLink.offsetLeft,
         width: activeLink.offsetWidth
       })
+    } else {
+      // Hide indicator if no link is active (e.g., on Cart or Product Details page)
+      setIndicatorStyle({
+        left: 0,
+        width: 0
+      })
     }
   }, [location.pathname])
 

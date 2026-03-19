@@ -19,7 +19,7 @@ const Home = () => {
         />
 
         {/* Best Sellers with Grid mobile layout */}
-        <div className="mt-16 md:mt-32">
+        <div className="mt-6 md:mt-32">
           <ProductSection 
             title="BEST SELLERS" 
             products={bestSellers} 

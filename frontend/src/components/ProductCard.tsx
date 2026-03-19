@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Star, Check } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 
 interface ProductCardProps {
@@ -29,7 +30,8 @@ const ProductCard = ({ id, image, name, rating, reviews, oldPrice, currentPrice 
   return (
     <div className="group flex flex-col items-start gap-3 md:gap-4 transition-all duration-300 w-full max-w-[275px]">
       {/* Container with Glassmorphism (Responsive Aspect Ratio) */}
-      <div 
+      <Link 
+        to={`/product/${id}`}
         className="relative w-full aspect-[275/400] rounded-[24px] md:rounded-[40px] shadow-2xl cursor-pointer flex items-center justify-center p-4 md:p-8 border border-white/20 bg-white/10 backdrop-blur-xl transition-transform duration-300 md:group-hover:scale-[1.03] overflow-hidden"
       >
         {/* Product Image - Zoomed to Cover (Desktop only) */}
@@ -40,13 +42,15 @@ const ProductCard = ({ id, image, name, rating, reviews, oldPrice, currentPrice 
             className="w-full h-full object-cover drop-shadow-[0_15px_15px_rgba(0,0,0,0.3)]"
           />
         </div>
-      </div>
+      </Link>
 
       {/* Product Info below the card - Left Aligned */}
       <div className="flex flex-col items-start text-left w-full px-1">
-        <h3 className="text-white font-bold text-sm md:text-xl mb-1 leading-tight font-poppins uppercase tracking-tight truncate w-full">
-          {name}
-        </h3>
+        <Link to={`/product/${id}`} className="block w-full">
+            <h3 className="text-white font-bold text-sm md:text-xl mb-1 leading-tight font-poppins uppercase tracking-tight truncate w-full hover:text-amber-400 transition-colors">
+            {name}
+            </h3>
+        </Link>
         
         <div className="flex items-center gap-1 mb-2">
           {[...Array(5)].map((_, i) => (

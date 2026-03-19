@@ -35,7 +35,7 @@ const ProductSection = ({ title, products, isScrollable = false, showSort = fals
   ]
 
   return (
-    <section className="mb-20 px-4 md:px-0">
+    <section className="mb-10 lg:mb-20 px-4 md:px-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between items-start mb-2 md:mb-10 gap-6">
         {/* Signature Branding Heading */}
         <div className="flex-1">
