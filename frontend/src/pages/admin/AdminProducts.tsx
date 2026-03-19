@@ -15,23 +15,37 @@ import {
 
 // ─── Modal Components ──────────────────────────────────────────────────────
 const ProductModal = ({ product, onClose, onSave }: { product?: any; onClose: () => void; onSave: (data: any) => Promise<void> }) => {
-  const [form, setForm] = useState(product || {
+  const [form, setForm] = useState<any>(product || {
     name: '', description: '', price: '', mrp: '', category: 'Makhana',
-    stock: 100, imageUrl: '', tags: '', weight: '', flavour: ''
+    stock: 100, imageUrl: '', images: [], tags: '', weight: '', flavour: ''
   })
+  
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
+  // Sync images if they come as a string (legacy/edge case)
+  useEffect(() => {
+    if (product && typeof product.images === 'string') {
+        setForm((f: any) => ({ ...f, images: product.images.split(',').filter(Boolean) }))
+    }
+  }, [product])
+
   const handleSave = async () => {
     if (!form.name || !form.price || !form.imageUrl || !form.category) {
-      setError('Please fill Name, Price, Category and Image URL.')
+      setError('Please fill Name, Price, Category and Main Image URL.')
       return
     }
     setSaving(true)
     try {
-      // Convert tags string to array if needed
       const data = { ...form }
-      if (typeof data.tags === 'string') data.tags = data.tags.split(',').map((t: string) => t.trim()).filter(Boolean)
+      if (typeof data.tags === 'string') {
+        data.tags = data.tags.split(',').map((t: string) => t.trim()).filter(Boolean)
+      }
+      // Ensure prices are numbers
+      data.price = Number(data.price)
+      data.mrp = Number(data.mrp || data.price)
+      data.stock = Number(data.stock)
+      
       await onSave(data)
       onClose()
     } catch (err: any) {
@@ -39,6 +53,23 @@ const ProductModal = ({ product, onClose, onSave }: { product?: any; onClose: ()
     } finally {
       setSaving(false)
     }
+  }
+
+  const addImageField = () => {
+    setForm((f: any) => ({ ...f, images: [...(f.images || []), ''] }))
+  }
+
+  const removeImageField = (index: number) => {
+    setForm((f: any) => ({ 
+        ...f, 
+        images: f.images.filter((_: any, i: number) => i !== index) 
+    }))
+  }
+
+  const updateImageField = (index: number, value: string) => {
+    const newImages = [...form.images]
+    newImages[index] = value
+    setForm((f: any) => ({ ...f, images: newImages }))
   }
 
   return (
@@ -64,38 +95,92 @@ const ProductModal = ({ product, onClose, onSave }: { product?: any; onClose: ()
                 </div>
              )}
 
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+                <div className="md:col-span-2">
+                    <label className="text-brand-dark/40 font-bold uppercase text-[9px] tracking-[0.2em] mb-1.5 block ml-4">Product Name</label>
+                    <input
+                        placeholder="Product Name"
+                        value={form.name}
+                        onChange={e => setForm((f: any) => ({ ...f, name: e.target.value }))}
+                        className="w-full bg-white border border-brand-red/10 focus:border-brand-red/30 text-brand-dark placeholder:text-brand-dark/20 px-6 py-4 rounded-full outline-none font-medium text-xs transition-all shadow-sm"
+                    />
+                </div>
+                <div className="md:col-span-2">
+                    <label className="text-brand-dark/40 font-bold uppercase text-[9px] tracking-[0.2em] mb-1.5 block ml-4">Description</label>
+                    <textarea
+                        placeholder="Description"
+                        value={form.description}
+                        rows={4}
+                        onChange={e => setForm((f: any) => ({ ...f, description: e.target.value }))}
+                        className="w-full bg-white border border-brand-red/10 focus:border-brand-red/30 text-brand-dark placeholder:text-brand-dark/20 px-6 py-4 rounded-[28px] outline-none font-medium text-xs transition-all resize-none shadow-sm"
+                    />
+                </div>
+                <div className="md:col-span-2">
+                    <label className="text-brand-red font-black uppercase text-[8px] tracking-[0.3em] font-syne mb-1.5 block ml-4 italic">Main Product Image (Shows on Cards)</label>
+                    <input
+                        placeholder="Main Hero Image URL"
+                        value={form.imageUrl}
+                        onChange={e => setForm((f: any) => ({ ...f, imageUrl: e.target.value }))}
+                        className="w-full bg-brand-pink/50 border border-brand-red/10 focus:border-brand-red/30 text-brand-dark placeholder:text-brand-dark/20 px-6 py-4 rounded-full outline-none font-medium text-xs transition-all shadow-sm"
+                    />
+                </div>
+             </div>
+
+             {/* Dynamic Gallery Section */}
+             <div className="mb-10 px-4">
+                <div className="flex items-center justify-between mb-4">
+                    <label className="text-brand-dark/40 font-black uppercase text-[10px] tracking-[0.3em] font-syne">Additional Gallery</label>
+                    <button 
+                        onClick={addImageField}
+                        className="flex items-center gap-2 text-brand-red hover:text-brand-dark transition-colors text-[9px] font-black uppercase tracking-widest font-syne"
+                    >
+                        <Plus className="w-3 h-3" />
+                        <span>Add Gallery Image</span>
+                    </button>
+                </div>
+                
+                <div className="flex flex-col gap-3">
+                    {form.images?.map((url: string, index: number) => (
+                        <div key={index} className="flex gap-2">
+                            <input
+                              placeholder={`Gallery Image #${index + 1} URL`}
+                              value={url}
+                              onChange={e => updateImageField(index, e.target.value)}
+                              className="flex-1 bg-white border border-brand-red/10 focus:border-brand-red/30 text-brand-dark placeholder:text-brand-dark/20 px-6 py-3 rounded-full outline-none font-medium text-[10px] shadow-sm"
+                            />
+                            <button 
+                                onClick={() => removeImageField(index)}
+                                className="p-3 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-full transition-all shrink-0"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </button>
+                        </div>
+                    ))}
+                    {(!form.images || form.images.length === 0) && (
+                        <p className="text-brand-dark/10 text-[9px] font-bold uppercase tracking-widest text-center py-4 border border-dashed border-brand-red/10 rounded-3xl">No additional images added</p>
+                    )}
+                </div>
+             </div>
+
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 {[
-                  { key: 'name', placeholder: 'Product Name', span: true },
-                  { key: 'description', placeholder: 'Description', span: true, area: true },
-                  { key: 'imageUrl', placeholder: 'Image URL', span: true },
                   { key: 'price', placeholder: 'Sale Price (₹)', type: 'number' },
                   { key: 'mrp', placeholder: 'MRP (₹)', type: 'number' },
                   { key: 'category', placeholder: 'Category' },
                   { key: 'flavour', placeholder: 'Flavour' },
                   { key: 'weight', placeholder: 'Weight' },
-                  { key: 'stock', placeholder: 'Starting Inventory', type: 'number' },
+                  { key: 'stock', placeholder: 'Inventory', type: 'number' },
                   { key: 'tags', placeholder: 'Tags (comma separated)', span: true },
-                ].map(({ key, placeholder, span, type = 'text', area }) => (
+                ].map(({ key, placeholder, span, type = 'text' }: any) => (
                   <div key={key} className={span ? 'md:col-span-2' : ''}>
                      <label className="text-brand-dark/40 font-bold uppercase text-[9px] tracking-[0.2em] mb-1.5 block ml-4">{placeholder}</label>
-                     {area ? (
-                        <textarea
-                          placeholder={placeholder}
-                          value={form[key]}
-                          rows={4}
-                          onChange={e => setForm((f: any) => ({ ...f, [key]: e.target.value }))}
-                          className="w-full bg-white border border-brand-red/10 focus:border-brand-red/30 text-brand-dark placeholder:text-brand-dark/20 px-6 py-4 rounded-[28px] outline-none font-medium text-xs transition-all resize-none shadow-sm"
-                        />
-                     ) : (
-                        <input
-                          type={type}
-                          placeholder={placeholder}
-                          value={form[key]}
-                          onChange={e => setForm((f: any) => ({ ...f, [key]: e.target.value }))}
-                          className="w-full bg-white border border-brand-red/10 focus:border-brand-red/30 text-brand-dark placeholder:text-brand-dark/20 px-6 py-4 rounded-full outline-none font-medium text-xs transition-all shadow-sm"
-                        />
-                     )}
+                     <input
+                        type={type}
+                        placeholder={placeholder}
+                        value={form[key]}
+                        onChange={e => setForm((f: any) => ({ ...f, [key]: e.target.value }))}
+                        className="w-full bg-white border border-brand-red/10 focus:border-brand-red/30 text-brand-dark placeholder:text-brand-dark/20 px-6 py-4 rounded-full outline-none font-medium text-xs transition-all shadow-sm"
+                     />
                   </div>
                 ))}
              </div>
@@ -117,7 +202,7 @@ const ProductModal = ({ product, onClose, onSave }: { product?: any; onClose: ()
   )
 }
 
-// ─── Main Content Discovery ────────────────────────────────────────────────
+// ─── Main Component ────────────────────────────────────────────────────────
 const AdminProducts = () => {
   const { getToken } = useAuth()
   const [products, setProducts] = useState<any[]>([])
@@ -167,7 +252,6 @@ const AdminProducts = () => {
       {modal.open && <ProductModal product={modal.product} onClose={() => setModal({ open: false })} onSave={handleSave} />}
 
       <div className="flex flex-col gap-10">
-         {/* Page Header Visualization Area */}
          <header className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div>
                <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-brand-red">PRODUCT INVENTORY</h1>
@@ -192,17 +276,16 @@ const AdminProducts = () => {
             </div>
          </header>
 
-         {/* Grid Content Discovery Visualization */}
          {loading ? (
             <div className="py-40 flex items-center justify-center">
-               <Loader2 className="w-10 h-10 text-white/10 animate-spin" />
+               <Loader2 className="w-10 h-10 text-brand-red/20 animate-spin" />
             </div>
          ) : filtered.length === 0 ? (
-            <div className="py-32 border-2 border-dashed border-white/5 rounded-lg flex flex-col items-center gap-6 justify-center text-center px-10">
-               <div className="w-20 h-20 rounded-lg bg-white/5 flex items-center justify-center text-white/20 animate-pulse"><Archive className="w-8 h-8" /></div>
+            <div className="py-32 border-2 border-dashed border-brand-red/10 rounded-2xl flex flex-col items-center gap-6 justify-center text-center px-10">
+               <div className="w-20 h-20 rounded-2xl bg-brand-pink/50 flex items-center justify-center text-brand-red animate-pulse"><Archive className="w-8 h-8" /></div>
                <div>
-                  <h3 className="text-white/80 font-black font-syne uppercase text-xl mb-2">No Products Discovered</h3>
-                  <p className="text-white/30 font-bold uppercase text-[10px] tracking-widest max-w-xs mx-auto">Try refining your search or add a new makhana variety to your store.</p>
+                  <h3 className="text-brand-dark/80 font-black uppercase text-xl mb-2">No Products Discovered</h3>
+                  <p className="text-brand-dark/30 font-bold uppercase text-[10px] tracking-widest max-w-xs mx-auto">Try refining your search or add a new variety to your store.</p>
                </div>
             </div>
          ) : (
@@ -229,8 +312,12 @@ const AdminProducts = () => {
                            {p.flavour || 'Organic'} {p.weight || '100g'}
                         </p>
 
-                        <div className="flex items-center gap-2">
-                           <div className={`w-2 h-2 rounded-full ${p.stock < 10 ? 'bg-red-500' : 'bg-green-500'}`} />
+                        <div className="flex items-center justify-between pt-6 border-t border-gray-50">
+                           <div className="flex items-center gap-2">
+                              <div className={`w-2 h-2 rounded-full ${p.stock < 10 ? 'bg-red-500' : 'bg-green-500'}`} />
+                              <span className="text-[10px] font-black text-brand-dark/60 uppercase tracking-widest">{p.stock} In Stock</span>
+                           </div>
+                           <span className="text-brand-red font-black text-sm italic">₹{p.price}</span>
                         </div>
                      </div>
                   </div>

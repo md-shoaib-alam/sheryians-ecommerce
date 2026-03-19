@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth, useUser } from "@clerk/react"
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { api } from '../lib/api'
 import {
@@ -54,6 +54,12 @@ const Checkout = () => {
   const { getToken } = useAuth()
   const { cart, getCartTotal, clearCart } = useCart()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Determine what we're checking out: the full cart or a direct buy single item
+  const directBuyItem = location.state?.directBuyItem
+  const isDirectBuy = !!directBuyItem
+  const checkoutItems = isDirectBuy ? [directBuyItem] : cart
 
   const [addresses, setAddresses] = useState<Address[]>([])
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
@@ -63,6 +69,9 @@ const Checkout = () => {
   const [banner, setBanner] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
   const [orderSuccess, setOrderSuccess] = useState(false)
   const [successOrderId, setSuccessOrderId] = useState('')
+  const [orderCancelled, setOrderCancelled] = useState(false)
+  const [cancelledOrderId, setCancelledOrderId] = useState('')
+  const [cancelledOrder, setCancelledOrder] = useState<any>(null)
 
   // Address form state
   const [showAddressForm, setShowAddressForm] = useState(false)
@@ -87,8 +96,8 @@ const Checkout = () => {
 
   // Redirect if cart empty or not signed in
   useEffect(() => {
-    if (cart.length === 0 && !orderSuccess) navigate('/cart')
-  }, [cart, navigate, orderSuccess])
+    if (checkoutItems.length === 0 && !orderSuccess && !orderCancelled) navigate('/cart')
+  }, [checkoutItems, navigate, orderSuccess, orderCancelled])
 
   useEffect(() => {
     if (!isSignedIn) navigate('/sign-in')
@@ -135,12 +144,14 @@ const Checkout = () => {
   }
 
   // Calculate totals
-  const subtotal = getCartTotal()
+  const subtotal = isDirectBuy 
+    ? parseFloat(directBuyItem.currentPrice) * (directBuyItem.quantity || 1)
+    : getCartTotal()
   const shipping = subtotal >= 499 ? 0 : 49
   const total = subtotal + shipping
 
-  // Build order items from cart
-  const buildItems = () => cart.map(item => ({
+  // Build order items from either the direct buy item or the cart
+  const buildItems = () => checkoutItems.map(item => ({
     productId: item.productId,
     quantity: item.quantity,
   }))
@@ -204,7 +215,7 @@ const Checkout = () => {
               console.log('✅ Payment verified! Confirming order.')
               setSuccessOrderId(verifyData.order.id)
               setOrderSuccess(true)
-              clearCart()
+              if (!isDirectBuy) clearCart()
             } else {
               console.error('❌ Backend verification returned success:false')
               showBanner('error', 'Critical: Payment could not be verified by our servers.')
@@ -220,16 +231,29 @@ const Checkout = () => {
         modal: {
           ondismiss: async () => {
             setProcessing(false)
-            showBanner('error', 'Payment cancelled. Your order has been cancelled.')
+            setOrderCancelled(true)
+            setCancelledOrderId(data.orderId)
+            
             // Background call: mark order as CANCELLED in DB
             try {
               const token = await getToken()
+              // 1. Cancel the order
               await api('/api/payment/cancel', {
                 method: 'POST',
                 token,
                 body: { orderId: data.orderId },
               })
-            } catch {}
+              
+              // 2. Fetch it to show items (optional but nice)
+              const orderData = await api(`/api/orders/${data.orderId}`, { token })
+              setCancelledOrder(orderData)
+              
+              // 3. Clear cart ONLY after we've marked order as cancelled (if it was a cart checkout)
+              if (!isDirectBuy) clearCart()
+            } catch (err) {
+              console.error('Error during cancellation cleanup:', err)
+              if (!isDirectBuy) clearCart() // still clear it as a safety measure for cart-based sessions
+            }
           },
         },
       }
@@ -261,7 +285,7 @@ const Checkout = () => {
         console.log('✅ COD Order successful')
         setSuccessOrderId(data.order.id)
         setOrderSuccess(true)
-        clearCart()
+        if (!isDirectBuy) clearCart()
       }
     } catch (err: any) {
       console.error('❌ COD payment error:', err)
@@ -309,6 +333,61 @@ const Checkout = () => {
                 Continue Shopping
               </Link>
             </div>
+        </div>
+      </div>
+    )
+  }  // ─── Order Cancelled View ───────────────────────────────────────────────
+  if (orderCancelled) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-6 py-20">
+        <div className="max-w-md w-full text-center">
+          <div className="relative mx-auto w-28 h-28 mb-8">
+            <div className="absolute inset-0 rounded-full bg-red-500/20 animate-ping" />
+            <div className="relative w-28 h-28 rounded-full bg-red-500/10 border-2 border-red-500/30 flex items-center justify-center">
+              <AlertCircle className="w-14 h-14 text-red-400" />
+            </div>
+          </div>
+
+          <h1 className="text-3xl md:text-5xl font-extrabold uppercase italic font-syne mb-2 tracking-tighter text-white">
+            Order Cancelled
+          </h1>
+          <p className="text-white/50 font-poppins text-sm mb-6 uppercase tracking-widest font-bold">
+            Payment Interrupted
+          </p>
+
+          {/* List items if we fetched them */}
+          {cancelledOrder && (
+            <div className="bg-white/5 border border-white/10 rounded-[32px] p-6 mb-10 text-left">
+              <p className="text-[9px] font-black uppercase text-white/30 tracking-[0.2em] mb-4">Items Not Processed</p>
+              <div className="space-y-3">
+                {cancelledOrder.items?.map((item: any) => (
+                  <div key={item.id} className="flex justify-between items-center text-xs">
+                    <span className="text-white/60 font-syne font-bold uppercase truncate pr-4">{item.name} × {item.quantity}</span>
+                    <span className="text-white font-poppins font-bold shrink-0">₹{item.price * item.quantity}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 pt-4 border-t border-white/10 flex justify-between items-center">
+                <span className="text-[10px] font-black uppercase text-white tracking-widest font-syne">Total Value</span>
+                <span className="text-lg font-black text-amber-400 font-poppins">₹{cancelledOrder.total}</span>
+              </div>
+            </div>
+          )}
+
+          {cancelledOrderId && (
+            <p className="text-white/20 font-poppins text-[9px] tracking-[0.3em] uppercase mb-10">
+              Ref: {cancelledOrderId.slice(0, 10).toUpperCase()}
+            </p>
+          )}
+
+          <div className="flex flex-col gap-3">
+            <Link
+              to="/products"
+              className="w-full bg-white text-red-950 py-4 rounded-full font-black uppercase tracking-widest text-sm hover:bg-amber-400 transition-all shadow-2xl font-syne hover:scale-[1.02] active:scale-95 duration-300 block"
+            >
+              Back to Shop
+            </Link>
+          </div>
         </div>
       </div>
     )
@@ -436,9 +515,10 @@ const Checkout = () => {
             <div className="bg-white border border-brand-red/10 rounded-xl p-6 shadow-sm">
               <h2 className="text-lg font-bold text-brand-dark mb-6">Order Summary</h2>
 
+              {/* Cart items */}
               <div className="space-y-4 mb-6 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                {cart.map(item => (
-                  <div key={item.id} className="flex gap-4">
+                {checkoutItems.map(item => (
+                  <div key={item.id || item.productId} className="flex gap-4 py-2">
                     <div className="w-16 h-16 bg-[#FAF6F6] rounded-md overflow-hidden shrink-0">
                       <img src={item.image} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
                     </div>

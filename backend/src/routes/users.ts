@@ -121,7 +121,8 @@ router.post('/addresses', requireAuth, async (req: Request, res: Response) => {
       },
     })
     res.status(201).json(address)
-  } catch {
+  } catch (error) {
+    console.error('Failed to create address:', error)
     res.status(500).json({ error: 'Failed to create address' })
   }
 })
