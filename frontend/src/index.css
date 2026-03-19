@@ -36,3 +36,38 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Print Styles */
+@media print {
+  /* Hide EVERYTHING by default */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Show only the invoice section and its children */
+  .print-section, .print-section * {
+    visibility: visible;
+  }
+
+  .print-section {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: block !important;
+  }
+
+  /* Reset background for print */
+  body {
+    background: white !important;
+    color: black !important;
+    margin: 0 !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 1cm;
+  }
+}
+
+
