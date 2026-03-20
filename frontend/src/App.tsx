@@ -13,7 +13,13 @@ import UserProfilePage from './pages/UserProfile'
 import Recipes from './pages/Recipes'
 import Checkout from './pages/Checkout'
 import Orders from './pages/Orders'
-import { About, Contact, Cart } from './pages/StaticPages'
+import { Cart } from './pages/StaticPages'
+import About from './pages/support/About'
+import Contact from './pages/support/Contact'
+import Terms from './pages/support/Terms'
+import Privacy from './pages/support/Privacy'
+import ShippingPolicy from './pages/support/ShippingPolicy'
+import RefundPolicy from './pages/support/RefundPolicy'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders'
@@ -49,6 +55,10 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/shipping-policy" element={<ShippingPolicy />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
           
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminDashboard />} />

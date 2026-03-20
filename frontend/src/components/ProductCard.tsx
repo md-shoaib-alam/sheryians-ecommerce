@@ -56,25 +56,25 @@ const ProductCard = ({ id, image, name, rating, reviews, oldPrice, currentPrice 
       {/* Product Info */}
       <div className="flex flex-col items-start text-left w-full px-1">
         <Link to={`/product/${id}`} className="block w-full">
-            <div className="h-10 md:h-9 flex items-start mb-1 overflow-hidden">
-              <h3 className="text-primary font-bold text-sm md:text-base leading-tight font-serif line-clamp-2 w-full hover:text-primary/70 transition-colors">
+            <div className="h-8 md:h-7 flex items-center mb-0 overflow-hidden">
+              <h3 className="text-primary font-bold text-lg md:text-xl leading-none font-serif line-clamp-1 w-full hover:text-primary/70 transition-colors">
                 {name}
               </h3>
             </div>
         </Link>
         
-        <div className="flex items-center gap-1 mb-2 h-4">
+        <div className="flex items-center gap-1 mb-2 h-5">
           {[...Array(5)].map((_, i) => (
             <Star 
               key={i} 
-              strokeWidth={1}
-              className={`w-3 h-3 ${i < rating ? 'fill-primary text-primary' : 'text-primary/10'}`} 
+              strokeWidth={1.5}
+              className={`w-4 h-4 ${i < rating ? 'fill-primary text-primary' : 'text-primary/10'}`} 
             />
           ))}
-          <span className="text-primary/30 text-[8px] ml-1 font-bold tracking-widest">({reviews})</span>
+          <span className="text-primary/30 text-[10px] ml-1 font-black tracking-widest">({reviews})</span>
         </div>
         
-        <div className="flex items-center gap-2 mb-4 font-bold tracking-widest h-8">
+        <div className="flex items-center gap-2 mb-2 font-bold tracking-widest h-6 mt-1">
             {oldPrice && <span className="text-primary/30 line-through text-[9px] md:text-xs">₹{oldPrice}</span>}
             <span className="text-primary text-base md:text-lg font-black tracking-tighter">₹{currentPrice}</span>
         </div>
