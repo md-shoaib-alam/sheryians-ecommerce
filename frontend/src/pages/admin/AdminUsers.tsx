@@ -12,6 +12,8 @@ import {
   MoreVertical,
 } from 'lucide-react'
 
+import { motion } from 'framer-motion'
+
 const AdminUsers = () => {
   const { getToken } = useAuth()
   const [users, setUsers] = useState<any[]>([])
@@ -40,86 +42,91 @@ const AdminUsers = () => {
 
   return (
     <AdminLayout>
-      <div className="flex flex-col gap-10">
-        <header className="flex flex-col md:flex-row items-center justify-between gap-8">
+      <div className="flex flex-col gap-16 md:gap-24">
+        <header className="flex flex-col md:flex-row items-center justify-between gap-12">
           <div>
-            <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-brand-red">CUSTOMER DIRECTORY</h1>
-            <div className="flex items-center gap-3 mt-2">
-              <span className="text-brand-red font-bold uppercase text-[10px] tracking-widest">{users.length} REGISTERED CUSTOMERS</span>
+            <h1 className="text-5xl md:text-7xl font-serif font-black italic text-primary tracking-tighter mb-2">Directory.</h1>
+            <div className="flex items-center gap-4 pl-1">
+               <span className="text-secondary bg-primary px-4 py-1.5 rounded-full font-black uppercase text-[9px] tracking-[0.4em]">{users.length} REGISTERED</span>
+               <p className="text-primary/20 font-black uppercase text-[10px] tracking-[0.5em]">Global Customer Base</p>
             </div>
           </div>
 
           <div className="relative w-full md:w-80">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dark/20" />
             <input
-              placeholder="SEARCH CUSTOMERS..."
+              placeholder="SEARCH DIRECTORY..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[#FAF6F6] border border-brand-red/10 focus:border-brand-red/30 text-brand-dark placeholder:text-brand-dark/20 pl-12 pr-6 py-2.5 rounded-lg outline-none font-bold text-[10px] tracking-widest uppercase transition-all shadow-sm"
+              className="w-full bg-secondary/10 border-none text-primary placeholder:text-primary/20 px-10 py-5 rounded-full outline-none font-black text-[10px] tracking-[0.4em] uppercase transition-all shadow-soft focus:ring-4 ring-primary/5"
             />
+            <Search className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/20" />
           </div>
         </header>
 
         {loading ? (
-          <div className="py-40 flex items-center justify-center">
-            <Loader2 className="w-10 h-10 text-brand-dark/10 animate-spin" />
+          <div className="py-60 flex items-center justify-center">
+            <Loader2 className="w-16 h-16 text-primary/10 animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="py-32 border-2 border-dashed border-brand-red/10 rounded-3xl flex flex-col items-center gap-6 justify-center text-center px-10">
-            <div className="w-20 h-20 rounded-full bg-brand-red/5 flex items-center justify-center text-brand-red/40"><Users className="w-8 h-8" /></div>
+          <div className="py-40 border-2 border-dashed border-primary/5 rounded-[64px] flex flex-col items-center gap-10 justify-center text-center px-10 bg-secondary/5">
+            <div className="w-32 h-32 rounded-[40px] bg-primary/5 flex items-center justify-center text-primary/10 border border-primary/5"><Users className="w-12 h-12" /></div>
             <div>
-              <h3 className="text-brand-dark font-black uppercase text-xl mb-2">NO CUSTOMERS IDENTIFIED</h3>
-              <p className="text-brand-dark/40 font-bold uppercase text-[10px] tracking-widest max-w-xs mx-auto">Try a different trajectory for your search discovery.</p>
+              <h3 className="text-primary/20 font-serif font-black italic text-4xl mb-4">No Contacts</h3>
+              <p className="text-primary/20 font-black uppercase text-[11px] tracking-[0.5em] max-w-sm mx-auto">Zero records discovered on this specific trajectory.</p>
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
             {filtered.map(user => (
-              <div key={user.id} className="bg-white border border-brand-red/10 rounded-2xl p-6 transition-all group relative overflow-hidden shadow-sm hover:border-brand-red/30">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#FAF6F6] rounded-full blur-3xl -z-10 transition-all duration-700" />
+              <motion.div 
+                layout
+                key={user.id} 
+                className="bg-white border border-primary/5 rounded-[48px] p-10 transition-all group relative overflow-hidden shadow-soft hover:shadow-2xl hover:shadow-primary/5 hover:scale-[1.02]"
+              >
+                <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/5 rounded-full blur-3xl -z-10 transition-all duration-700 group-hover:bg-accent/5" />
                 
-                <div className="flex items-start justify-between mb-8">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-brand-red/5 rounded-xl flex items-center justify-center font-black text-xl text-brand-red shadow-sm transition-transform">
+                <div className="flex items-start justify-between mb-12">
+                  <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center font-serif font-black italic text-2xl text-primary shadow-soft border border-primary/5 group-hover:bg-primary group-hover:text-secondary transition-all">
                       {user.name?.[0] || 'U'}
                     </div>
                     <div>
-                      <h3 className="text-lg font-black uppercase tracking-tight text-brand-dark truncate max-w-[150px]">{user.name || 'Anonymous'}</h3>
-                      <div className="flex items-center gap-2 mt-1">
+                      <h3 className="text-xl font-serif font-black italic text-primary tracking-tighter capitalize truncate max-w-[150px]">{user.name || 'Anonymous'}</h3>
+                      <div className="flex items-center gap-3 mt-1">
                         {user.isAdmin && (
-                          <span className="bg-amber-100 text-amber-700 text-[8px] font-black uppercase px-2 py-0.5 rounded-full border border-amber-200 flex items-center gap-1">
-                            <Shield className="w-2 h-2" /> ADMIN
+                          <span className="bg-accent/10 text-accent text-[8px] font-black uppercase px-3 py-1 rounded-full border border-accent/20 flex items-center gap-1 leading-none">
+                            <Shield className="w-2.5 h-2.5" /> ADMIN
                           </span>
                         )}
-                        <span className="text-brand-dark/40 font-bold uppercase text-[8px] tracking-widest">CUSTOMER</span>
+                        <span className="text-primary/20 font-black uppercase text-[8px] tracking-widest leading-none">MEMBER</span>
                       </div>
                     </div>
                   </div>
-                  <button className="p-3 bg-[#FAF6F6] rounded-2xl text-brand-dark/30 hover:text-brand-red transition-all"><MoreVertical className="w-4 h-4" /></button>
+                  <button className="p-4 bg-secondary/10 hover:bg-primary hover:text-white rounded-2xl text-primary/20 transition-all shadow-soft"><MoreVertical className="w-5 h-5" /></button>
                 </div>
 
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center gap-3 text-brand-dark/60">
-                    <Mail className="w-3.5 h-3.5 text-brand-red/50" />
-                    <p className="text-[10px] font-bold font-sans truncate">{user.email}</p>
+                <div className="space-y-4 mb-12">
+                  <div className="flex items-center gap-4 text-primary/40 group/mail">
+                    <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center group-hover/mail:bg-primary group-hover/mail:text-white transition-all"><Mail className="w-3.5 h-3.5" /></div>
+                    <p className="text-[11px] font-bold font-sans truncate">{user.email}</p>
                   </div>
-                  <div className="flex items-center gap-3 text-brand-dark/60">
-                    <Calendar className="w-3.5 h-3.5 text-brand-red/50" />
-                    <p className="text-[10px] font-bold font-sans uppercase tracking-widest">JOINED {new Date(user.createdAt).toLocaleDateString()}</p>
+                  <div className="flex items-center gap-4 text-primary/40 group/cal">
+                    <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center group-hover/cal:bg-primary group-hover/cal:text-white transition-all"><Calendar className="w-3.5 h-3.5" /></div>
+                    <p className="text-[11px] font-black uppercase tracking-[0.2em]">SINCE {new Date(user.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short' })}</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 pt-6 border-t border-brand-red/5">
-                  <div className="bg-[#FAF6F6] p-3 rounded-xl text-center border border-brand-red/5">
-                    <p className="text-xl font-black font-sans text-brand-dark">{user._count?.orders || 0}</p>
-                    <p className="text-[9px] font-bold uppercase tracking-widest text-brand-dark/40 mt-1">ORDERS</p>
+                <div className="grid grid-cols-2 gap-4 pt-10 border-t border-primary/5">
+                  <div className="bg-secondary/10 p-6 rounded-[32px] text-center border border-primary/5 group-hover:bg-white transition-all shadow-inner">
+                    <p className="text-2xl font-serif font-black italic text-primary leading-none mb-1">{user._count?.orders || 0}</p>
+                    <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary/20">ORDERS</p>
                   </div>
-                  <div className="bg-[#FAF6F6] p-3 rounded-xl text-center border border-brand-red/5">
-                    <p className="text-xl font-black font-sans text-brand-dark">{user._count?.reviews || 0}</p>
-                    <p className="text-[9px] font-bold uppercase tracking-widest text-brand-dark/40 mt-1">REVIEWS</p>
+                  <div className="bg-secondary/10 p-6 rounded-[32px] text-center border border-primary/5 group-hover:bg-white transition-all shadow-inner">
+                    <p className="text-2xl font-serif font-black italic text-primary leading-none mb-1">{user._count?.reviews || 0}</p>
+                    <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary/20">REVIEWS</p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}

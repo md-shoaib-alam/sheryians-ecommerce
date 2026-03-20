@@ -23,14 +23,16 @@ interface Stats {
   recentOrders: any[]
 }
 
+// ─── Stat Card Component ───────────────────────────────────────────────────
 const StatCard = ({ icon: Icon, label, value, color }: { icon: any; label: string; value: string | number; color: string }) => (
-  <div className="bg-white border border-brand-red/10 rounded-xl p-6 flex items-center gap-5 hover:border-brand-red/30 transition-all shadow-sm group">
-    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${color} shrink-0 shadow-inner bg-opacity-10`}>
-      <Icon className={`w-5 h-5 ${color.replace('bg-', 'text-').replace('/20', '')}`} />
+  <div className="bg-white border border-primary/5 rounded-[40px] p-8 flex items-center gap-6 hover:border-accent/20 transition-all shadow-soft group relative overflow-hidden">
+    <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-full blur-3xl -z-10 group-hover:scale-150 transition-all duration-1000 opacity-0 group-hover:opacity-100" />
+    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${color} shrink-0 shadow-lg shadow-white/10 group-hover:scale-110 transition-transform duration-500`}>
+      <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-').replace('/10', '')}`} />
     </div>
-    <div className="truncate">
-      <p className="text-brand-dark/30 font-bold uppercase text-[9px] tracking-widest font-syne mb-0.5">{label}</p>
-      <h3 className="text-xl font-black font-syne text-brand-dark truncate">{value}</h3>
+    <div className="truncate flex-1">
+      <p className="text-primary/30 font-black uppercase text-[9px] tracking-[0.3em] mb-1">{label}</p>
+      <h3 className="text-3xl font-serif font-black italic text-primary truncate tracking-tighter">{value}</h3>
     </div>
   </div>
 )
@@ -67,7 +69,7 @@ const AdminDashboard = () => {
     return (
       <AdminLayout>
         <div className="min-h-[60vh] flex items-center justify-center">
-          <Loader2 className="w-8 h-8 text-brand-dark/20 animate-spin" />
+          <Loader2 className="w-12 h-12 text-accent animate-spin" />
         </div>
       </AdminLayout>
     )
@@ -75,77 +77,81 @@ const AdminDashboard = () => {
 
   return (
     <AdminLayout>
-      <div className="flex flex-col gap-8 md:gap-12">
-        <header className="flex flex-col sm:flex-row items-center sm:justify-between gap-6 px-4 md:px-0">
-          <div className="text-center sm:text-left">
-            <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-brand-red">DASHBOARD OVERVIEW</h1>
-            <p className="text-brand-dark/30 font-bold uppercase text-[10px] tracking-[0.2em] font-sans">Real-time store performance analytics</p>
+      <div className="flex flex-col gap-16 md:gap-24">
+        <header className="flex flex-col sm:flex-row items-center sm:justify-between gap-8">
+          <div>
+            <h1 className="text-5xl md:text-7xl font-serif font-black italic text-primary tracking-tighter mb-2">Omniscience.</h1>
+            <p className="text-primary/30 font-black uppercase text-[10px] tracking-[0.5em] pl-1">Store Performance Hub</p>
           </div>
-          <div className="flex items-center gap-3 bg-brand-red/5 border border-brand-red/10 px-5 py-3 rounded-full">
-              <Calendar className="w-4 h-4 text-brand-dark/40" />
-              <span className="text-[10px] font-black font-sans uppercase tracking-widest text-brand-dark/60">
+          <div className="flex items-center gap-4 bg-secondary/20 border border-primary/5 px-8 py-4 rounded-full shadow-soft backdrop-blur-sm">
+              <Calendar className="w-4 h-4 text-primary/40" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
                  {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
               </span>
           </div>
         </header>
 
         {/* Global Key Stats Discovery Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-4 md:px-0 mb-10">
-          <StatCard icon={BarChart3} label="Total Revenue" value={formatCurrency(stats?.totalRevenue || 0)} color="bg-brand-red/20" />
-          <StatCard icon={ShoppingBag} label="Total Orders" value={stats?.totalOrders || 0} color="bg-orange-500/20" />
-          <StatCard icon={Users} label="Total Users" value={stats?.totalUsers || 0} color="bg-blue-500/20" />
-          <StatCard icon={Package} label="Total Products" value={stats?.totalProducts || 0} color="bg-purple-500/20" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+          <StatCard icon={BarChart3} label="Revenue Flow" value={formatCurrency(stats?.totalRevenue || 0)} color="bg-accent/10" />
+          <StatCard icon={ShoppingBag} label="Orders count" value={stats?.totalOrders || 0} color="bg-primary/5" />
+          <StatCard icon={Users} label="Active clients" value={stats?.totalUsers || 0} color="bg-secondary/20" />
+          <StatCard icon={Package} label="Inventory items" value={stats?.totalProducts || 0} color="bg-green-500/10" />
         </div>
 
         {/* Orders Frictionless Visualization Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 px-4 md:px-0">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Latest Orders List Content */}
-          <div className="lg:col-span-8 bg-white border border-brand-red/10 rounded-xl p-6 md:p-8 overflow-hidden shadow-sm">
-            <div className="flex items-center justify-between mb-8 pb-4 border-b border-brand-red/5">
-              <div className="flex items-center gap-3">
-                <div className="bg-brand-red/5 p-2 rounded-lg text-brand-red"><Clock className="w-4 h-4" /></div>
-                <h3 className="text-lg font-black uppercase tracking-tight text-brand-red">RECENT ORDERS</h3>
+          <div className="lg:col-span-8 bg-white border border-primary/5 rounded-[48px] p-10 md:p-12 shadow-soft overflow-hidden">
+            <div className="flex items-center justify-between mb-16">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-secondary/10 rounded-2xl flex items-center justify-center border border-primary/5">
+                   <Clock className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="text-3xl font-serif font-black italic text-primary tracking-tighter">Recent Exchanges</h3>
               </div>
-              <Link to="/admin/orders" className="text-[9px] font-black uppercase tracking-widest text-brand-red hover:bg-brand-red/5 px-3 py-1.5 rounded-lg transition-all">SEE ALL</Link>
+              <Link to="/admin/orders" className="text-[10px] font-black uppercase tracking-widest text-accent hover:underline transition-all">SEE ALL HISTORY</Link>
             </div>
 
-            <div className="space-y-3 overflow-x-auto custom-scrollbar-horizontal pr-2 pb-4">
+            <div className="overflow-x-auto no-scrollbar">
               {stats?.recentOrders?.length === 0 ? (
-                <div className="text-center py-12 opacity-20 italic font-syne uppercase tracking-widest">No orders yet</div>
+                <div className="text-center py-24 italic font-serif text-3xl text-primary/10">No recent transactions</div>
               ) : (
-                <table className="w-full text-left border-collapse min-w-[600px]">
+                <table className="w-full text-left border-collapse min-w-[700px]">
                   <thead>
-                    <tr className="text-[9px] font-black uppercase tracking-widest text-brand-dark/30 border-b border-brand-red/5">
-                      <th className="pb-4 pr-4 uppercase">Order Info</th>
-                      <th className="pb-4 pr-4 uppercase">Customer</th>
-                      <th className="pb-4 pr-4 uppercase">Total</th>
-                      <th className="pb-4 pr-4 uppercase">Status</th>
-                      <th className="pb-4 pr-4 text-right uppercase">Date</th>
+                    <tr className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/20 border-b border-primary/5">
+                      <th className="pb-8 pr-6">IDENTITY</th>
+                      <th className="pb-8 pr-6">CLIENT</th>
+                      <th className="pb-8 pr-6">EXCHANGE</th>
+                      <th className="pb-8 pr-6">STATE</th>
+                      <th className="pb-8 text-right">MOMENT</th>
                     </tr>
                   </thead>
-                  <tbody className="text-[11px] font-bold text-brand-dark/80">
+                  <tbody className="text-sm">
                     {stats?.recentOrders?.map((order: any) => (
-                      <tr key={order.id} className="border-b border-brand-red/5 hover:bg-brand-red/5 transition-all group">
-                        <td className="py-5 pr-4 font-black font-syne uppercase text-[10px] tracking-tight text-brand-dark">#{order.id.slice(0, 8)}</td>
-                        <td className="py-5 pr-4 flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-brand-red/10 flex items-center justify-center font-black italic text-xs text-brand-red">
-                                {order.user?.name?.[0] || 'U'}
-                            </div>
-                            <div className="flex flex-col">
-                                <p className="text-xs font-black font-syne uppercase tracking-tight text-brand-dark">{order.user?.name || 'Anonymous'}</p>
-                                <p className="text-[8px] text-brand-dark/30 font-poppins">{order.user?.email}</p>
+                      <tr key={order.id} className="border-b border-primary/5 hover:bg-secondary/5 transition-all group">
+                        <td className="py-8 pr-6 font-serif font-black italic text-primary tracking-tighter">#{order.id.slice(0, 8).toUpperCase()}</td>
+                        <td className="py-8 pr-6">
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center font-serif font-black italic text-sm text-primary group-hover:scale-110 transition-transform">
+                                    {order.user?.name?.[0] || 'U'}
+                                </div>
+                                <div className="flex flex-col">
+                                    <p className="font-serif font-black italic text-primary leading-none mb-1">{order.user?.name || 'Private Client'}</p>
+                                    <p className="text-[10px] text-primary/20 font-black uppercase tracking-widest leading-none">{order.user?.email}</p>
+                                </div>
                             </div>
                         </td>
-                        <td className="py-5 pr-4 font-black font-poppins text-xs text-brand-dark">₹{order.total}</td>
-                        <td className="py-5 pr-4">
-                           <span className={`text-[8px] font-black uppercase px-2 py-1 rounded-md border 
-                            ${order.status === 'DELIVERED' ? 'bg-green-100 text-green-700 border-green-200' : 
-                              order.status === 'PENDING' ? 'bg-brand-red/10 text-brand-red border-brand-red/10' : 
-                              'bg-brand-pink text-brand-dark/50 border-brand-red/5'}`}>
+                        <td className="py-8 pr-6 font-black italic text-primary tracking-tighter text-lg">₹{order.total}</td>
+                        <td className="py-8 pr-6">
+                           <span className={`text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-full border shadow-sm
+                            ${order.status === 'DELIVERED' ? 'bg-green-500/10 text-green-700 border-green-500/10' : 
+                              order.status === 'PENDING' ? 'bg-primary/5 text-primary border-primary/5' : 
+                              'bg-secondary/10 text-primary/40 border-primary/5'}`}>
                                 {order.status}
                            </span>
                         </td>
-                        <td className="py-5 pr-4 text-right text-brand-dark/40 font-poppins">{new Date(order.createdAt).toLocaleDateString()}</td>
+                        <td className="py-8 text-right text-primary/30 font-black text-[10px] tracking-widest uppercase">{new Date(order.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -155,31 +161,34 @@ const AdminDashboard = () => {
           </div>
 
           {/* Quick Shortcuts Discovery Sidebar */}
-          <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white border border-brand-red/10 rounded-xl p-6 md:p-8 shadow-sm">
-               <div className="flex items-center gap-3 mb-6">
-                 <div className="bg-brand-red/5 p-2 rounded-lg text-brand-red"><PlusCircle className="w-4 h-4 text-brand-red" /></div>
-                 <h3 className="text-lg font-black uppercase tracking-tight text-brand-red">QUICK ACTIONS</h3>
+          <div className="lg:col-span-4 space-y-8">
+            <div className="bg-white border border-primary/5 rounded-[48px] p-10 md:p-12 shadow-soft">
+               <div className="flex items-center gap-4 mb-12">
+                 <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center border border-accent/20">
+                    <PlusCircle className="w-6 h-6 text-accent" />
+                 </div>
+                 <h3 className="text-3xl font-serif font-black italic text-primary tracking-tighter">Velocity</h3>
                </div>
-               <div className="flex flex-col gap-3">
-                 <Link to="/admin/products" className="group flex items-center justify-between bg-brand-red text-white py-4 px-6 rounded-lg font-black uppercase text-[10px] tracking-widest hover:bg-brand-dark transition-all shadow-sm">
-                    ADD NEW PRODUCT
-                    <PlusCircle className="w-4 h-4 group-hover:rotate-90 transition-all duration-500" />
+               <div className="flex flex-col gap-4">
+                 <Link to="/admin/products" className="group flex items-center justify-between bg-primary text-secondary py-6 px-10 rounded-full font-black uppercase text-[11px] tracking-[0.3em] overflow-hidden relative hover:scale-[1.02] transition-all shadow-2xl shadow-primary/20">
+                    <span className="relative z-10">CURATE SELECTION</span>
+                    <PlusCircle className="w-5 h-5 group-hover:rotate-90 transition-all duration-700 relative z-10" />
+                    <div className="absolute inset-0 bg-accent translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700" />
                  </Link>
-                 <Link to="/admin/orders" className="flex items-center justify-between bg-[#FAF6F6] border border-brand-red/5 hover:border-brand-red/20 text-brand-dark py-4 px-6 rounded-lg font-black uppercase text-[10px] tracking-widest transition-all shadow-sm">
-                    VIEW ORDERS
-                    <ShoppingBag className="w-4 h-4 text-brand-red" />
+                 <Link to="/admin/orders" className="flex items-center justify-between bg-secondary/10 border border-primary/5 hover:bg-secondary/20 text-primary py-6 px-10 rounded-full font-black uppercase text-[11px] tracking-[0.3em] transition-all">
+                    AUDIT HISTORY
+                    <ShoppingBag className="w-5 h-5 opacity-40" />
                  </Link>
                </div>
             </div>
 
-            <div className="bg-white border border-brand-red/10 rounded-xl p-6 md:p-8 shadow-sm overflow-hidden relative group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-brand-red/5 rounded-full blur-3xl -z-10 group-hover:scale-150 transition-all duration-1000" />
-                <h3 className="text-xl font-black uppercase tracking-tight text-brand-red mb-2 leading-tight">SYSTEM STATUS</h3>
-                <p className="text-[8px] font-black uppercase tracking-[0.4em] text-brand-dark/30 mb-8">ALL SYSTEMS OPERATIONAL</p>
-                <div className="flex items-center gap-2 text-green-500">
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">ACTIVE</span>
+            <div className="bg-primary border border-primary rounded-[48px] p-10 md:p-12 shadow-2xl overflow-hidden relative group">
+                <div className="absolute -top-10 -right-10 w-48 h-48 bg-accent/20 rounded-full blur-[100px] -z-0 group-hover:scale-150 transition-all duration-1000" />
+                <h3 className="text-3xl font-serif font-black italic text-white mb-2 leading-tight relative z-10">Guardian</h3>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 mb-10 relative z-10">SYSTEM PULSE CHECK</p>
+                <div className="flex items-center gap-4 text-accent relative z-10">
+                    <div className="w-3 h-3 rounded-full bg-accent animate-pulse" />
+                    <span className="text-[11px] font-black uppercase tracking-[0.5em] text-white">NOMINAL STATE</span>
                 </div>
             </div>
           </div>

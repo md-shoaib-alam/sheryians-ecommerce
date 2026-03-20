@@ -1,42 +1,47 @@
-import { Leaf, Heart, Award } from 'lucide-react'
+import { Dumbbell, Flame, ShieldAlert, Heart } from 'lucide-react'
 
-const Features = () => {
-  const features = [
+const Benefits = () => {
+  const benefits = [
     {
-      icon: <Leaf className="w-8 h-8 text-brand-red" />,
-      title: "Ethically Sourced",
-      description: "We partner directly with farmers who share our commitment to sustainable, organic practices."
+      icon: <Dumbbell className="w-8 h-8 text-white" />,
+      title: "High Protein",
+      description: "Essential for muscle building and repairing tissues, making it a perfect post-workout snack."
     },
     {
-      icon: <Heart className="w-8 h-8 text-brand-red" />,
-      title: "Artisan Crafted",
-      description: "Each batch is carefully roasted and seasoned by hand to preserve authentic flavors."
+      icon: <Flame className="w-8 h-8 text-white" />,
+      title: "Low Calories",
+      description: "A guilt-free snack that keeps you full longer without the extra calorie load."
     },
     {
-      icon: <Award className="w-8 h-8 text-brand-red" />,
-      title: "Premium Quality",
-      description: "Only the finest lotus seeds make it into our products. No compromise, ever."
+      icon: <ShieldAlert className="w-8 h-8 text-white" />,
+      title: "Rich in Antioxidants",
+      description: "Powerful compounds that help fight inflammation and protect your cells from damage."
+    },
+    {
+      icon: <Heart className="w-8 h-8 text-white" />,
+      title: "Heart Healthy",
+      description: "Low in sodium and cholesterol, promoting better cardiovascular health with every crunch."
     }
   ]
 
   return (
-    <section className="py-20 bg-brand-pink/50">
+    <section className="py-20 bg-secondary/10">
       <div className="max-w-7xl mx-auto px-4 md:px-6 text-center">
-        <h2 className="text-xl md:text-3xl font-black tracking-tight text-brand-red mb-12 uppercase">
-          The Shriyans Difference
+        <h2 className="text-2xl md:text-4xl font-serif font-bold text-primary mb-16 uppercase tracking-tight">
+          Benefits of Makhana
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <div key={index} className="bg-white p-8 md:p-12 rounded-sm shadow-sm hover:shadow-md transition-shadow flex flex-col items-center text-center">
-              <div className="mb-6">
-                {feature.icon}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {benefits.map((benefit, index) => (
+            <div key={index} className="bg-white p-8 rounded-2xl shadow-soft hover:shadow-lg transition-all duration-300 flex flex-col items-center text-center group border border-primary/5 hover:border-accent/40">
+              <div className="mb-6 p-4 bg-primary rounded-2xl group-hover:bg-accent transition-colors duration-300 shadow-lg shadow-primary/20">
+                {benefit.icon}
               </div>
-              <h3 className="text-xl font-bold text-brand-dark mb-4 uppercase tracking-wider">
-                {feature.title}
+              <h3 className="text-xl font-bold text-primary mb-4 uppercase tracking-wider font-serif">
+                {benefit.title}
               </h3>
-              <p className="text-brand-dark/60 leading-relaxed">
-                {feature.description}
+              <p className="text-primary/60 leading-relaxed font-sans text-sm">
+                {benefit.description}
               </p>
             </div>
           ))}
@@ -46,4 +51,4 @@ const Features = () => {
   )
 }
 
-export default Features
+export default Benefits
