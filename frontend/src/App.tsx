@@ -12,6 +12,7 @@ import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
 import UserProfilePage from './pages/UserProfile'
 import Recipes from './pages/Recipes'
 import Checkout from './pages/Checkout'
+import Orders from './pages/Orders'
 import { About, Contact, Cart } from './pages/StaticPages'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminProducts from './pages/admin/AdminProducts'
@@ -40,6 +41,7 @@ function App() {
           <Route path="/recipes" element={<Recipes />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/profile" element={<UserProfilePage />} />
+          <Route path="/orders" element={<Orders />} />
           <Route path="/sign-in/*" element={<SignInPage />} />
           <Route path="/sign-up/*" element={<SignUpPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />

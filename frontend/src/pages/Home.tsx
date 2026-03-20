@@ -32,7 +32,7 @@ const Home = () => {
   return (
     <div className="bg-white">
       <HeroBanner />
-      
+
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -41,15 +41,15 @@ const Home = () => {
       >
         <Benefits />
       </motion.div>
-      
+
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-24">
         <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-16 text-center">Featured Collection</h2>
         {loading ? (
-             <div className="py-20 flex justify-center"><div className="w-12 h-12 border-4 border-accent/20 border-t-accent rounded-full animate-spin" /></div>
+          <div className="py-20 flex justify-center"><div className="w-12 h-12 border-4 border-accent/20 border-t-accent rounded-full animate-spin" /></div>
         ) : (
-          <ProductSection 
-            title="" 
-            products={featuredProducts} 
+          <ProductSection
+            title=""
+            products={featuredProducts}
             isScrollable={true}
           />
         )}

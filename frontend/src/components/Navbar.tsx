@@ -81,8 +81,8 @@ const Navbar = () => {
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, to: string) => {
     if (location.pathname === to) {
-        e.preventDefault()
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+      e.preventDefault()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
@@ -90,7 +90,7 @@ const Navbar = () => {
     <>
       <nav className={`fixed top-0 left-0 right-0 py-3 px-4 md:px-8 z-50 flex items-center justify-between transition-all duration-500 ${getNavBackground()}`}>
         {/* Logo Section */}
-        <Link 
+        <Link
           to="/"
           onClick={(e) => handleLinkClick(e, '/')}
           className="flex flex-col items-start leading-none group cursor-pointer"
@@ -134,11 +134,11 @@ const Navbar = () => {
               </li>
             </ul>
             {/* Sliding Single Indicator (Desktop only) */}
-            <span 
+            <span
               className="absolute bottom-0 h-0.5 bg-accent transition-all duration-[800ms] ease-out pointer-events-none"
-              style={{ 
-                left: `${indicatorStyle.left}px`, 
-                width: `${indicatorStyle.width}px` 
+              style={{
+                left: `${indicatorStyle.left}px`,
+                width: `${indicatorStyle.width}px`
               }}
             />
           </div>
@@ -147,8 +147,8 @@ const Navbar = () => {
         {/* Action Buttons & Mobile Toggle */}
         <div className="flex items-center gap-2 md:gap-4">
           <div className="hidden md:flex relative group items-center">
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Search products..."
               onFocus={() => setIsSearchOpen(true)}
               className={`bg-secondary/20 hover:bg-secondary/40 border border-white/10 rounded-full px-6 py-1.5 w-48 lg:w-64 focus:w-80 focus:bg-white focus:text-primary transition-all duration-300 text-sm font-bold outline-none shadow-sm ${getTextColor()}`}
@@ -156,13 +156,13 @@ const Navbar = () => {
             <Search className={`absolute right-4 w-4 h-4 transition-colors pointer-events-none ${isScrolled || isMenuOpen || !isHome ? 'text-white/40 group-focus-within:text-white' : 'text-primary/40 group-focus-within:text-primary'}`} />
           </div>
 
-          <button 
+          <button
             onClick={() => setIsSearchOpen(true)}
             className={`md:hidden p-2 hover:bg-secondary/20 rounded-full transition-all ${getTextColor()}`}
           >
             <Search className="w-6 h-6" />
           </button>
-          
+
           <Link to="/cart" onClick={(e) => handleLinkClick(e, '/cart')} className={`p-2 hover:bg-secondary/20 rounded-full transition-all relative group ${getTextColor()}`}>
             <ShoppingCart className="w-5 md:w-6 h-5 md:h-6" />
             {cart.length > 0 && (
@@ -171,21 +171,21 @@ const Navbar = () => {
               </span>
             )}
           </Link>
-          
+
           {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center">
             <Show when="signed-out">
-                <Link to="/sign-in" className="bg-accent text-white px-6 py-1.5 rounded-full font-bold text-sm hover:scale-105 transition-all cursor-pointer block shadow-lg shadow-black/20">
-                    Sign In
-                </Link>
+              <Link to="/sign-in" className="bg-accent text-white px-6 py-1.5 rounded-full font-bold text-sm hover:scale-105 transition-all cursor-pointer block shadow-lg shadow-black/20">
+                Sign In
+              </Link>
             </Show>
             <Show when="signed-in">
-                <ProfileAvatar />
+              <ProfileAvatar />
             </Show>
           </div>
-          
+
           {/* Mobile Hamburger Button */}
-          <button 
+          <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className={`md:hidden p-2 hover:bg-secondary/20 rounded-lg transition-all ${getTextColor()}`}
           >
@@ -194,79 +194,79 @@ const Navbar = () => {
         </div>
 
       </nav>
-      
+
       {/* Mobile Menu Overlay */}
       <div className={`fixed inset-0 bg-[#5B0F2E] md:hidden z-[9999] flex flex-col transition-all duration-500 transform ${isMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 pointer-events-none'}`}>
         {/* Header in Overlay */}
         <div className="flex items-center justify-between px-6 py-8 border-b border-white/5">
-            <div className="flex flex-col items-start leading-none uppercase">
-              <span className="text-white text-xl font-black tracking-tight">SHRIYANS</span>
-              <span className="text-white/40 text-[10px] font-bold tracking-[0.4em] self-end -mt-1">Lotus Seeds</span>
-            </div>
-            <button 
-              onClick={() => setIsMenuOpen(false)}
-              className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-all border border-white/10"
-            >
-              <X className="w-6 h-6 text-white" />
-            </button>
+          <div className="flex flex-col items-start leading-none uppercase">
+            <span className="text-white text-xl font-black tracking-tight">SHRIYANS</span>
+            <span className="text-white/40 text-[10px] font-bold tracking-[0.4em] self-end -mt-1">Lotus Seeds</span>
+          </div>
+          <button
+            onClick={() => setIsMenuOpen(false)}
+            className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-all border border-white/10"
+          >
+            <X className="w-6 h-6 text-white" />
+          </button>
         </div>
 
         {/* Links Section */}
         <div className="flex-1 flex flex-col items-center justify-center px-6 overflow-y-auto w-full">
-            <ul className="flex flex-col items-center gap-10 w-full py-10">
-              {[
-                { name: 'Home', path: '/' },
-                { name: 'Products', path: '/products' },
-                { name: 'Recipes', path: '/recipes' },
-                { name: 'About', path: '/about' },
-                { name: 'Contact', path: '/contact' }
-              ].map((item, idx) => (
-                <li 
-                  key={item.name}
-                  className="w-full text-center"
-                >
-                  <NavLink 
-                    to={item.path} 
-                    onClick={(e) => { setIsMenuOpen(false); handleLinkClick(e, item.path); }} 
-                    className={({ isActive }) => `text-3xl font-black uppercase tracking-[0.2em] transition-all relative inline-block
+          <ul className="flex flex-col items-center gap-10 w-full py-10">
+            {[
+              { name: 'Home', path: '/' },
+              { name: 'Products', path: '/products' },
+              { name: 'Recipes', path: '/recipes' },
+              { name: 'About', path: '/about' },
+              { name: 'Contact', path: '/contact' }
+            ].map((item, idx) => (
+              <li
+                key={item.name}
+                className="w-full text-center"
+              >
+                <NavLink
+                  to={item.path}
+                  onClick={(e) => { setIsMenuOpen(false); handleLinkClick(e, item.path); }}
+                  className={({ isActive }) => `text-3xl font-black uppercase tracking-[0.2em] transition-all relative inline-block
                       ${isActive ? 'text-accent' : 'text-white/80 hover:text-white'}
                     `}
-                  >
-                    {item.name}
-                    {location.pathname === item.path && (
-                        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-1 bg-accent" />
-                    )}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
+                >
+                  {item.name}
+                  {location.pathname === item.path && (
+                    <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-1 bg-accent" />
+                  )}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
         </div>
-        
+
         {/* Auth/Profile Footer */}
         <div className="p-12 border-t border-white/5 bg-black/20">
           <Show when="signed-out">
-              <Link 
-                to="/sign-in" 
-                className="bg-accent text-white w-full py-5 rounded-full font-black uppercase text-base tracking-widest cursor-pointer flex items-center justify-center gap-3 shadow-2xl shadow-accent/20 border border-accent/20" 
-                onClick={() => setIsMenuOpen(false)}
-              >
-                    Sign In
-              </Link>
+            <Link
+              to="/sign-in"
+              className="bg-accent text-white w-full py-5 rounded-full font-black uppercase text-base tracking-widest cursor-pointer flex items-center justify-center gap-3 shadow-2xl shadow-accent/20 border border-accent/20"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Sign In
+            </Link>
           </Show>
           <Show when="signed-in">
-              <div className="flex flex-col items-center">
-                  <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex flex-col items-center gap-4 group">
-                      <div className="relative p-1 rounded-full border border-accent/30">
-                          <ProfileAvatar size="lg" />
-                      </div>
-                      <div className="flex flex-col items-center text-center">
-                        <span className="text-white font-black uppercase text-sm tracking-widest flex items-center gap-2">
-                           Account Profile
-                        </span>
-                        <span className="text-white/40 font-bold uppercase text-[9px] tracking-[0.4em] mt-1">Manage Settings</span>
-                      </div>
-                  </Link>
-              </div>
+            <div className="flex flex-col items-center">
+              <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex flex-col items-center gap-4 group">
+                <div className="relative p-1 rounded-full border border-accent/30">
+                  <ProfileAvatar size="lg" />
+                </div>
+                <div className="flex flex-col items-center text-center">
+                  <span className="text-white font-black uppercase text-sm tracking-widest flex items-center gap-2">
+                    Account Profile
+                  </span>
+                  <span className="text-white/40 font-bold uppercase text-[9px] tracking-[0.4em] mt-1">Manage Settings</span>
+                </div>
+              </Link>
+            </div>
           </Show>
         </div>
       </div>

@@ -300,7 +300,7 @@ const Checkout = () => {
               <p className="text-primary/40 text-[10px] font-bold uppercase tracking-widest mb-2">Order ID</p>
               <h2 className="text-xl font-mono font-bold text-primary mb-8">#{successOrderId.slice(0, 12).toUpperCase()}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                 <Link to="/profile" className="bg-primary text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">View My Orders</Link>
+                 <Link to="/orders" className="bg-primary text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">View My Orders</Link>
                  <Link to="/" className="bg-white text-primary border border-primary/10 py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-primary/5 transition-all">Back to Home</Link>
               </div>
            </div>
