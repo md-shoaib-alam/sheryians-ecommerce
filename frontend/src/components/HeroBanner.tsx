@@ -11,37 +11,37 @@ const HeroBanner = () => {
       <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-secondary/5 blur-[150px] rounded-full"></div>
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 w-full z-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
           
           {/* Column 1: Content (Left) */}
           <motion.div
             initial={{ x: -100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 1.2, delay: 0.3 }}
-            className="order-2 md:order-1 text-left flex flex-col justify-center py-10 md:py-0"
+            className="order-2 md:order-1 text-left flex flex-col justify-center py-6 md:py-0"
           >
-            <span className="text-secondary uppercase tracking-[0.5em] font-black text-xs md:text-sm mb-6 block drop-shadow-sm">
+            <span className="text-secondary uppercase tracking-[0.3em] md:tracking-[0.5em] font-black text-[10px] md:text-sm mb-4 md:mb-6 block drop-shadow-sm">
                 Premium Roasted Makhana
             </span>
-            <h1 className="text-white text-6xl md:text-[7rem] font-serif font-black leading-[0.85] mb-8 max-w-2xl italic tracking-tighter drop-shadow-2xl">
+            <h1 className="text-white text-4xl sm:text-5xl md:text-[7rem] font-serif font-black leading-[0.9] md:leading-[0.85] mb-6 md:mb-8 max-w-2xl italic tracking-tighter drop-shadow-2xl">
                 Crunchy. <br />
                 Artisanal. <br />
                 <span className="text-accent">Divine.</span>
             </h1>
-            <p className="text-white/60 text-lg md:text-2xl max-w-lg mb-12 font-sans font-medium leading-relaxed drop-shadow-sm">
+            <p className="text-white/60 text-sm sm:text-base md:text-2xl max-w-lg mb-8 md:mb-12 font-sans font-medium leading-relaxed drop-shadow-sm">
                 Elevate your snacking experience with Shriyans Lotus Seeds. Hand-picked, expertly roasted, and seasoned for perfection. 
             </p>
             
-            <div className="flex flex-wrap gap-10 items-center">
+            <div className="flex flex-wrap gap-6 md:gap-10 items-center">
                 <Link 
                     to="/products" 
-                    className="bg-accent text-white px-14 py-6 rounded-full font-black uppercase text-sm tracking-widest hover:scale-110 active:scale-95 transition-all shadow-2xl shadow-accent/20 cursor-pointer block border border-accent/20 text-center"
+                    className="bg-accent text-white px-8 md:px-14 py-4 md:py-6 rounded-full font-black uppercase text-[10px] md:text-sm tracking-widest hover:scale-110 active:scale-95 transition-all shadow-2xl shadow-accent/20 cursor-pointer block border border-accent/20 text-center"
                 >
                     Shop Now
                 </Link>
                 <div className="flex flex-col">
-                    <span className="text-accent font-serif italic text-4xl font-black italic tracking-tighter">25% OFF</span>
-                    <span className="text-white/30 uppercase text-[10px] tracking-[0.5em] font-black">On Your First Order</span>
+                    <span className="text-accent font-serif italic text-2xl md:text-4xl font-black italic tracking-tighter">25% OFF</span>
+                    <span className="text-white/30 uppercase text-[8px] md:text-[10px] tracking-[0.3em] md:tracking-[0.5em] font-black">On Your First Order</span>
                 </div>
             </div>
           </motion.div>
@@ -53,7 +53,7 @@ const HeroBanner = () => {
             transition={{ duration: 1.5, ease: "easeOut" }}
             className="order-1 md:order-2 flex justify-center md:justify-end items-center"
           >
-            <div className="relative w-full aspect-[4/5] max-w-[500px] overflow-hidden rounded-[64px] border border-white/10 shadow-2xl">
+            <div className="relative w-full aspect-[4/5] max-w-[320px] md:max-w-[500px] overflow-hidden rounded-[32px] md:rounded-[64px] border border-white/10 shadow-2xl">
               {/* Premium Card Container */}
               <div className="absolute inset-0 bg-white/[0.03] backdrop-blur-3xl"></div>
               <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent"></div>
@@ -65,7 +65,7 @@ const HeroBanner = () => {
                  
                  <motion.img 
                   animate={{ 
-                    y: [0, -20, 0],
+                    y: [0, -10, 0],
                   }}
                   transition={{
                     duration: 6,
@@ -74,7 +74,7 @@ const HeroBanner = () => {
                   }}
                   src={herobanner} 
                   alt="Premium Makhana" 
-                  className="relative z-10 w-full h-full object-cover drop-shadow-[0_50px_80px_rgba(0,0,0,0.7)]"
+                  className="relative z-10 w-full h-full object-cover px-8 md:px-0 drop-shadow-[0_30px_50px_rgba(0,0,0,0.5)] md:drop-shadow-[0_50px_80px_rgba(0,0,0,0.7)]"
                   loading="eager"
                 />
               </div>
