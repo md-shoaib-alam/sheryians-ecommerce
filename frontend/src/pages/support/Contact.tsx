@@ -23,7 +23,7 @@ const Contact = () => {
                         </div>
                         <div>
                             <p className="text-xs font-black uppercase tracking-widest text-white/40 mb-1">Email Concierge</p>
-                            <p className="text-xl font-serif">hello@shriyans.com</p>
+                            <p className="text-xl font-serif">shriyanskris12@gmail.com</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-6 group">
@@ -32,7 +32,7 @@ const Contact = () => {
                         </div>
                         <div>
                             <p className="text-xs font-black uppercase tracking-widest text-white/40 mb-1">Customer Care</p>
-                            <p className="text-xl font-serif">+91 98765 43210</p>
+                            <p className="text-xl font-serif">+91 80946 56597</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-6 group">
@@ -52,7 +52,7 @@ const Contact = () => {
                  <div className="flex items-start gap-4">
                     <MapPin className="w-5 h-5 text-accent shrink-0" />
                     <p className="text-primary/70 font-medium leading-relaxed">
-                        Sector 62, Noida, Uttar Pradesh 201301<br/>
+                        Kila no. 37/3/1, Vill-Khijuri, Dharuhera, Rewari, Haryana, India-123106<br/>
                         India
                     </p>
                  </div>

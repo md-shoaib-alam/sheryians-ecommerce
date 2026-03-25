@@ -1,72 +1,38 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Search, Play, Youtube, Loader2 } from 'lucide-react'
+import { Search, Play, Youtube, Loader2, AlertCircle } from 'lucide-react'
+import { api } from '../lib/api'
 
 const Recipes = () => {
   const [searchTerm, setSearchTerm] = useState('')
-  const [loading] = useState(false)
-  
-  // Mock data for Makhana recipes
-  const mockRecipes = [
-    {
-      id: "1",
-      title: "Roasted Peri Peri Makhana - 2 Ways",
-      thumbnail: "https://img.youtube.com/vi/qQGIn_Fm0X0/maxresdefault.jpg",
-      channel: "Cooking With Shriyans",
-      type: "Snack",
-      link: "https://youtube.com/watch?v=qQGIn_Fm0X0"
-    },
-    {
-      id: "2",
-      title: "Makhana Kheer - Royal Indian Dessert",
-      thumbnail: "https://img.youtube.com/vi/C9hV0fLRE5U/maxresdefault.jpg",
-      channel: "Sweet Treats",
-      type: "Dessert",
-      link: "https://youtube.com/watch?v=C9hV0fLRE5U"
-    },
-    {
-      id: "3",
-      title: "Healthy Makhana Chaat for Weight Loss",
-      thumbnail: "https://img.youtube.com/vi/4aWvX9n4P_Y/maxresdefault.jpg",
-      channel: "Health First",
-      type: "Healthy",
-      link: "https://youtube.com/watch?v=4aWvX9n4P_Y"
-    },
-    {
-      id: "4",
-      title: "Matar Makhana Sabzi - Restaurant Style",
-      thumbnail: "https://img.youtube.com/vi/B775Z6S6oE8/maxresdefault.jpg",
-      channel: "Chef's Table",
-      type: "Main Course",
-      link: "https://youtube.com/watch?v=B775Z6S6oE8"
-    },
-    {
-        id: "5",
-        title: "Caramelized Jaggery Makhana",
-        thumbnail: "https://img.youtube.com/vi/YisXp2D_Psw/maxresdefault.jpg",
-        channel: "Traditional Flavors",
-        type: "Snack",
-        link: "https://youtube.com/watch?v=YisXp2D_Psw"
-      },
-      {
-        id: "6",
-        title: "Garlic Herb Makhana Butter Roast",
-        thumbnail: "https://img.youtube.com/vi/u98UskX1p3U/maxresdefault.jpg",
-        channel: "Modern Kitchen",
-        type: "Snack",
-        link: "https://youtube.com/watch?v=u98UskX1p3U"
-      }
-  ]
-
-  const [recipes, setRecipes] = useState(mockRecipes)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [allRecipes, setAllRecipes] = useState<any[]>([])
+  const [recipes, setRecipes] = useState<any[]>([])
 
   useEffect(() => {
-    const filtered = mockRecipes.filter(r => 
+    const fetchRecipes = async () => {
+      try {
+        setLoading(true)
+        const data = await api('/api/recipes')
+        setAllRecipes(data)
+        setRecipes(data)
+      } catch (err) {
+        setError('Failed to load culinary inspiration. Please try again later.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchRecipes()
+  }, [])
+
+  useEffect(() => {
+    const filtered = allRecipes.filter(r => 
       r.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
       r.type.toLowerCase().includes(searchTerm.toLowerCase())
     )
     setRecipes(filtered)
-  }, [searchTerm])
+  }, [searchTerm, allRecipes])
 
   return (
     <div className="bg-white min-h-screen pt-32 pb-20 px-4 md:px-8">
@@ -111,6 +77,17 @@ const Recipes = () => {
 
         {loading ? (
              <div className="py-20 flex justify-center"><Loader2 className="w-12 h-12 text-accent animate-spin" /></div>
+        ) : error ? (
+            <div className="py-20 flex flex-col items-center gap-6 justify-center text-center">
+                <AlertCircle className="w-16 h-16 text-primary/10" />
+                <p className="text-primary/40 font-serif italic text-2xl">{error}</p>
+                <button 
+                  onClick={() => window.location.reload()}
+                  className="bg-primary text-white px-8 py-3 rounded-full font-black uppercase text-[10px] tracking-widest hover:scale-105 transition-all"
+                >
+                  Reload Page
+                </button>
+            </div>
         ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 {recipes.map((recipe, index) => (

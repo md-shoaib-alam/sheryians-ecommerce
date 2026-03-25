@@ -24,6 +24,7 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders'
 import AdminUsers from './pages/admin/AdminUsers'
+import AdminRecipes from './pages/admin/AdminRecipes'
 import OrderDetails from './pages/OrderDetails'
 
 
@@ -63,6 +64,7 @@ function App() {
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/products" element={<AdminProducts />} />
+          <Route path="/admin/recipes" element={<AdminRecipes />} />
           <Route path="/admin/orders" element={<AdminOrders />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/profile/order/:id" element={<OrderDetails />} />

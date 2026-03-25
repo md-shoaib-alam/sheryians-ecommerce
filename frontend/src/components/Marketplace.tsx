@@ -1,4 +1,5 @@
-
+import amazonLogo from '../assets/icon/amazon-svgrepo-com.svg'
+import meeshoLogo from '../assets/icon/messo.png'
 
 const Marketplace = () => {
   const marketplaces = [
@@ -6,13 +7,13 @@ const Marketplace = () => {
       name: "Amazon", 
       id: "amazon", 
       link: "https://amazon.in",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1024px-Amazon_logo.svg.png"
+      logo: amazonLogo
     },
     { 
       name: "Meesho", 
       id: "meesho", 
       link: "https://meesho.com",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Meesho_Logo_Full.png/1200px-Meesho_Logo_Full.png"
+      logo: meeshoLogo
     }
   ]
 
@@ -27,7 +28,7 @@ const Marketplace = () => {
         <div className="grid grid-cols-2 md:flex md:flex-row items-center justify-center gap-6 md:gap-20 max-w-2xl mx-auto">
           {marketplaces.map(mkt => (
             <a key={mkt.id} href={mkt.link} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group">
-              <div className="mb-4 md:mb-6 w-full aspect-video md:w-64 md:h-32 flex items-center justify-center bg-white border border-primary/5 rounded-2xl md:rounded-3xl shadow-soft group-hover:scale-105 transition-transform duration-500 overflow-hidden relative p-4 md:p-8">
+              <div className="mb-4 md:mb-6 w-full aspect-square md:w-64 md:h-32 flex items-center justify-center bg-white border border-primary/5 rounded-2xl md:rounded-3xl shadow-soft group-hover:scale-105 transition-transform duration-500 overflow-hidden relative p-4 md:p-8">
                  <div className="absolute inset-0 bg-primary/5 scale-0 group-hover:scale-100 transition-transform duration-500 origin-bottom-right"></div>
                  <img src={mkt.logo} alt={mkt.name} className="w-full h-full object-contain relative z-10" />
               </div>

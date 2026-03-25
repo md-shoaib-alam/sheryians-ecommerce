@@ -6,6 +6,7 @@ import SearchDrawer from './SearchDrawer'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 
 import { useCart } from '../context/CartContext'
+import logo from '../assets/icon/logo.png'
 
 const ProfileAvatar = ({ size = 'sm' }: { size?: 'sm' | 'lg' }) => {
   const { user } = useUser()
@@ -93,14 +94,17 @@ const Navbar = () => {
         <Link
           to="/"
           onClick={(e) => handleLinkClick(e, '/')}
-          className="flex flex-col items-start leading-none group cursor-pointer"
+          className="flex items-center gap-3 leading-none group cursor-pointer"
         >
-          <span className={`text-xl md:text-2xl font-black tracking-tight transition-colors ${getTextColor()}`}>
-            SHRIYANS
-          </span>
-          <span className={`text-[10px] md:text-[12px] font-bold tracking-[0.4em] self-end -mt-1 transition-colors uppercase ${isScrolled || isMenuOpen || !isHome && !isOrders ? 'text-white/70' : 'text-white/50'}`}>
-            Lotus Seeds
-          </span>
+          <img src={logo} alt="Shriyans Logo" className="w-10 h-10 md:w-12 md:h-12 object-contain" />
+          <div className="flex flex-col items-start">
+            <span className={`text-xl md:text-2xl font-black tracking-tight transition-colors ${getTextColor()}`}>
+              SHRIYANS
+            </span>
+            <span className={`text-[10px] md:text-[12px] font-bold tracking-[0.4em] self-end -mt-1 transition-colors uppercase ${isScrolled || isMenuOpen || !isHome && !isOrders ? 'text-white/70' : 'text-white/50'}`}>
+              Lotus Seeds
+            </span>
+          </div>
         </Link>
 
         {/* Desktop Navigation Links */}
@@ -199,9 +203,12 @@ const Navbar = () => {
       <div className={`fixed inset-0 bg-[#5B0F2E] md:hidden z-[9999] flex flex-col transition-all duration-500 transform ${isMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 pointer-events-none'}`}>
         {/* Header in Overlay */}
         <div className="flex items-center justify-between px-6 py-8 border-b border-white/5">
-          <div className="flex flex-col items-start leading-none uppercase">
-            <span className="text-white text-xl font-black tracking-tight">SHRIYANS</span>
-            <span className="text-white/40 text-[10px] font-bold tracking-[0.4em] self-end -mt-1">Lotus Seeds</span>
+          <div className="flex items-center gap-3 leading-none uppercase">
+            <img src={logo} alt="Shriyans Logo" className="w-10 h-10 object-contain" />
+            <div className="flex flex-col items-start leading-none uppercase">
+              <span className="text-white text-xl font-black tracking-tight">SHRIYANS</span>
+              <span className="text-white/40 text-[10px] font-bold tracking-[0.4em] self-end -mt-1">Lotus Seeds</span>
+            </div>
           </div>
           <button
             onClick={() => setIsMenuOpen(false)}

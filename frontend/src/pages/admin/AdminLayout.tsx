@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Bell,
   Search,
+  Youtube,
   Menu as MenuIcon
 } from 'lucide-react'
 
@@ -76,6 +77,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                <div className="space-y-2">
                   <SidebarItem to="/admin" icon={LayoutDashboard} label="Overview" active={location.pathname === '/admin'} />
                   <SidebarItem to="/admin/products" icon={Package} label="Inventory" active={location.pathname === '/admin/products'} />
+                  <SidebarItem to="/admin/recipes" icon={Youtube} label="Theater" active={location.pathname === '/admin/recipes'} />
                   <SidebarItem to="/admin/orders" icon={ShoppingBag} label="Orders" active={location.pathname === '/admin/orders'} />
                   <SidebarItem to="/admin/users" icon={Users} label="Customers" active={location.pathname === '/admin/users'} />
                </div>

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Instagram, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide-react'
+import logo from '../assets/icon/logo.png'
 
 const Footer = () => {
   return (
@@ -7,13 +8,16 @@ const Footer = () => {
       <div className="w-full grid grid-cols-1 md:grid-cols-12 gap-y-12 md:gap-x-12 mb-16">
         {/* Brand Section */}
         <div className="md:col-span-4">
-          <Link to="/" className="flex flex-col items-start leading-none group mb-6">
-            <span className="text-3xl font-black tracking-tighter text-white group-hover:text-accent transition-colors uppercase">
-              SHRIYANS
-            </span>
-            <span className="text-[11px] font-bold tracking-[0.3em] text-white/50 group-hover:text-white transition-colors uppercase mt-1">
-              Lotus Seeds
-            </span>
+          <Link to="/" className="flex items-center gap-4 group mb-6">
+            <img src={logo} alt="Shriyans Logo" className="w-12 h-12 md:w-16 md:h-16 object-contain" />
+            <div className="flex flex-col items-start leading-none">
+              <span className="text-3xl font-black tracking-tighter text-white group-hover:text-accent transition-colors uppercase">
+                SHRIYANS
+              </span>
+              <span className="text-[11px] font-bold tracking-[0.3em] text-white/50 group-hover:text-white transition-colors uppercase mt-1">
+                Lotus Seeds
+              </span>
+            </div>
           </Link>
           <p className="text-white/50 text-sm leading-relaxed max-w-sm font-medium">
             Bringing you the finest quality Makhana with hand-crafted flavors since 2026. Crunchy, healthy, and delicious.
@@ -49,15 +53,15 @@ const Footer = () => {
           <ul className="flex flex-col gap-4 text-white/50 text-xs font-medium tracking-wider">
             <li className="flex items-start gap-3 hover:text-white transition-colors">
               <Mail className="w-4 h-4 text-accent shrink-0" /> 
-              <span className="break-all">hello@shriyans.com</span>
+              <span className="break-all">shriyanskris12@gmail.com</span>
             </li>
             <li className="flex items-start gap-3 hover:text-white transition-colors">
                <MapPin className="w-4 h-4 text-accent shrink-0" />
-               <span>Sector 62, Noida, Uttar Pradesh 201301</span>
+               <span>Kila no. 37/3/1, Vill-Khijuri, Dharuhera, Rewari, Haryana, India-123106</span>
             </li>
             <li className="flex items-start gap-3 hover:text-white transition-colors">
                <Phone className="w-4 h-4 text-accent shrink-0" />
-               <span>+91 98765 43210</span>
+               <span>+91 80946 56597</span>
             </li>
           </ul>
           
