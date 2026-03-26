@@ -12,7 +12,7 @@ const Certifications = () => {
   ]
 
   // Repeat certifications several times for a seamless loop on all screen sizes
-  const loopCertifications = [...certifications, ...certifications, ...certifications, ...certifications]
+  const loopCertifications = [...certifications, ...certifications]
 
   return (
     <section className="py-12 bg-white border-y border-primary/5 overflow-hidden pause-on-hover">
