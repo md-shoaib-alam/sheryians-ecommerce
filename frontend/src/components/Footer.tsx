@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Instagram, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide-react'
+import { Instagram, Facebook, Mail, Phone, MapPin } from 'lucide-react'
 import logo from '../assets/icon/logo.png'
 
 const Footer = () => {
@@ -68,7 +68,6 @@ const Footer = () => {
           <div className="flex items-center gap-4 mt-8">
              <a href="#" className="p-2.5 bg-white/5 hover:bg-accent/20 hover:text-accent rounded-full transition-all text-white"><Instagram className="w-4 h-4" /></a>
              <a href="#" className="p-2.5 bg-white/5 hover:bg-accent/20 hover:text-accent rounded-full transition-all text-white"><Facebook className="w-4 h-4" /></a>
-             <a href="#" className="p-2.5 bg-white/5 hover:bg-accent/20 hover:text-accent rounded-full transition-all text-white"><Twitter className="w-4 h-4" /></a>
           </div>
         </div>
       </div>

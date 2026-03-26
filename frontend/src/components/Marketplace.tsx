@@ -6,13 +6,13 @@ const Marketplace = () => {
     { 
       name: "Amazon", 
       id: "amazon", 
-      link: "https://amazon.in",
+      link: "https://www.amazon.in/l/27943762031?ie=UTF8&marketplaceID=A21TJRUUN4KGV&product=B0GQB8JJNQ&me=A2YNHXFOM7UQNN",
       logo: amazonLogo
     },
     { 
       name: "Meesho", 
       id: "meesho", 
-      link: "https://meesho.com",
+      link: "https://www.meesho.com/SHRIYANSLOTUSSEEDSLLP?_ms=3.0.3",
       logo: meeshoLogo
     }
   ]
