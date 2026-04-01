@@ -3,6 +3,10 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
+import compression from 'compression'
+import morgan from 'morgan'
+
+
 
 import userRoutes from './routes/users'
 import productRoutes from './routes/products'
@@ -17,8 +21,18 @@ dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 5000
 
+// ─── Logging ───────────────────────────────────────────────────────────────
+if (process.env.NODE_ENV === 'production') {
+  app.use(morgan('combined'))
+} else {
+  app.use(morgan('dev'))
+}
+
 // ─── Security Headers ──────────────────────────────────────────────────────
 app.use(helmet())
+app.use(compression()) // Compress responses
+
+
 
 // ─── Rate Limiting ─────────────────────────────────────────────────────────
 const globalLimiter = rateLimit({
@@ -82,10 +96,17 @@ app.use('*', (_req, res) => {
 })
 
 // ─── Global Error Handler ─────────────────────────────────────────────────
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error('Unhandled error:', err)
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  const isPrismaError = err?.code && err?.clientVersion
+  console.error('[Error]: ', isPrismaError ? `Prisma Error: ${err.code}` : err.message)
+  
+  if (process.env.NODE_ENV === 'development') {
+    return res.status(500).json({ error: err.message, stack: err.stack })
+  }
+
   res.status(500).json({ error: 'Internal server error' })
 })
+
 
 // ─── Start Server ─────────────────────────────────────────────────────────
 app.listen(PORT, () => {

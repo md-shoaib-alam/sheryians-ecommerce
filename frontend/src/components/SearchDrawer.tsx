@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { X, Search, ArrowRight } from 'lucide-react'
-import { allProducts } from '../data/products'
+import { api } from '../lib/api'
 import ProductCard from './ProductCard'
 
 interface SearchDrawerProps {
@@ -10,6 +10,7 @@ interface SearchDrawerProps {
 
 const SearchDrawer = ({ isOpen, onClose }: SearchDrawerProps) => {
   const [searchQuery, setSearchQuery] = useState('')
+  const [products, setProducts] = useState<any[]>([])
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const trendingRowRef = useRef<HTMLDivElement>(null)
 
@@ -21,23 +22,32 @@ const SearchDrawer = ({ isOpen, onClose }: SearchDrawerProps) => {
     'Cheese & Chill'
   ]
 
-  // Reset scroll and states when opening drawer
+  // Fetch products when drawer opens
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await api('/api/products')
+        setProducts(data.products || [])
+      } catch (err) {
+        console.error('Failed to fetch products for search:', err)
+      }
+    }
+    
     if (isOpen) {
-      // Clear previous search and scroll everything back to start
+      fetchProducts()
       setSearchQuery('')
       if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0
       if (trendingRowRef.current) trendingRowRef.current.scrollLeft = 0
     }
   }, [isOpen])
 
-  // Filter products matching search - Fixed to only search by name as per product data
+  // Filter products matching search
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return []
-    return allProducts.filter(p => 
+    return products.filter(p => 
       p.name.toLowerCase().includes(searchQuery.toLowerCase())
     ).slice(0, 4)
-  }, [searchQuery])
+  }, [searchQuery, products])
 
   return (
     <div className={`fixed inset-0 z-[100] transition-all duration-500 ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
@@ -102,7 +112,15 @@ const SearchDrawer = ({ isOpen, onClose }: SearchDrawerProps) => {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                   {filteredProducts.map((product) => (
                     <div key={product.id} className="animate-in fade-in zoom-in-95 duration-500">
-                      <ProductCard {...product} />
+                      <ProductCard 
+                        id={product.id}
+                        name={product.name}
+                        image={product.imageUrl || product.image}
+                        currentPrice={product.price?.toString()}
+                        oldPrice={product.mrp?.toString()}
+                        rating={product.rating || 5}
+                        reviews={product._count?.reviews || 0}
+                      />
                     </div>
                   ))}
                 </div>
