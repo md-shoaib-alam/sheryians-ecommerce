@@ -63,7 +63,7 @@ const Checkout = () => {
 
   const [addresses, setAddresses] = useState<Address[]>([])
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
-  const [paymentMethod, setPaymentMethod] = useState<'RAZORPAY' | 'COD'>('RAZORPAY')
+  const [paymentMethod] = useState<'RAZORPAY'>('RAZORPAY')
   const [loading, setLoading] = useState(true)
   const [processing, setProcessing] = useState(false)
   const [banner, setBanner] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
@@ -246,38 +246,12 @@ const Checkout = () => {
     }
   }
 
-  const handleCODPayment = async () => {
-    setProcessing(true)
-    try {
-      const token = await getToken()
-      const data = await api('/api/payment/cod', {
-        method: 'POST',
-        token,
-        body: {
-          items: buildItems(),
-          addressId: selectedAddress,
-        },
-      })
-
-      if (data.success) {
-        if (!isDirectBuy) await clearCart()
-        setSuccessOrderId(data.order.id)
-        setOrderSuccess(true)
-      }
-    } catch (err: any) {
-      showBanner('error', err.message || 'Failed to place order.')
-    } finally {
-      setProcessing(false)
-    }
-  }
-
   const handlePlaceOrder = () => {
     if (!selectedAddress) {
       showBanner('error', 'Select a shipping address first.')
       return
     }
-    if (paymentMethod === 'RAZORPAY') handleRazorpayPayment()
-    else handleCODPayment()
+    handleRazorpayPayment()
   }
 
   if (orderSuccess) {
@@ -450,29 +424,17 @@ const Checkout = () => {
                  <CreditCard className="w-6 h-6 text-primary" />
                  Payment Method
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <button onClick={() => setPaymentMethod('RAZORPAY')} className={`text-left p-6 rounded-2xl border-2 transition-all
-                  ${paymentMethod === 'RAZORPAY' ? 'border-primary bg-primary/5' : 'border-gray-100 hover:border-primary/10 bg-white'}`}>
+              <div className="grid grid-cols-1 gap-4">
+                <div className={`p-6 rounded-2xl border-2 border-primary bg-primary/5`}>
                   <div className="flex items-center justify-between mb-4">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'RAZORPAY' ? 'border-primary' : 'border-gray-200'}`}>
-                        {paymentMethod === 'RAZORPAY' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center border-primary text-primary`}>
+                        <div className="w-2.5 h-2.5 rounded-full bg-primary" />
                     </div>
-                    <ShieldCheck className={`w-5 h-5 ${paymentMethod === 'RAZORPAY' ? 'text-primary' : 'text-gray-300'}`} />
+                    <ShieldCheck className={`w-5 h-5 text-primary`} />
                   </div>
                   <h3 className="text-lg font-bold text-primary mb-1">Pay Online</h3>
-                  <p className="text-primary/40 text-[10px] font-bold uppercase tracking-widest">Cards, UPI, Net Banking</p>
-                </button>
-
-                <button onClick={() => setPaymentMethod('COD')} className={`text-left p-6 rounded-2xl border-2 transition-all
-                  ${paymentMethod === 'COD' ? 'border-primary bg-primary/5' : 'border-gray-100 hover:border-primary/10 bg-white'}`}>
-                   <div className="flex items-center justify-between mb-4">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'COD' ? 'border-primary' : 'border-gray-200'}`}>
-                        {paymentMethod === 'COD' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
-                    </div>
-                  </div>
-                  <h3 className="text-lg font-bold text-primary mb-1">Cash on Delivery</h3>
-                  <p className="text-primary/40 text-[10px] font-bold uppercase tracking-widest">Pay when you receive</p>
-                </button>
+                  <p className="text-primary/40 text-[10px] font-bold uppercase tracking-widest">Cards, UPI, Net Banking (Razorpay)</p>
+                </div>
               </div>
             </section>
           </div>
