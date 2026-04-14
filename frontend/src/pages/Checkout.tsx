@@ -63,7 +63,6 @@ const Checkout = () => {
 
   const [addresses, setAddresses] = useState<Address[]>([])
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
-  const [paymentMethod] = useState<'RAZORPAY'>('RAZORPAY')
   const [loading, setLoading] = useState(true)
   const [processing, setProcessing] = useState(false)
   const [banner, setBanner] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
