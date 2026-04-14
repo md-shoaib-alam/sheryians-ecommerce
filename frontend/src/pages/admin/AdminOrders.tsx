@@ -16,6 +16,10 @@ import {
   Loader2,
   Phone,
   CreditCard,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  CalendarDays,
 } from 'lucide-react'
 
 const OrderDetailsModal = ({ order, onClose, onUpdateStatus, isUpdating }: { order: any, onClose: () => void, onUpdateStatus: (id: string, s: string) => void, isUpdating: boolean }) => {
@@ -209,22 +213,30 @@ const AdminOrders = () => {
   const [updating, setUpdating] = useState<string | null>(null)
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null)
   const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null)
+  
+  // Pagination & Date Filters
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
     setNotification({ message, type })
   }
 
   const fetchOrders = useCallback(async () => {
+    setLoading(true)
     try {
       const token = await getToken()
-      const data = await api(`/api/admin/orders?status=${statusFilter}`, { token })
+      const data = await api(`/api/admin/orders?status=${statusFilter}&page=${currentPage}&startDate=${startDate}&endDate=${endDate}`, { token })
       setOrders(data.orders || [])
+      setTotalPages(data.pages || 1)
     } catch {
       // not available
     } finally {
       setLoading(false)
     }
-  }, [getToken, statusFilter])
+  }, [getToken, statusFilter, currentPage, startDate, endDate])
 
   useEffect(() => { fetchOrders() }, [fetchOrders])
 
@@ -295,12 +307,37 @@ const AdminOrders = () => {
                
                <select
                  value={statusFilter}
-                 onChange={e => setStatusFilter(e.target.value)}
+                 onChange={e => { setStatusFilter(e.target.value); setCurrentPage(1); }}
                  className="bg-white border border-gray-300 rounded px-4 py-2 text-sm outline-none focus:border-gray-900"
                >
                   <option value="">All Statuses</option>
                   {ORDER_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                </select>
+
+               <div className="flex items-center gap-2 bg-white border border-gray-300 rounded px-3">
+                  <Calendar className="w-4 h-4 text-gray-400" />
+                  <input 
+                    type="date"
+                    value={startDate}
+                    onChange={e => { setStartDate(e.target.value); setCurrentPage(1); }}
+                    className="py-2 text-sm outline-none bg-transparent"
+                  />
+                  <span className="text-gray-400">to</span>
+                  <input 
+                    type="date"
+                    value={endDate}
+                    onChange={e => { setEndDate(e.target.value); setCurrentPage(1); }}
+                    className="py-2 text-sm outline-none bg-transparent"
+                  />
+                  {(startDate || endDate) && (
+                    <button 
+                      onClick={() => { setStartDate(''); setEndDate(''); setCurrentPage(1); }}
+                      className="ml-2 text-gray-400 hover:text-gray-900"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+               </div>
             </div>
          </div>
 
@@ -329,6 +366,15 @@ const AdminOrders = () => {
                         <div className={`px-2 py-1 rounded text-[10px] font-bold ${getStatusColor(order.status)}`}>
                             {order.status}
                         </div>
+                     </div>
+
+                     <div className="px-5 py-2 bg-gray-50/50 border-b border-gray-100 flex items-center gap-2">
+                        <CalendarDays className="w-3.5 h-3.5 text-gray-400" />
+                        <span className="text-[11px] font-medium text-gray-500">
+                          {new Date(order.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                          <span className="mx-1 text-gray-300">•</span>
+                          {new Date(order.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                        </span>
                      </div>
 
                      <div className="p-5 flex-1 space-y-4">
@@ -362,6 +408,42 @@ const AdminOrders = () => {
                      </div>
                   </div>
                ))}
+            </div>
+         )}
+
+         {/* Pagination Controls */}
+         {!loading && filtered.length > 0 && totalPages > 1 && (
+            <div className="flex items-center justify-center gap-4 pt-8">
+               <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  className="p-2 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-30 transition-all"
+               >
+                  <ChevronLeft className="w-5 h-5" />
+               </button>
+               
+               <div className="flex items-center gap-2">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                     <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-10 h-10 rounded font-bold text-sm transition-all
+                           ${currentPage === page 
+                              ? 'bg-gray-900 text-white shadow-lg' 
+                              : 'bg-white border border-gray-300 text-gray-600 hover:border-gray-900'}`}
+                     >
+                        {page}
+                     </button>
+                  ))}
+               </div>
+
+               <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  className="p-2 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-30 transition-all"
+               >
+                  <ChevronRight className="w-5 h-5" />
+               </button>
             </div>
          )}
       </div>

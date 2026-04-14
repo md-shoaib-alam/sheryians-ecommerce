@@ -88,12 +88,23 @@ router.delete('/products/:id', async (req: Request, res: Response) => {
 
 // Admin: GET /api/admin/orders
 router.get('/orders', async (req: Request, res: Response) => {
-  const { status, page = '1', limit = '20' } = req.query
+  const { status, page = '1', limit = '20', startDate, endDate } = req.query
   const skip = (parseInt(page as string) - 1) * Math.min(parseInt(limit as string) || 20, 100)
   const take = Math.min(parseInt(limit as string) || 20, 100)
 
   const where: any = {}
   if (status) where.status = status
+
+  if (startDate || endDate) {
+    where.createdAt = {}
+    if (startDate) where.createdAt.gte = new Date(startDate as string)
+    if (endDate) {
+      // Set to end of the day if just a date string is provided
+      const end = new Date(endDate as string)
+      if (endDate.toString().length <= 10) end.setHours(23, 59, 59, 999)
+      where.createdAt.lte = end
+    }
+  }
 
   try {
     const [orders, total] = await Promise.all([
