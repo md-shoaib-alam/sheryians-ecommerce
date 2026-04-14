@@ -4,6 +4,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
 import UserSync from './components/UserSync'
+import AdminRoute from './components/AdminRoute'
 
 // Lazy loaded pages
 const Home = lazy(() => import('./pages/Home'))
@@ -76,11 +77,13 @@ function App() {
             <Route path="/refund-policy" element={<RefundPolicy />} />
             
             {/* Admin Routes */}
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/products" element={<AdminProducts />} />
-            <Route path="/admin/recipes" element={<AdminRecipes />} />
-            <Route path="/admin/orders" element={<AdminOrders />} />
-            <Route path="/admin/users" element={<AdminUsers />} />
+            <Route element={<AdminRoute />}>
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/products" element={<AdminProducts />} />
+              <Route path="/admin/recipes" element={<AdminRecipes />} />
+              <Route path="/admin/orders" element={<AdminOrders />} />
+              <Route path="/admin/users" element={<AdminUsers />} />
+            </Route>
             <Route path="/profile/order/:id" element={<OrderDetails />} />
           </Routes>
         </Suspense>

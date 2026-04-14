@@ -9,10 +9,7 @@ import {
   Calendar,
   Shield,
   Loader2,
-  MoreVertical,
 } from 'lucide-react'
-
-import { motion } from 'framer-motion'
 
 const AdminUsers = () => {
   const { getToken } = useAuth()
@@ -42,92 +39,86 @@ const AdminUsers = () => {
 
   return (
     <AdminLayout>
-      <div className="flex flex-col gap-16 md:gap-24">
-        <header className="flex flex-col md:flex-row items-center justify-between gap-12">
+      <div className="space-y-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-5xl md:text-7xl font-serif font-black italic text-primary tracking-tighter mb-2">Directory.</h1>
-            <div className="flex items-center gap-4 pl-1">
-               <span className="text-secondary bg-primary px-4 py-1.5 rounded-full font-black uppercase text-[9px] tracking-[0.4em]">{users.length} REGISTERED</span>
-               <p className="text-primary/20 font-black uppercase text-[10px] tracking-[0.5em]">Global Customer Base</p>
-            </div>
+            <h1 className="text-2xl font-bold text-gray-900">User Directory</h1>
+            <p className="text-sm text-gray-500">Manage and view registered customers.</p>
           </div>
 
-          <div className="relative w-full md:w-80">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
-              placeholder="SEARCH DIRECTORY..."
+              placeholder="Search users..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full bg-secondary/10 border-none text-primary placeholder:text-primary/20 px-10 py-5 rounded-full outline-none font-black text-[10px] tracking-[0.4em] uppercase transition-all shadow-soft focus:ring-4 ring-primary/5"
+              className="pl-10 pr-4 py-2 border border-gray-300 rounded text-sm outline-none focus:border-gray-900 w-full sm:w-64"
             />
-            <Search className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/20" />
           </div>
-        </header>
+        </div>
 
         {loading ? (
-          <div className="py-60 flex items-center justify-center">
-            <Loader2 className="w-16 h-16 text-primary/10 animate-spin" />
+          <div className="py-20 flex items-center justify-center">
+            <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="py-40 border-2 border-dashed border-primary/5 rounded-[64px] flex flex-col items-center gap-10 justify-center text-center px-10 bg-secondary/5">
-            <div className="w-32 h-32 rounded-[40px] bg-primary/5 flex items-center justify-center text-primary/10 border border-primary/5"><Users className="w-12 h-12" /></div>
-            <div>
-              <h3 className="text-primary/20 font-serif font-black italic text-4xl mb-4">No Contacts</h3>
-              <p className="text-primary/20 font-black uppercase text-[11px] tracking-[0.5em] max-w-sm mx-auto">Zero records discovered on this specific trajectory.</p>
-            </div>
+          <div className="py-20 bg-white border border-gray-200 rounded text-center">
+            <Users className="w-12 h-12 text-gray-200 mx-auto mb-4" />
+            <p className="text-gray-500">No users found.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
-            {filtered.map(user => (
-              <motion.div 
-                layout
-                key={user.id} 
-                className="bg-white border border-primary/5 rounded-[48px] p-10 transition-all group relative overflow-hidden shadow-soft hover:shadow-2xl hover:shadow-primary/5 hover:scale-[1.02]"
-              >
-                <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/5 rounded-full blur-3xl -z-10 transition-all duration-700 group-hover:bg-accent/5" />
-                
-                <div className="flex items-start justify-between mb-12">
-                  <div className="flex items-center gap-6">
-                    <div className="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center font-serif font-black italic text-2xl text-primary shadow-soft border border-primary/5 group-hover:bg-primary group-hover:text-secondary transition-all">
-                      {user.name?.[0] || 'U'}
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-serif font-black italic text-primary tracking-tighter capitalize truncate max-w-[150px]">{user.name || 'Anonymous'}</h3>
-                      <div className="flex items-center gap-3 mt-1">
-                        {user.isAdmin && (
-                          <span className="bg-accent/10 text-accent text-[8px] font-black uppercase px-3 py-1 rounded-full border border-accent/20 flex items-center gap-1 leading-none">
-                            <Shield className="w-2.5 h-2.5" /> ADMIN
-                          </span>
-                        )}
-                        <span className="text-primary/20 font-black uppercase text-[8px] tracking-widest leading-none">MEMBER</span>
-                      </div>
-                    </div>
-                  </div>
-                  <button className="p-4 bg-secondary/10 hover:bg-primary hover:text-white rounded-2xl text-primary/20 transition-all shadow-soft"><MoreVertical className="w-5 h-5" /></button>
-                </div>
-
-                <div className="space-y-4 mb-12">
-                  <div className="flex items-center gap-4 text-primary/40 group/mail">
-                    <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center group-hover/mail:bg-primary group-hover/mail:text-white transition-all"><Mail className="w-3.5 h-3.5" /></div>
-                    <p className="text-[11px] font-bold font-sans truncate">{user.email}</p>
-                  </div>
-                  <div className="flex items-center gap-4 text-primary/40 group/cal">
-                    <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center group-hover/cal:bg-primary group-hover/cal:text-white transition-all"><Calendar className="w-3.5 h-3.5" /></div>
-                    <p className="text-[11px] font-black uppercase tracking-[0.2em]">SINCE {new Date(user.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short' })}</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 pt-10 border-t border-primary/5">
-                  <div className="bg-secondary/10 p-6 rounded-[32px] text-center border border-primary/5 group-hover:bg-white transition-all shadow-inner">
-                    <p className="text-2xl font-serif font-black italic text-primary leading-none mb-1">{user._count?.orders || 0}</p>
-                    <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary/20">ORDERS</p>
-                  </div>
-                  <div className="bg-secondary/10 p-6 rounded-[32px] text-center border border-primary/5 group-hover:bg-white transition-all shadow-inner">
-                    <p className="text-2xl font-serif font-black italic text-primary leading-none mb-1">{user._count?.reviews || 0}</p>
-                    <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary/20">REVIEWS</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+          <div className="bg-white border border-gray-200 rounded overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                    <thead className="bg-gray-50 text-gray-500 border-b border-gray-200">
+                        <tr>
+                            <th className="px-6 py-4 font-semibold uppercase text-xs">Customer</th>
+                            <th className="px-6 py-4 font-semibold uppercase text-xs">Email</th>
+                            <th className="px-6 py-4 font-semibold uppercase text-xs">Stats</th>
+                            <th className="px-6 py-4 font-semibold uppercase text-xs text-right">Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                        {filtered.map(user => (
+                            <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                                <td className="px-6 py-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded bg-gray-100 flex items-center justify-center font-bold text-gray-600">
+                                            {user.name?.[0] || 'U'}
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-gray-900">{user.name || 'Anonymous'}</p>
+                                            {user.role === 'admin' && (
+                                              <span className="text-[10px] font-bold text-blue-600 uppercase flex items-center gap-1">
+                                                <Shield className="w-2 h-2" /> Admin
+                                              </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 text-gray-600">
+                                    <div className="flex items-center gap-2">
+                                        <Mail className="w-4 h-4 text-gray-400" />
+                                        {user.email}
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <div className="flex gap-4 text-xs">
+                                        <span className="text-gray-500">Orders: <b className="text-gray-900">{user._count?.orders || 0}</b></span>
+                                        <span className="text-gray-500">Reviews: <b className="text-gray-900">{user._count?.reviews || 0}</b></span>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 text-right text-gray-500">
+                                    <div className="flex items-center justify-end gap-2">
+                                        <Calendar className="w-4 h-4" />
+                                        {new Date(user.createdAt).toLocaleDateString()}
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
           </div>
         )}
       </div>

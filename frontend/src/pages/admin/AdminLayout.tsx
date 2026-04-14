@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useUser } from "@clerk/react"
-import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard,
   Package,
@@ -12,19 +11,18 @@ import {
   ChevronRight,
   Bell,
   Search,
-  Youtube,
   Menu as MenuIcon
 } from 'lucide-react'
 
 const SidebarItem = ({ to, icon: Icon, label, active }: { to: string; icon: any; label: string; active: boolean }) => (
   <Link
     to={to}
-    className={`flex items-center gap-4 px-6 py-4 rounded-3xl font-black uppercase text-[10px] tracking-[0.2em] transition-all
-      ${active ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-105' : 'text-primary/40 hover:text-primary hover:bg-secondary/20'}`}
+    className={`flex items-center gap-3 px-4 py-2 rounded font-medium text-sm transition-colors
+      ${active ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}
   >
     <Icon className="w-4 h-4 shrink-0" />
-    <span className="flex-1 whitespace-nowrap">{label}</span>
-    {active && <div className="w-1.5 h-1.5 rounded-full bg-accent" />}
+    <span className="flex-1 truncate">{label}</span>
+    {active && <ChevronRight className="w-3 h-3" />}
   </Link>
 )
 
@@ -36,130 +34,104 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const breadcrumbs = location.pathname.split('/').filter(Boolean).map(s => s.charAt(0).toUpperCase() + s.slice(1))
 
   return (
-    <div className="min-h-screen bg-white flex overflow-hidden font-sans text-primary">
+    <div className="min-h-screen bg-gray-50 flex font-sans text-gray-900">
       
-      {/* Sidebar Overlay */}
-      <AnimatePresence>
-        {isSidebarOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsSidebarOpen(false)} 
-            className="fixed inset-0 bg-primary/20 backdrop-blur-sm z-40 lg:hidden"
-          />
-        )}
-      </AnimatePresence>
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          onClick={() => setIsSidebarOpen(false)} 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+        />
+      )}
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-primary/5 transform transition-transform duration-500 ease-in-out lg:relative lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex flex-col h-full py-10 px-6">
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transform transition-transform duration-200 ease-in-out lg:relative lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex flex-col h-full">
           
-          {/* Logo */}
-          <div className="flex items-center gap-4 mb-16 px-2">
-             <Link to="/" className="flex flex-col items-start leading-none group">
-                <span className="text-2xl font-black italic tracking-tighter text-primary group-hover:text-accent transition-colors">
-                  SHRIYANS
-                </span>
-                <span className="text-[10px] font-bold tracking-[0.3em] text-primary/30 self-end -mt-1 group-hover:text-primary transition-colors uppercase">
-                  Admin Panel
-                </span>
+          {/* Logo / Header */}
+          <div className="flex items-center justify-between px-6 py-6 border-b border-gray-800">
+             <Link to="/" className="text-xl font-bold tracking-tight">
+               Store Admin
              </Link>
-             <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden ml-auto p-2 hover:bg-secondary/20 rounded-full transition-colors text-primary/20">
-                <X className="w-4 h-4" />
+             <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-gray-400 hover:text-white">
+                <X className="w-5 h-5" />
              </button>
           </div>
 
-          <nav className="flex-1 space-y-10 overflow-y-auto no-scrollbar">
-            {/* MAIN Section */}
+          <nav className="flex-1 px-4 py-6 space-y-8 overflow-y-auto">
             <div>
-               <p className="px-6 text-[9px] font-black text-primary/20 uppercase tracking-[0.4em] mb-4">Operations</p>
-               <div className="space-y-2">
-                  <SidebarItem to="/admin" icon={LayoutDashboard} label="Overview" active={location.pathname === '/admin'} />
-                  <SidebarItem to="/admin/products" icon={Package} label="Inventory" active={location.pathname === '/admin/products'} />
-                  <SidebarItem to="/admin/recipes" icon={Youtube} label="Theater" active={location.pathname === '/admin/recipes'} />
+               <p className="px-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-4">Management</p>
+               <div className="space-y-1">
+                  <SidebarItem to="/admin" icon={LayoutDashboard} label="Dashboard" active={location.pathname === '/admin'} />
+                  <SidebarItem to="/admin/products" icon={Package} label="Products" active={location.pathname === '/admin/products'} />
                   <SidebarItem to="/admin/orders" icon={ShoppingBag} label="Orders" active={location.pathname === '/admin/orders'} />
-                  <SidebarItem to="/admin/users" icon={Users} label="Customers" active={location.pathname === '/admin/users'} />
+                  <SidebarItem to="/admin/users" icon={Users} label="Users" active={location.pathname === '/admin/users'} />
                </div>
             </div>
 
-            {/* OTHERS Section */}
             <div>
-               <p className="px-6 text-[9px] font-black text-primary/20 uppercase tracking-[0.4em] mb-4">Resources</p>
-               <div className="space-y-2">
-                  <Link to="/" className="flex items-center gap-4 px-6 py-4 rounded-3xl font-black uppercase text-[10px] tracking-[0.2em] text-accent hover:bg-accent/5 transition-all">
+               <p className="px-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-4">Storefront</p>
+               <div className="space-y-1">
+                  <Link to="/" className="flex items-center gap-3 px-4 py-2 rounded text-sm text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
                      <ExternalLink className="w-4 h-4" />
-                     Return To Store
+                     View Website
                   </Link>
                </div>
             </div>
           </nav>
 
-          {/* User Profile Footer */}
-          <div className="mt-auto pt-8 border-t border-primary/5">
-             <div className="flex items-center gap-4 p-4 rounded-[32px] bg-secondary/10 hover:bg-secondary/20 transition-all group cursor-pointer border border-primary/5">
-                <div className="w-12 h-12 rounded-full border border-primary/10 overflow-hidden shadow-sm shrink-0">
-                   <img src={user?.imageUrl} alt="Admin" className="w-full h-full object-cover" />
-                </div>
+          {/* User Profile */}
+          <div className="p-4 border-t border-gray-800">
+             <div className="flex items-center gap-3 p-2 rounded hover:bg-gray-800 transition-colors cursor-pointer">
+                <img src={user?.imageUrl} alt="" className="w-8 h-8 rounded-full bg-gray-700" />
                 <div className="truncate flex-1">
-                   <h4 className="text-[11px] font-black truncate uppercase tracking-widest text-primary">{user?.fullName || 'Administrator'}</h4>
-                   <p className="text-[9px] text-primary/30 truncate uppercase font-bold tracking-widest">{user?.primaryEmailAddress?.emailAddress}</p>
+                   <p className="text-xs font-semibold truncate">{user?.fullName || 'Admin'}</p>
+                   <p className="text-[10px] text-gray-500 truncate">{user?.primaryEmailAddress?.emailAddress}</p>
                 </div>
              </div>
           </div>
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto h-screen relative scroll-smooth bg-[#fdfdfd]">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0">
         
-        {/* Header / Top Bar */}
-        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-primary/5 px-6 md:px-12 py-6 flex items-center justify-between">
-           <div className="flex items-center gap-6">
+        {/* Top Header */}
+        <header className="bg-white border-b border-gray-200 px-4 md:px-8 py-4 flex items-center justify-between">
+           <div className="flex items-center gap-4">
               <button 
                 onClick={() => setIsSidebarOpen(true)} 
-                className="lg:hidden p-3 bg-secondary/20 hover:bg-secondary/30 rounded-2xl transition-all"
+                className="lg:hidden p-2 text-gray-500 hover:bg-gray-100 rounded"
               >
-                <MenuIcon className="w-5 h-5 text-primary" />
+                <MenuIcon className="w-5 h-5" />
               </button>
               
-              <div className="hidden sm:block">
-                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.4em] text-primary/20 mb-1">
-                    <span>Shriyans</span>
-                    <ChevronRight className="w-2.5 h-2.5 opacity-30" />
-                    <span className="text-accent">{breadcrumbs[breadcrumbs.length - 1] || 'Dashboard'}</span>
-                 </div>
-                 <h2 className="text-3xl font-serif font-black italic text-primary tracking-tighter capitalize">
-                    {breadcrumbs[breadcrumbs.length - 1] || 'Dashboard'}
-                 </h2>
+              <div className="hidden sm:flex items-center gap-2 text-xs text-gray-500 uppercase tracking-wider">
+                 <span>Admin</span>
+                 <ChevronRight className="w-3 h-3" />
+                 <span className="text-gray-900 font-bold">{breadcrumbs[breadcrumbs.length - 1] || 'Dashboard'}</span>
               </div>
            </div>
 
            <div className="flex items-center gap-4">
               <div className="hidden md:flex items-center relative">
-                 <Search className="absolute left-4 w-4 h-4 text-primary/20" />
+                 <Search className="absolute left-3 w-4 h-4 text-gray-400" />
                  <input 
-                    placeholder="FIND DATA..." 
-                    className="bg-secondary/10 border-none rounded-full pl-12 pr-6 py-4 text-[10px] font-black uppercase tracking-widest outline-none focus:ring-4 ring-primary/5 transition-all w-64 text-primary placeholder:text-primary/20"
+                    placeholder="Search..." 
+                    className="bg-gray-100 border border-transparent rounded px-10 py-2 text-sm outline-none focus:bg-white focus:border-gray-300 transition-all w-64"
                  />
               </div>
-              <button className="p-4 bg-white border border-primary/5 text-primary/40 hover:text-accent rounded-full transition-all relative shadow-soft">
-                 <Bell className="w-4 h-4" />
-                 <span className="absolute top-4 right-4 w-1.5 h-1.5 bg-accent rounded-full border border-white" />
+              <button className="p-2 text-gray-400 hover:text-gray-600 rounded relative">
+                 <Bell className="w-5 h-5" />
+                 <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
               </button>
            </div>
         </header>
 
-        <div className="p-8 md:p-12 max-w-7xl mx-auto">
-             <motion.div
-               initial={{ opacity: 0, y: 20 }}
-               animate={{ opacity: 1, y: 0 }}
-               transition={{ duration: 0.5 }}
-             >
-                {children}
-             </motion.div>
-        </div>
-      </main>
+        <main className="flex-1 p-6 md:p-8 overflow-y-auto">
+            {children}
+        </main>
+      </div>
     </div>
   )
 }

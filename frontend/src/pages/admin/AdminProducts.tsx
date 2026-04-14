@@ -2,21 +2,38 @@ import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from "@clerk/react"
 import { api } from '../../lib/api'
 import AdminLayout from './AdminLayout'
-import { motion, AnimatePresence } from 'framer-motion'
 import {
   Plus,
-  PlusCircle,
-  Archive,
   Loader2,
   AlertCircle,
   X,
   Edit2,
   Trash2,
   Search,
+  Package,
+  CheckCircle,
+  AlertTriangle,
 } from 'lucide-react'
 
-// ─── Modal Components ──────────────────────────────────────────────────────
-// ─── Modal Components ──────────────────────────────────────────────────────
+const Notification = ({ message, type, onClose }: { message: string, type: 'success' | 'error', onClose: () => void }) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 3000)
+    return () => clearTimeout(timer)
+  }, [onClose])
+
+  return (
+    <div className={`fixed top-4 right-4 z-[100] flex items-center gap-3 px-6 py-4 rounded shadow-2xl animate-in slide-in-from-right-full duration-300
+      ${type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
+      {type === 'success' ? <CheckCircle className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
+      <span className="text-sm font-bold">{message}</span>
+      <button onClick={onClose} className="ml-4 opacity-50 hover:opacity-100 transition-opacity">
+        <X className="w-4 h-4" />
+      </button>
+    </div>
+  )
+}
+
+// ─── Modal ──────────────────────────────────────────────────────────────────
 const ProductModal = ({ product, onClose, onSave }: { product?: any; onClose: () => void; onSave: (data: any) => Promise<void> }) => {
   const [form, setForm] = useState<any>(product || {
     name: '', description: '', price: '', mrp: '', category: 'Makhana',
@@ -27,14 +44,18 @@ const ProductModal = ({ product, onClose, onSave }: { product?: any; onClose: ()
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (product && typeof product.images === 'string') {
-        setForm((f: any) => ({ ...f, images: product.images.split(',').filter(Boolean) }))
+    if (product) {
+      let images = product.images || []
+      if (typeof images === 'string') {
+        images = images.split(',').filter(Boolean)
+      }
+      setForm((f: any) => ({ ...f, images }))
     }
   }, [product])
 
   const handleSave = async () => {
     if (!form.name || !form.price || !form.imageUrl || !form.category) {
-      setError('Essential fields (Name, Price, Category, Hero Image) are required.')
+      setError('Name, Price, Category, and Primary Image are required.')
       return
     }
     setSaving(true)
@@ -50,7 +71,7 @@ const ProductModal = ({ product, onClose, onSave }: { product?: any; onClose: ()
       await onSave(data)
       onClose()
     } catch (err: any) {
-      setError(err.message || 'Failed to curate product.')
+      setError(err.message || 'Failed to save product.')
     } finally {
       setSaving(false)
     }
@@ -74,150 +95,159 @@ const ProductModal = ({ product, onClose, onSave }: { product?: any; onClose: ()
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-10 pointer-events-none">
-       <motion.div 
-         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-         onClick={onClose} className="absolute inset-0 bg-primary/20 backdrop-blur-md pointer-events-auto" 
-       />
-       
-       <motion.div 
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="relative w-full max-w-2xl bg-white border border-primary/5 rounded-[48px] shadow-2xl overflow-hidden pointer-events-auto flex flex-col max-h-full"
-       >
-          <header className="px-10 py-10 border-b border-primary/5 flex items-center justify-between shrink-0">
-             <div>
-                <h3 className="text-3xl font-serif font-black italic text-primary tracking-tighter">{product ? 'Refine Product' : 'Curate New Item'}</h3>
-                <p className="text-[10px] font-black text-primary/30 uppercase tracking-[0.4em]">Inventory Sanctuary</p>
-             </div>
-             <button onClick={onClose} className="p-4 bg-secondary/20 rounded-full hover:bg-secondary/30 transition-all text-primary/40">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+       <div className="bg-white rounded shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+          <header className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+             <h3 className="text-lg font-bold text-gray-900">{product ? 'Edit Product' : 'Add New Product'}</h3>
+             <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
                 <X className="w-5 h-5" />
              </button>
           </header>
 
-          <div className="flex-1 overflow-y-auto p-10 no-scrollbar">
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
              {error && (
-                <div className="bg-primary/5 border border-primary/10 px-8 py-4 rounded-3xl text-primary text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-4 mb-10">
-                    <AlertCircle className="w-5 h-5 shrink-0 opacity-40" />
+                <div className="bg-red-50 border border-red-200 px-4 py-3 rounded text-red-700 text-sm flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
                     {error}
                 </div>
              )}
 
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                <div className="md:col-span-2">
-                    <label className="text-[9px] font-black uppercase tracking-[0.4em] text-primary/20 mb-3 block ml-6">Nomenclature</label>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2 space-y-1">
+                    <label className="text-xs font-semibold text-gray-500 uppercase">Product Name</label>
                     <input
-                        placeholder="ITEM NAME"
                         value={form.name}
                         onChange={e => setForm((f: any) => ({ ...f, name: e.target.value }))}
-                        className="w-full bg-secondary/10 border-none text-primary placeholder:text-primary/20 px-8 py-5 rounded-full outline-none font-bold text-sm focus:ring-4 ring-primary/5 transition-all shadow-soft"
+                        className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:border-gray-900 outline-none transition-colors"
                     />
                 </div>
-                <div className="md:col-span-2">
-                    <label className="text-[9px] font-black uppercase tracking-[0.4em] text-primary/20 mb-3 block ml-6">Manifesto</label>
+                <div className="md:col-span-2 space-y-1">
+                    <label className="text-xs font-semibold text-gray-500 uppercase">Description</label>
                     <textarea
-                        placeholder="DETAILED DESCRIPTION"
                         value={form.description}
-                        rows={5}
+                        rows={4}
                         onChange={e => setForm((f: any) => ({ ...f, description: e.target.value }))}
-                        className="w-full bg-secondary/10 border-none text-primary placeholder:text-primary/20 px-8 py-6 rounded-[32px] outline-none font-bold text-sm focus:ring-4 ring-primary/5 transition-all resize-none shadow-soft"
+                        className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:border-gray-900 outline-none transition-colors resize-none"
                     />
                 </div>
-                <div className="md:col-span-2">
-                    <label className="text-[9px] font-black uppercase tracking-[0.4em] text-accent mb-3 block ml-6 italic">Hero Image Identity</label>
+                <div className="md:col-span-2 space-y-1">
+                    <label className="text-xs font-semibold text-gray-500 uppercase">Hero Image URL</label>
                     <input
-                        placeholder="PRIMARY SOURCE URL"
                         value={form.imageUrl}
                         onChange={e => setForm((f: any) => ({ ...f, imageUrl: e.target.value }))}
-                        className="w-full bg-accent/5 border border-accent/20 text-primary placeholder:text-primary/20 px-8 py-5 rounded-full outline-none font-bold text-sm focus:ring-4 ring-accent/5 transition-all shadow-soft"
+                        className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:border-gray-900 outline-none transition-colors"
                     />
+                </div>
+                <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-500 uppercase">Price (₹)</label>
+                    <input
+                        type="number"
+                        value={form.price}
+                        onChange={e => setForm((f: any) => ({ ...f, price: e.target.value }))}
+                        className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:border-gray-900 outline-none transition-colors"
+                    />
+                </div>
+                <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-500 uppercase">MRP (₹)</label>
+                    <input
+                        type="number"
+                        value={form.mrp}
+                        onChange={e => setForm((f: any) => ({ ...f, mrp: e.target.value }))}
+                        className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:border-gray-900 outline-none transition-colors"
+                    />
+                </div>
+                <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-500 uppercase">Category</label>
+                    <input
+                        value={form.category}
+                        onChange={e => setForm((f: any) => ({ ...f, category: e.target.value }))}
+                        className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:border-gray-900 outline-none transition-colors"
+                    />
+                </div>
+                <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-500 uppercase">Stock</label>
+                    <input
+                        type="number"
+                        value={form.stock}
+                        onChange={e => setForm((f: any) => ({ ...f, stock: e.target.value }))}
+                        className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:border-gray-900 outline-none transition-colors"
+                    />
+                </div>
+                <div className="space-y-1 text-xs">
+                    <label className="font-semibold text-gray-500 uppercase">Weight</label>
+                    <input value={form.weight} onChange={e => setForm((f: any) => ({ ...f, weight: e.target.value }))} className="w-full border border-gray-300 rounded px-3 py-2 outline-none" />
+                </div>
+                <div className="space-y-1 text-xs">
+                    <label className="font-semibold text-gray-500 uppercase">Flavour</label>
+                    <input value={form.flavour} onChange={e => setForm((f: any) => ({ ...f, flavour: e.target.value }))} className="w-full border border-gray-300 rounded px-3 py-2 outline-none" />
                 </div>
              </div>
 
-             {/* Dynamic Gallery Section */}
-             <div className="mb-12">
-                <div className="flex items-center justify-between mb-6 px-4">
-                    <label className="text-[10px] font-black uppercase tracking-[0.5em] text-primary/30">Visual Gallery</label>
+              {/* Gallery Section */}
+              <div className="space-y-4 pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-gray-500 uppercase">Product Gallery</label>
                     <button 
+                        type="button"
                         onClick={addImageField}
-                        className="flex items-center gap-2 text-accent hover:underline transition-all text-[10px] font-black uppercase tracking-widest"
+                        className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
                     >
-                        <Plus className="w-4 h-4" />
-                        <span>Add Perspective</span>
+                        <Plus className="w-3 h-3" /> Add Image
                     </button>
                 </div>
                 
-                <div className="flex flex-col gap-4">
+                <div className="space-y-2">
                     {form.images?.map((url: string, index: number) => (
-                        <div key={index} className="flex gap-4 group">
+                        <div key={index} className="flex gap-2">
                             <input
-                              placeholder={`GALLERY SOURCE #${index + 1}`}
+                              placeholder="Image URL"
                               value={url}
                               onChange={e => updateImageField(index, e.target.value)}
-                              className="flex-1 bg-secondary/10 border-none text-primary placeholder:text-primary/20 px-8 py-4 rounded-full outline-none font-bold text-[11px] shadow-soft focus:ring-4 ring-primary/5 transition-all"
+                              className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm outline-none focus:border-gray-900"
                             />
                             <button 
+                                type="button"
                                 onClick={() => removeImageField(index)}
-                                className="p-4 bg-primary/5 hover:bg-primary hover:text-white text-primary/40 rounded-full transition-all shrink-0 shadow-soft"
+                                className="p-2 text-gray-400 hover:text-red-600 border border-gray-300 rounded"
                             >
                                 <Trash2 className="w-4 h-4" />
                             </button>
                         </div>
                     ))}
                     {(!form.images || form.images.length === 0) && (
-                        <div className="text-primary/10 text-[10px] font-black uppercase tracking-[0.4em] text-center py-8 border-2 border-dashed border-primary/5 rounded-[32px]">No secondary visuals added</div>
+                        <p className="text-xs text-gray-400 italic">No gallery images added yet.</p>
                     )}
                 </div>
-             </div>
-
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
-                {[
-                  { key: 'price', placeholder: 'Sale Value (₹)', type: 'number' },
-                  { key: 'mrp', placeholder: 'Retail MRP (₹)', type: 'number' },
-                  { key: 'category', placeholder: 'Collection' },
-                  { key: 'flavour', placeholder: 'Notes / Flavour' },
-                  { key: 'weight', placeholder: 'Dimensions / Weight' },
-                  { key: 'stock', placeholder: 'Vault Inventory', type: 'number' },
-                  { key: 'tags', placeholder: 'Discovery Tags (comma separated)', span: true },
-                ].map(({ key, placeholder, span, type = 'text' }: any) => (
-                  <div key={key} className={span ? 'md:col-span-2' : ''}>
-                     <label className="text-[9px] font-black uppercase tracking-[0.4em] text-primary/20 mb-3 block ml-6">{placeholder}</label>
-                     <input
-                        type={type}
-                        placeholder={placeholder.toUpperCase()}
-                        value={form[key]}
-                        onChange={e => setForm((f: any) => ({ ...f, [key]: e.target.value }))}
-                        className="w-full bg-secondary/10 border-none text-primary placeholder:text-primary/20 px-8 py-5 rounded-full outline-none font-bold text-sm focus:ring-4 ring-primary/5 transition-all shadow-soft"
-                     />
-                  </div>
-                ))}
-             </div>
+              </div>
           </div>
 
-          <footer className="px-10 py-10 border-t border-primary/5 bg-white flex gap-6 shrink-0">
+          <footer className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3 bg-gray-50">
+             <button onClick={onClose} className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-800">Cancel</button>
              <button
                onClick={handleSave}
                disabled={saving}
-               className="flex-1 bg-primary text-secondary py-6 rounded-full font-black uppercase text-[11px] tracking-[0.4em] transition-all disabled:opacity-50 flex items-center justify-center gap-4 shadow-2xl shadow-primary/20 hover:scale-[1.02]"
+               className="bg-gray-900 text-white px-6 py-2 rounded text-sm font-semibold hover:bg-gray-800 disabled:opacity-50 flex items-center gap-2"
              >
-                {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <PlusCircle className="w-5 h-5" />}
-                {product ? 'Commit Changes' : 'Initialize Item'}
+                {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+                {product ? 'Update Product' : 'Create Product'}
              </button>
-             <button onClick={onClose} className="px-12 py-6 bg-transparent border border-primary/10 hover:bg-secondary/20 text-primary/40 hover:text-primary rounded-full font-black uppercase text-[11px] tracking-[0.4em] transition-all">Discard</button>
           </footer>
-       </motion.div>
+       </div>
     </div>
   )
 }
 
-// ─── Main Component ────────────────────────────────────────────────────────
 const AdminProducts = () => {
   const { getToken } = useAuth()
   const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [modal, setModal] = useState<{ open: boolean; product?: any }>({ open: false })
   const [search, setSearch] = useState('')
+  const [modal, setModal] = useState<{ open: boolean; product?: any }>({ open: false })
+  const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null)
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type })
+  }
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -235,22 +265,29 @@ const AdminProducts = () => {
 
   const handleSave = async (data: any) => {
     const token = await getToken()
-    if (modal.product) {
-       await api(`/api/admin/products/${modal.product.id}`, { method: 'PATCH', token, body: data })
-    } else {
-       await api('/api/admin/products', { method: 'POST', token, body: data })
+    try {
+      if (modal.product) {
+         await api(`/api/admin/products/${modal.product.id}`, { method: 'PATCH', token, body: data })
+         showNotification('Product updated successfully')
+      } else {
+         await api('/api/admin/products', { method: 'POST', token, body: data })
+         showNotification('Product created successfully')
+      }
+      fetchProducts()
+    } catch (err: any) {
+      showNotification(err.message || 'Failed to save product', 'error')
     }
-    fetchProducts()
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Relinquish this product from the inventory?')) return
+    if (!confirm('Are you sure you want to PERMANENTLY delete this product? This cannot be undone.')) return
     try {
        const token = await getToken()
        await api(`/api/admin/products/${id}`, { method: 'DELETE', token })
+       showNotification('Product deleted permanently')
        fetchProducts()
-    } catch {
-       alert('Operation failed.')
+    } catch (err: any) {
+       showNotification(err.message || 'Operation failed', 'error')
     }
   }
 
@@ -258,98 +295,90 @@ const AdminProducts = () => {
 
   return (
     <AdminLayout>
-      <AnimatePresence>
-        {modal.open && <ProductModal product={modal.product} onClose={() => setModal({ open: false })} onSave={handleSave} />}
-      </AnimatePresence>
+      {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
+      {modal.open && <ProductModal product={modal.product} onClose={() => setModal({ open: false })} onSave={handleSave} />}
 
-      <div className="flex flex-col gap-16">
-         <header className="flex flex-col md:flex-row items-center justify-between gap-12">
+      <div className="space-y-6">
+         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-               <h1 className="text-5xl md:text-7xl font-serif font-black italic text-primary tracking-tighter mb-2">Vault.</h1>
-               <div className="flex items-center gap-4 pl-1">
-                  <span className="text-secondary bg-primary px-4 py-1.5 rounded-full font-black uppercase text-[9px] tracking-[0.4em]">{products.length} Items</span>
-                  <p className="text-primary/20 font-black uppercase text-[10px] tracking-[0.5em]">Inventory Sanctuary</p>
-               </div>
+               <h1 className="text-2xl font-bold text-gray-900">Inventory Management</h1>
+               <p className="text-sm text-gray-500">Manage your store's products and stock levels.</p>
             </div>
             
-            <div className="flex items-center gap-6 w-full md:w-auto">
-               <div className="relative flex-1 md:w-80">
+            <div className="flex items-center gap-3">
+               <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
-                    placeholder="SEARCH VAULT..."
+                    placeholder="Search products..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    className="w-full bg-secondary/10 border-none text-primary placeholder:text-primary/20 px-10 py-5 rounded-full outline-none font-black text-[10px] tracking-[0.4em] uppercase transition-all shadow-soft focus:ring-4 ring-primary/5"
+                    className="pl-10 pr-4 py-2 border border-gray-300 rounded text-sm outline-none focus:border-gray-900 w-full sm:w-64"
                   />
-                  <Search className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/20" />
                </div>
-               <button onClick={() => setModal({ open: true })} className="bg-primary text-secondary px-10 py-5 rounded-full font-black uppercase text-[11px] tracking-[0.4em] hover:scale-105 transition-all shadow-2xl shadow-primary/20 shrink-0 flex items-center gap-4">
-                  <Plus className="w-5 h-5 shrink-0" />
-                  <span>Addition</span>
+               <button onClick={() => setModal({ open: true })} className="bg-gray-900 text-white px-4 py-2 rounded text-sm font-semibold hover:bg-gray-800 flex items-center gap-2 shrink-0">
+                  <Plus className="w-4 h-4" />
+                  Add Product
                </button>
             </div>
-         </header>
+         </div>
 
          {loading ? (
-            <div className="py-60 flex items-center justify-center">
-               <Loader2 className="w-16 h-16 text-primary/10 animate-spin" />
+            <div className="py-20 flex items-center justify-center">
+               <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
             </div>
          ) : filtered.length === 0 ? (
-            <div className="py-40 border-2 border-dashed border-primary/5 rounded-[64px] flex flex-col items-center gap-10 justify-center text-center px-10 bg-secondary/5">
-               <div className="w-32 h-32 rounded-[40px] bg-primary/5 flex items-center justify-center text-primary/10 animate-pulse border border-primary/5"><Archive className="w-12 h-12" /></div>
-               <div>
-                  <h3 className="text-primary/20 font-serif font-black italic text-4xl mb-4">Vast Emptiness</h3>
-                  <p className="text-primary/20 font-black uppercase text-[11px] tracking-[0.5em] max-w-sm mx-auto">No items found matching your filter parameters.</p>
-               </div>
+            <div className="py-20 bg-white border border-gray-200 rounded text-center">
+               <Package className="w-12 h-12 text-gray-200 mx-auto mb-4" />
+               <p className="text-gray-500">No products found.</p>
             </div>
          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-12">
-               {filtered.map(p => (
-                  <motion.div 
-                    layout
-                    key={p.id} 
-                    className={`group bg-white border border-primary/5 rounded-[48px] overflow-hidden transition-all shadow-soft relative ${!p.isActive ? 'opacity-40 grayscale' : ''}`}
-                  >
-                     <div className="relative aspect-[4/3] overflow-hidden bg-secondary/5 p-2">
-                        <div className="w-full h-full relative overflow-hidden rounded-[40px] bg-white">
-                           <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" loading="lazy" />
-                        </div>
-                        
-                        <div className="absolute top-8 left-8 flex gap-3">
-                           <span className="bg-primary/90 backdrop-blur-md px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-[0.4em] text-white">{p.category}</span>
-                           {!p.isActive && <span className="bg-accent text-primary px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-[0.4em]">Archived</span>}
-                        </div>
-                        
-                        <div className="absolute bottom-8 right-8 flex gap-3 translate-y-20 group-hover:translate-y-0 transition-transform duration-500">
-                           <button onClick={() => setModal({ open: true, product: p })} className="w-12 h-12 bg-white hover:bg-primary hover:text-white text-primary rounded-2xl flex items-center justify-center shadow-2xl transition-all border border-primary/5"><Edit2 className="w-5 h-5" /></button>
-                           <button onClick={() => handleDelete(p.id)} className="w-12 h-12 bg-white hover:bg-accent text-primary rounded-2xl flex items-center justify-center shadow-2xl transition-all border border-primary/5"><Trash2 className="w-5 h-5" /></button>
-                        </div>
-                     </div>
-
-                     <div className="p-10">
-                        <div className="flex items-start justify-between gap-4 mb-4">
-                           <h3 className="text-2xl font-serif font-black italic text-primary tracking-tighter truncate capitalize">{p.name}</h3>
-                           <span className="text-accent font-black text-xl italic tracking-tighter shrink-0">₹{p.price}</span>
-                        </div>
-                        
-                        <div className="flex items-center gap-4 mb-8">
-                           <p className="text-primary/30 font-black uppercase text-[10px] tracking-widest bg-secondary/20 px-4 py-1.5 rounded-full">
-                              {p.flavour || 'Natural'}
-                           </p>
-                           <p className="text-primary/30 font-black uppercase text-[10px] tracking-widest bg-secondary/20 px-4 py-1.5 rounded-full">
-                              {p.weight || '100g'}
-                           </p>
-                        </div>
-
-                        <div className="flex items-center justify-between pt-8 border-t border-primary/5">
-                           <div className="flex items-center gap-3">
-                              <div className={`w-2.5 h-2.5 rounded-full animate-pulse ${p.stock < 20 ? 'bg-accent shadow-lg shadow-accent/50' : 'bg-green-500 shadow-lg shadow-green-500/50'}`} />
-                              <span className="text-[10px] font-black text-primary/40 uppercase tracking-[0.3em]">{p.stock} Units Vaulted</span>
-                           </div>
-                           <p className="text-[10px] font-black italic text-primary/20 tracking-widest">#{p.id.slice(0, 6).toUpperCase()}</p>
-                        </div>
-                     </div>
-                  </motion.div>
-               ))}
+            <div className="bg-white border border-gray-200 rounded overflow-hidden shadow-sm">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                        <thead className="bg-gray-50 text-gray-500 border-b border-gray-200">
+                            <tr>
+                                <th className="px-6 py-4 font-semibold uppercase text-xs">Product</th>
+                                <th className="px-6 py-4 font-semibold uppercase text-xs">Category</th>
+                                <th className="px-6 py-4 font-semibold uppercase text-xs">Price</th>
+                                <th className="px-6 py-4 font-semibold uppercase text-xs">Stock</th>
+                                <th className="px-6 py-4 font-semibold uppercase text-xs text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                            {filtered.map(p => (
+                                <tr key={p.id} className="hover:bg-gray-50 transition-colors">
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-3">
+                                            <img src={p.imageUrl} alt="" className="w-10 h-10 rounded bg-gray-100 object-cover" />
+                                            <div>
+                                                <p className="font-bold text-gray-900">{p.name}</p>
+                                                <p className="text-xs text-gray-500 truncate max-w-[200px]">{p.description.slice(0, 50)}...</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-gray-600">{p.category}</td>
+                                    <td className="px-6 py-4 font-semibold text-gray-900">₹{p.price}</td>
+                                    <td className="px-6 py-4">
+                                        <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase
+                                            ${p.stock < 20 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                                            {p.stock} in stock
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-right">
+                                        <div className="flex items-center justify-end gap-2">
+                                            <button onClick={() => setModal({ open: true, product: p })} className="p-2 text-gray-400 hover:text-blue-600 transition-colors">
+                                                <Edit2 className="w-4 h-4" />
+                                            </button>
+                                            <button onClick={() => handleDelete(p.id)} className="p-2 text-gray-400 hover:text-red-600 transition-colors">
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
          )}
       </div>

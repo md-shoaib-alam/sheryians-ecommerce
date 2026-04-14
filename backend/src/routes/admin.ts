@@ -70,10 +70,19 @@ router.patch('/products/:id', async (req: Request, res: Response) => {
 router.delete('/products/:id', async (req: Request, res: Response) => {
   const id = req.params.id as string
   try {
-    await prisma.product.update({ where: { id }, data: { isActive: false } })
+    // Delete related records that might block the deletion
+    await prisma.cartItem.deleteMany({ where: { productId: id } })
+    await prisma.review.deleteMany({ where: { productId: id } })
+    
+    // Attempt to delete the product
+    await prisma.product.delete({ where: { id } })
     res.json({ success: true })
-  } catch {
-    res.status(500).json({ error: 'Failed to delete product' })
+  } catch (error: any) {
+    console.error('Delete error:', error)
+    if (error.code === 'P2003') {
+        return res.status(400).json({ error: 'Cannot delete product that has been ordered. Try archiving instead.' })
+    }
+    res.status(500).json({ error: 'Failed to delete product permanently' })
   }
 })
 
@@ -216,6 +225,22 @@ router.delete('/recipes/:id', async (req: Request, res: Response) => {
     res.json({ success: true })
   } catch {
     res.status(500).json({ error: 'Failed to delete recipe' })
+  }
+})
+
+// Admin: GET /api/admin/users
+router.get('/users', async (_req: Request, res: Response) => {
+  try {
+    const users = await prisma.user.findMany({
+      include: {
+        _count: { select: { orders: true, reviews: true } }
+      },
+      orderBy: { createdAt: 'desc' },
+    })
+    res.json(users)
+  } catch (err) {
+    console.error('Fetch users error:', err)
+    res.status(500).json({ error: 'Failed to fetch users' })
   }
 })
 

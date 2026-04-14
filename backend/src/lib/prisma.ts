@@ -13,7 +13,7 @@ const pool = new Pool({
   connectionString,
   max: 20,              // Up to 20 connections per Node instance
   idleTimeoutMillis: 30000, 
-  connectionTimeoutMillis: 2000,
+  connectionTimeoutMillis: 10000,
 })
 
 const adapter = new PrismaPg(pool)

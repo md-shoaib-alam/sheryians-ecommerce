@@ -1,25 +1,34 @@
 import { useState, useEffect, useRef } from 'react'
 import { ShoppingCart, Menu, X, Search } from 'lucide-react'
 import { Show, useUser } from "@clerk/react";
-import { motion } from "framer-motion";
 import SearchDrawer from './SearchDrawer'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 
 import { useCart } from '../context/CartContext'
 import logo from '../assets/icon/logo.png'
 
-const ProfileAvatar = ({ size = 'sm' }: { size?: 'sm' | 'lg' }) => {
+const ProfileAvatar = ({ size = 'sm', noLink = false }: { size?: 'sm' | 'lg', noLink?: boolean }) => {
   const { user } = useUser()
   const sizeClass = size === 'lg' ? 'w-14 h-14 text-xl' : 'w-9 h-9 text-sm'
+  const content = (
+    <>
+      {user?.imageUrl
+        ? <img src={user.imageUrl} alt={user?.firstName || 'Profile'} className="w-full h-full object-cover" />
+        : <span>{(user?.firstName?.[0] || user?.emailAddresses?.[0]?.emailAddress?.[0] || 'U').toUpperCase()}</span>
+      }
+    </>
+  )
+
+  if (noLink) {
+    return <div className={`${sizeClass} rounded-full border-2 border-brand-red/20 overflow-hidden flex items-center justify-center bg-brand-red font-black text-white`}>{content}</div>
+  }
+
   return (
     <Link
       to="/profile"
       className={`${sizeClass} rounded-full border-2 border-brand-red/20 hover:border-brand-red transition-all overflow-hidden flex items-center justify-center bg-brand-red font-black text-white hover:scale-110 scale-100 duration-200`}
     >
-      {user?.imageUrl
-        ? <img src={user.imageUrl} alt={user?.firstName || 'Profile'} className="w-full h-full object-cover" />
-        : <span>{(user?.firstName?.[0] || user?.emailAddresses?.[0]?.emailAddress?.[0] || 'U').toUpperCase()}</span>
-      }
+      {content}
     </Link>
   )
 }
@@ -264,7 +273,7 @@ const Navbar = () => {
             <div className="flex flex-col items-center">
               <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex flex-col items-center gap-4 group">
                 <div className="relative p-1 rounded-full border border-accent/30">
-                  <ProfileAvatar size="lg" />
+                  <ProfileAvatar size="lg" noLink />
                 </div>
                 <div className="flex flex-col items-center text-center">
                   <span className="text-white font-black uppercase text-sm tracking-widest flex items-center gap-2">
