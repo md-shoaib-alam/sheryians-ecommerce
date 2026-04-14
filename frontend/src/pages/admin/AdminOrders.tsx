@@ -9,15 +9,16 @@ import {
   CheckCircle,
   AlertTriangle,
   Eye,
-  CreditCard,
   ShoppingBag,
   Filter,
   Clock,
   Package,
   Loader2,
+  Phone,
+  CreditCard,
 } from 'lucide-react'
 
-const OrderDetailsModal = ({ order, onClose, onUpdateStatus }: { order: any, onClose: () => void, onUpdateStatus: (id: string, s: string) => void }) => {
+const OrderDetailsModal = ({ order, onClose, onUpdateStatus, isUpdating }: { order: any, onClose: () => void, onUpdateStatus: (id: string, s: string) => void, isUpdating: boolean }) => {
   if (!order) return null;
 
   return (
@@ -43,8 +44,9 @@ const OrderDetailsModal = ({ order, onClose, onUpdateStatus }: { order: any, onC
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Status</p>
                     <select 
                         value={order.status}
+                        disabled={isUpdating}
                         onChange={(e) => onUpdateStatus(order.id, e.target.value)}
-                        className="w-full bg-transparent font-bold text-gray-900 outline-none cursor-pointer"
+                        className={`w-full bg-transparent font-bold text-gray-900 outline-none cursor-pointer ${isUpdating ? 'opacity-50' : ''}`}
                     >
                         {['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'REFUNDED'].map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
@@ -78,7 +80,15 @@ const OrderDetailsModal = ({ order, onClose, onUpdateStatus }: { order: any, onC
                         </h4>
                         <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm space-y-1">
                             <p className="font-bold text-gray-900 text-lg">{order.user?.name || 'Walk-in Customer'}</p>
-                            <p className="text-gray-500">{order.user?.email || 'No email provided'}</p>
+                            <p className="text-gray-500 flex items-center gap-2">
+                                <Mail className="w-3.5 h-3.5" /> {order.user?.email || 'No email provided'}
+                            </p>
+                            {order.address?.phone && (
+                                <p className="text-gray-900 font-semibold flex items-center gap-2 mt-2">
+                                    <Phone className="w-3.5 h-3.5 text-blue-600" />
+                                    {order.address.phone}
+                                </p>
+                            )}
                         </div>
                     </div>
 
@@ -259,7 +269,12 @@ const AdminOrders = () => {
   return (
     <AdminLayout>
       {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
-      <OrderDetailsModal order={selectedOrder} onClose={() => setSelectedOrder(null)} onUpdateStatus={handleUpdateStatus} />
+      <OrderDetailsModal 
+        order={selectedOrder} 
+        onClose={() => setSelectedOrder(null)} 
+        onUpdateStatus={handleUpdateStatus} 
+        isUpdating={updating === selectedOrder?.id}
+      />
       <div className="space-y-8">
          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -324,6 +339,7 @@ const AdminOrders = () => {
                             <div className="min-w-0">
                                 <p className="text-sm font-bold text-gray-900 truncate">{order.user?.name || 'Customer'}</p>
                                 <p className="text-xs text-gray-500 truncate">{order.user?.email}</p>
+                                {order.address?.phone && <p className="text-[10px] font-bold text-blue-600 mt-0.5">{order.address.phone}</p>}
                             </div>
                         </div>
 
@@ -341,7 +357,7 @@ const AdminOrders = () => {
                             <p className="text-lg font-bold text-gray-900">₹{order.total}</p>
                         </div>
                         <div className="p-2 rounded bg-white border border-gray-200 text-gray-400 group-hover:text-gray-900 group-hover:border-gray-900 transition-all">
-                            <Eye className="w-4 h-4" />
+                            {updating === order.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Eye className="w-4 h-4" />}
                         </div>
                      </div>
                   </div>

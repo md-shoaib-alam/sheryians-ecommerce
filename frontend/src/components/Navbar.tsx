@@ -236,7 +236,7 @@ const Navbar = () => {
               { name: 'Recipes', path: '/recipes' },
               { name: 'About', path: '/about' },
               { name: 'Contact', path: '/contact' }
-            ].map((item, idx) => (
+            ].map((item) => (
               <li
                 key={item.name}
                 className="w-full text-center"
