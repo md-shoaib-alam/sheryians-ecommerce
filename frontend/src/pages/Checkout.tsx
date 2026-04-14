@@ -50,7 +50,7 @@ const Banner = ({ type, msg }: { type: 'success' | 'error'; msg: string }) => (
 
 // ─── Checkout Page ─────────────────────────────────────────────────────────
 const Checkout = () => {
-  const { isSignedIn } = useUser()
+  const { isLoaded, isSignedIn } = useUser()
   const { getToken } = useAuth()
   const { cart, getCartTotal, clearCart } = useCart()
   const navigate = useNavigate()
@@ -99,8 +99,8 @@ const Checkout = () => {
   }, [checkoutItems, navigate, orderSuccess, orderCancelled])
 
   useEffect(() => {
-    if (!isSignedIn) navigate('/sign-in')
-  }, [isSignedIn, navigate])
+    if (isLoaded && !isSignedIn) navigate('/sign-in')
+  }, [isLoaded, isSignedIn, navigate])
 
   // Fetch addresses
   const fetchAddresses = useCallback(async () => {
@@ -191,9 +191,10 @@ const Checkout = () => {
           }
 
           try {
+            const freshToken = await getToken()
             const verifyData = await api('/api/payment/verify', {
               method: 'POST',
-              token,
+              token: freshToken,
               body: {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
@@ -203,9 +204,9 @@ const Checkout = () => {
             })
 
             if (verifyData.success) {
+              if (!isDirectBuy) await clearCart()
               setSuccessOrderId(verifyData.order.id)
               setOrderSuccess(true)
-              if (!isDirectBuy) clearCart()
             } else {
               showBanner('error', 'Payment verification failed.')
             }
@@ -230,9 +231,8 @@ const Checkout = () => {
               })
               const orderData = await api(`/api/orders/${data.orderId}`, { token })
               setCancelledOrder(orderData)
-              if (!isDirectBuy) clearCart()
             } catch {
-              if (!isDirectBuy) clearCart()
+              // ignore
             }
           },
         },
@@ -260,9 +260,9 @@ const Checkout = () => {
       })
 
       if (data.success) {
+        if (!isDirectBuy) await clearCart()
         setSuccessOrderId(data.order.id)
         setOrderSuccess(true)
-        if (!isDirectBuy) clearCart()
       }
     } catch (err: any) {
       showBanner('error', err.message || 'Failed to place order.')
