@@ -21,12 +21,12 @@ const HeroBanner = () => {
             transition={{ duration: 1.2, delay: 0.3 }}
             className="order-2 md:order-1 text-left flex flex-col justify-center py-6 md:py-0"
           >
-            <span className="text-secondary/80 uppercase tracking-[0.3em] md:tracking-[0.5em] font-sans font-normal text-[10px] md:text-sm mb-4 md:mb-6 block drop-shadow-sm">
-              Traditionally Indian Healthy Foods
+            <span className="text-secondary/80 uppercase tracking-[0.3em] md:tracking-[0.5em] text-[10px] md:text-[12px] mb-4 md:mb-6 block drop-shadow-sm">
+              Traditionally Indian Healthy Globally
             </span>
             <h1 className="text-white text-3xl sm:text-4xl md:text-[4.5rem] font-serif font-black leading-[1] md:leading-[0.9] mb-6 md:mb-8 max-w-2xl italic tracking-tighter drop-shadow-2xl">
-              <span className="whitespace-nowrap">Premium Roasted</span> <br />
-              <span className="text-accent">Makhana.</span>
+              <span className="whitespace-nowrap">Premium</span> <br />
+              <span className="text-accent text-9xl">Makhana</span>
             </h1>
             <p className="text-white/60 text-sm sm:text-base md:text-xl max-w-lg mb-8 md:mb-12 font-sans font-normal leading-relaxed drop-shadow-sm">
               Super Puffed Lotus Seeds by Shriyans. Gluten Free, Zero Cholesterol, and Rich in Antioxidants – the perfect protein-rich healthy snack.

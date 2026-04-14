@@ -20,7 +20,7 @@ const Footer = () => {
             </div>
           </Link>
           <p className="text-white/50 text-sm leading-relaxed max-w-sm font-medium">
-            Bringing you the finest quality Makhana with hand-crafted flavors since 2026. Crunchy, healthy, and delicious.
+            Bringing you the finest quality Makhana with hand-crafted flavors since 2025. Crunchy, healthy, and delicious.
           </p>
         </div>
 

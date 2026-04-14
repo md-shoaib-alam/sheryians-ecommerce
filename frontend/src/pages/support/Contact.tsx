@@ -61,7 +61,7 @@ const Contact = () => {
                  <div className="mt-8 relative aspect-video rounded-3xl overflow-hidden shadow-soft border border-primary/5">
                     <iframe 
                       title="location-map"
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d112123.63371900138!2d77.3001!3d28.6272!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce5a43173357b%3A0x37ffce30c3f1c74a!2sNoida%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1710921234567!5m2!1sen!2sin" 
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3516.7178044918155!2d76.69953703397421!3d28.185496442147688!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d4f6c9b7c811b%3A0x2c76e828d6282ba2!2sKhijuri%2C%20Haryana%20123106!5e0!3m2!1sen!2sin!4v1776178564740!5m2!1sen!2sin" 
                       width="100%" 
                       height="100%" 
                       style={{ border: 0 }} 
