@@ -1,9 +1,24 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-// import herobanner from '../assets/prodcut8.png'
-import herobanner from '../assets/heroprodcut-removebg-preview.png'
+import { motion, AnimatePresence } from 'framer-motion'
+
+const images = [
+  "https://ik.imagekit.io/damienknights/SLS%20Products/Peri%20Peri%20B.jpeg",
+  "https://ik.imagekit.io/damienknights/SLS%20Products/R%20Salt%20Big.jpeg?updatedAt=1776187808430",
+  "https://ik.imagekit.io/damienknights/SLS%20Products/Peri%20Peri%20B.jpeg",
+  "https://ik.imagekit.io/damienknights/SLS%20Products/Himalayan%20Rock%20Salt.jpeg?updatedAt=1776187807307",
+]
 
 const HeroBanner = () => {
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length)
+    }, 3000)
+    return () => clearInterval(timer)
+  }, [])
+
   return (
     <div className="relative w-full min-h-screen bg-primary pt-24 md:pt-32 overflow-hidden flex flex-col justify-center">
       {/* Decorative background elements */}
@@ -39,10 +54,6 @@ const HeroBanner = () => {
               >
                 Shop Now
               </Link>
-              <div className="flex flex-col">
-                <span className="text-accent font-serif italic text-2xl md:text-4xl font-black italic tracking-tighter">25% OFF</span>
-                <span className="text-white/30 uppercase text-[8px] md:text-[10px] tracking-[0.3em] md:tracking-[0.5em] font-black">On Your First Order</span>
-              </div>
             </div>
           </motion.div>
 
@@ -63,24 +74,26 @@ const HeroBanner = () => {
                 {/* Radial accent glow */}
                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-accent/20 blur-[100px] rounded-full"></div>
 
-                <motion.img
-                  src={herobanner}
-                  alt="Premium Makhana"
-                  className="relative z-10 w-full h-full object-cover px-8 md:px-0 drop-shadow-[0_30px_50px_rgba(0,0,0,0.5)] md:drop-shadow-[0_50px_80px_rgba(0,0,0,0.7)]"
-                  loading="eager"
-                />
+                <AnimatePresence initial={false}>
+                  <motion.img
+                    key={currentIndex}
+                    src={images[currentIndex]}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.6, ease: "easeInOut" }}
+                    alt="Premium Makhana"
+                    className="absolute inset-0 z-10 w-full h-full object-cover px-8 md:px-0 drop-shadow-[0_30px_50px_rgba(0,0,0,0.5)] md:drop-shadow-[0_50px_80px_rgba(0,0,0,0.7)]"
+                    loading="eager"
+                  />
+                </AnimatePresence>
               </div>
             </div>
           </motion.div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 animate-bounce hidden md:block opacity-30">
-        <div className="w-[1px] h-20 bg-gradient-to-b from-accent to-transparent flex justify-center pt-2">
-          <div className="w-[3px] h-3 bg-accent rounded-full"></div>
-        </div>
-      </div>
+
     </div>
   )
 }
