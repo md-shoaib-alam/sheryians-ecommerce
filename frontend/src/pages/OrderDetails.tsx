@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { 
   Package, MapPin, CreditCard, Clock, ChevronLeft, 
   CheckCircle2, AlertCircle, Truck, Receipt, 
-  Hash, Info, Loader2, Calendar, ShoppingBag
+  Hash, Loader2, ShoppingBag
 } from 'lucide-react'
 
 import { api } from '../lib/api'

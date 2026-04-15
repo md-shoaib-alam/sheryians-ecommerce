@@ -205,12 +205,18 @@ router.get('/inquiries', async (_req: Request, res: Response) => {
 
 // Admin: PATCH /api/admin/inquiries/:id
 router.patch('/inquiries/:id', async (req: Request, res: Response) => {
-  const { id } = req.params
+  const id = req.params.id as string
   const { status } = req.body
+
+  const validStatuses = ['NEW', 'READ', 'REPLIED']
+  if (!status || !validStatuses.includes(status)) {
+    return res.status(400).json({ error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` })
+  }
+
   try {
     const inquiry = await prisma.inquiry.update({
       where: { id },
-      data: { status },
+      data: { status: status as string },
     })
     res.json(inquiry)
   } catch {
@@ -220,7 +226,7 @@ router.patch('/inquiries/:id', async (req: Request, res: Response) => {
 
 // Admin: DELETE /api/admin/inquiries/:id
 router.delete('/inquiries/:id', async (req: Request, res: Response) => {
-  const { id } = req.params
+  const id = req.params.id as string
   try {
     await prisma.inquiry.delete({ where: { id } })
     res.json({ success: true })

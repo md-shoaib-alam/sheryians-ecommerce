@@ -30,6 +30,9 @@ router.post('/', requireAuth, async (req: Request, res: Response) => {
   const { productId, quantity = 1 } = req.body
 
   if (!productId) return res.status(400).json({ error: 'productId is required' })
+  if (!Number.isInteger(quantity) || quantity < 1 || quantity > 50) {
+    return res.status(400).json({ error: 'Quantity must be an integer between 1 and 50' })
+  }
 
   try {
     const user = await prisma.user.findUnique({ where: { clerkUserId: clerkId } })

@@ -5,13 +5,30 @@ import ProductCard from '../components/ProductCard'
 import { api } from '../lib/api'
 import { Loader2, SlidersHorizontal, ChevronDown, X } from 'lucide-react'
 
+interface Product {
+    id: string
+    name: string
+    description: string
+    price: number
+    mrp: number
+    imageUrl?: string
+    image?: string
+    category: string
+    tags: string[]
+    stock: number
+    rating?: number
+    flavour?: string
+    ordersCount?: number
+    _count?: { reviews: number }
+}
+
 const Products = () => {
     const { data, isLoading } = useQuery({
         queryKey: ['products', 'all'],
         queryFn: () => api('/api/products'),
     })
 
-    const products = data?.products || []
+    const products: Product[] = data?.products || []
     const [sortBy, setSortBy] = useState('featured')
 
     // Active applied filters
@@ -27,18 +44,18 @@ const Products = () => {
     const [tempCategory, setTempCategory] = useState('All')
 
     const filteredAndSortedProducts = useMemo(() => {
-        let result = products.filter((p: any) =>
+        let result = products.filter((p: Product) =>
             (p.rating || 5) >= filterRating &&
             (p.price || 0) <= priceRange &&
             (activeCategory === 'All' || p.category === activeCategory)
         )
 
         if (sortBy === 'price-low') {
-            result.sort((a: any, b: any) => (a.price || 0) - (b.price || 0))
+            result.sort((a: Product, b: Product) => (a.price || 0) - (b.price || 0))
         } else if (sortBy === 'price-high') {
-            result.sort((a: any, b: any) => (b.price || 0) - (a.price || 0))
+            result.sort((a: Product, b: Product) => (b.price || 0) - (a.price || 0))
         } else if (sortBy === 'bestselling') {
-            result.sort((a: any, b: any) => (b.ordersCount || 0) - (a.ordersCount || 0))
+            result.sort((a: Product, b: Product) => (b.ordersCount || 0) - (a.ordersCount || 0))
         }
         return result
     }, [products, sortBy, filterRating, priceRange, activeCategory])
@@ -224,7 +241,7 @@ const Products = () => {
                 </AnimatePresence>
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
-                    {filteredAndSortedProducts.map((product) => (
+                    {filteredAndSortedProducts.map((product: Product) => (
                         <motion.div
                             key={product.id}
                             layout
@@ -235,7 +252,7 @@ const Products = () => {
                             <ProductCard
                                 id={product.id}
                                 name={product.name}
-                                image={product.imageUrl || product.image}
+                                image={product.imageUrl || product.image || ''}
                                 currentPrice={product.price?.toString()}
                                 oldPrice={product.mrp?.toString()}
                                 rating={product.rating || 5}

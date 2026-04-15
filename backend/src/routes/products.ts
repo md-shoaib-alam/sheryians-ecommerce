@@ -15,11 +15,14 @@ router.get('/', optionalAuth, async (req: Request, res: Response) => {
 
   if (category) where.category = category as string
   if (search) {
-    where.OR = [
-      { name:        { contains: search as string, mode: 'insensitive' } },
-      { description: { contains: search as string, mode: 'insensitive' } },
-      { flavour:     { contains: search as string, mode: 'insensitive' } },
-    ]
+    const sanitizedSearch = (search as string).slice(0, 200).trim()
+    if (sanitizedSearch) {
+      where.OR = [
+        { name:        { contains: sanitizedSearch, mode: 'insensitive' } },
+        { description: { contains: sanitizedSearch, mode: 'insensitive' } },
+        { flavour:     { contains: sanitizedSearch, mode: 'insensitive' } },
+      ]
+    }
   }
   if (tags) {
     const tagList = (tags as string).split(',')

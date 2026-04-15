@@ -1,4 +1,4 @@
-import { PrismaClient } from '../../generated/prisma/client'
+import { PrismaClient } from '../../generated/prisma'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 import dotenv from 'dotenv'
@@ -16,7 +16,7 @@ const pool = new Pool({
   connectionTimeoutMillis: 10000,
 })
 
-const adapter = new PrismaPg(pool)
+const adapter = new PrismaPg(pool as any)
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 

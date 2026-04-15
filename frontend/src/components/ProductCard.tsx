@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 
 interface ProductCardProps {
-  id: number
+  id: string
   image: string
   name: string
   rating: number
   reviews: number
-  oldPrice: string
+  oldPrice?: string
   currentPrice: string
 }
 

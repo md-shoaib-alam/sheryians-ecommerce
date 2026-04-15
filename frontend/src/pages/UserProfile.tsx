@@ -1,6 +1,6 @@
 import { useUser, useClerk, useAuth } from "@clerk/react"
 import { useNavigate } from 'react-router-dom'
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   User, LogOut, Package, MapPin, Plus, Trash2, CheckCircle2, AlertCircle, ChevronRight, Loader2, Settings, Calendar, Phone
@@ -8,21 +8,6 @@ import {
 import { api } from '../lib/api'
 
 // Types
-interface Address {
-  id: string
-  label: string
-  firstName: string
-  lastName: string
-  line1: string
-  line2: string | null
-  city: string
-  state: string
-  zip: string
-  country: string
-  phone: string
-  isDefault: boolean
-}
-
 interface OrderItem {
   id: string
   name: string

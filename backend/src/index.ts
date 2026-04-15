@@ -74,7 +74,13 @@ app.use(cors({
   credentials: true,
 }))
 
-app.use(express.json({ limit: '1mb' }))
+// Capture raw body for Razorpay webhook signature verification
+app.use(express.json({
+  limit: '1mb',
+  verify: (req: any, _res, buf) => {
+    req.rawBody = buf
+  },
+}))
 app.use(express.urlencoded({ extended: true }))
 
 // ─── Health Check ──────────────────────────────────────────────────────────
