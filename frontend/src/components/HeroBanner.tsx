@@ -44,7 +44,7 @@ const HeroBanner = () => {
               <span className="text-accent text-7xl md:text-9xl">Makhana</span>
             </h1>
             <p className="text-white/60 text-sm sm:text-base md:text-xl max-w-lg mb-8 md:mb-12 font-sans font-normal leading-relaxed drop-shadow-sm">
-              Super Puffed Lotus Seeds by Shriyans. Gluten Free, Zero Cholesterol, and Rich in Antioxidants – the perfect protein-rich healthy snack.
+              Super Puffed Lotus Seeds by Shriyans. Gluten Free, Zero Cholesterol, and Rich in Antioxidants –  the perfect protein-rich healthy snack.
             </p>
 
             <div className="flex flex-wrap gap-6 md:gap-10 items-center">
@@ -83,7 +83,7 @@ const HeroBanner = () => {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.6, ease: "easeInOut" }}
                     alt="Premium Makhana"
-                    className="absolute inset-0 z-10 w-full h-full object-cover px-8 md:px-0 drop-shadow-[0_30px_50px_rgba(0,0,0,0.5)] md:drop-shadow-[0_50px_80px_rgba(0,0,0,0.7)]"
+                    className="absolute inset-0 z-10 w-full h-full object-cover drop-shadow-[0_30px_50px_rgba(0,0,0,0.5)] md:drop-shadow-[0_50px_80px_rgba(0,0,0,0.7)]"
                     loading="eager"
                   />
                 </AnimatePresence>

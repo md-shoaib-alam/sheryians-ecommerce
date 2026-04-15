@@ -29,6 +29,7 @@ const AdminProducts = lazy(() => import('./pages/admin/AdminProducts'))
 const AdminOrders = lazy(() => import('./pages/admin/AdminOrders'))
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'))
 const AdminRecipes = lazy(() => import('./pages/admin/AdminRecipes'))
+const AdminInquiries = lazy(() => import('./pages/admin/AdminInquiries'))
 
 // Non-lazy for small static components if needed, but Cart was bundled
 import { Cart } from './pages/StaticPages'
@@ -83,6 +84,7 @@ function App() {
               <Route path="/admin/recipes" element={<AdminRecipes />} />
               <Route path="/admin/orders" element={<AdminOrders />} />
               <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/inquiries" element={<AdminInquiries />} />
             </Route>
             <Route path="/profile/order/:id" element={<OrderDetails />} />
           </Routes>

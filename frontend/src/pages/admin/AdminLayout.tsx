@@ -6,6 +6,7 @@ import {
   Package,
   ShoppingBag,
   Users,
+  MessageSquare,
   X,
   ExternalLink,
   ChevronRight,
@@ -66,6 +67,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                   <SidebarItem to="/admin/products" icon={Package} label="Products" active={location.pathname === '/admin/products'} />
                   <SidebarItem to="/admin/orders" icon={ShoppingBag} label="Orders" active={location.pathname === '/admin/orders'} />
                   <SidebarItem to="/admin/users" icon={Users} label="Users" active={location.pathname === '/admin/users'} />
+                  <SidebarItem to="/admin/inquiries" icon={MessageSquare} label="Inquiries" active={location.pathname === '/admin/inquiries'} />
                </div>
             </div>
 

@@ -191,5 +191,43 @@ router.get('/users', async (_req: Request, res: Response) => {
   }
 })
 
+// Admin: GET /api/admin/inquiries
+router.get('/inquiries', async (_req: Request, res: Response) => {
+  try {
+    const inquiries = await prisma.inquiry.findMany({
+      orderBy: { createdAt: 'desc' },
+    })
+    res.json(inquiries)
+  } catch {
+    res.status(500).json({ error: 'Failed to fetch inquiries' })
+  }
+})
+
+// Admin: PATCH /api/admin/inquiries/:id
+router.patch('/inquiries/:id', async (req: Request, res: Response) => {
+  const { id } = req.params
+  const { status } = req.body
+  try {
+    const inquiry = await prisma.inquiry.update({
+      where: { id },
+      data: { status },
+    })
+    res.json(inquiry)
+  } catch {
+    res.status(500).json({ error: 'Failed to update inquiry' })
+  }
+})
+
+// Admin: DELETE /api/admin/inquiries/:id
+router.delete('/inquiries/:id', async (req: Request, res: Response) => {
+  const { id } = req.params
+  try {
+    await prisma.inquiry.delete({ where: { id } })
+    res.json({ success: true })
+  } catch {
+    res.status(500).json({ error: 'Failed to delete inquiry' })
+  }
+})
+
 export default router
 
