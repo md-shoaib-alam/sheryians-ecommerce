@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { useQuery } from '@tanstack/react-query'
 import HeroBanner from '../components/HeroBanner'
 import ProductSection from '../components/ProductSection'
 import Benefits from '../components/Features'
@@ -10,23 +10,12 @@ import Marketplace from '../components/Marketplace'
 import { api } from '../lib/api'
 
 const Home = () => {
-  const [products, setProducts] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data, isLoading } = useQuery({
+    queryKey: ['products', 'home'],
+    queryFn: () => api('/api/products?limit=12'),
+  })
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await api('/api/products?limit=12')
-        setProducts(data.products || [])
-      } catch (err) {
-        console.error('Failed to fetch home products:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchProducts()
-  }, [])
-
+  const products = data?.products || []
   const featuredProducts = products.slice(0, 8)
 
   return (
@@ -44,7 +33,7 @@ const Home = () => {
 
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-24">
         <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-16 text-center">Featured Collection</h2>
-        {loading ? (
+        {isLoading ? (
           <div className="py-20 flex justify-center"><div className="w-12 h-12 border-4 border-accent/20 border-t-accent rounded-full animate-spin" /></div>
         ) : (
           <ProductSection

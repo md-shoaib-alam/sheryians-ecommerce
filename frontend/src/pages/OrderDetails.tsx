@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth, useUser } from '@clerk/react'
+import { useQuery } from '@tanstack/react-query'
 import { 
   Package, MapPin, CreditCard, Clock, ChevronLeft, 
   CheckCircle2, AlertCircle, Truck, Receipt, 
@@ -53,26 +53,15 @@ const OrderDetails = () => {
   const navigate = useNavigate()
   const { getToken } = useAuth()
   const { user } = useUser()
-  const [order, setOrder] = useState<Order | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchOrderDetails = async () => {
-      if (!id) return
-      try {
+  const { data: order, isLoading, isError, error } = useQuery<Order>({
+    queryKey: ['order', id],
+    queryFn: async () => {
         const token = await getToken()
-        const data = await api(`/api/orders/${id}`, { token })
-        setOrder(data)
-      } catch (err: any) {
-        setError(err.message || 'Failed to load order details')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchOrderDetails()
-  }, [id, getToken])
+        return api(`/api/orders/${id}`, { token })
+    },
+    enabled: !!id,
+  })
 
   const getStatusInfo = (status: string) => {
     const steps = [
@@ -99,7 +88,7 @@ const OrderDetails = () => {
     }
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center pt-20 bg-[#f8f9fa]">
         <Loader2 className="w-10 h-10 text-brand-red/30 animate-spin" />
@@ -107,13 +96,13 @@ const OrderDetails = () => {
     )
   }
 
-  if (error || !order) {
+  if (isError || !order) {
     return (
       <div className="min-h-screen pt-32 pb-20 px-4 flex flex-col items-center justify-center text-center bg-[#f8f9fa]">
         <div className="bg-white border border-gray-100 p-8 rounded-[40px] max-w-md w-full shadow-sm">
           <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-6" />
           <h2 className="text-2xl font-black italic tracking-tighter text-gray-900 uppercase mb-2">Order Not Found</h2>
-          <p className="text-gray-500 text-sm mb-8">{error || "We couldn't find the order you're looking for."}</p>
+          <p className="text-gray-500 text-sm mb-8">{(error as any)?.message || "We couldn't find the order you're looking for."}</p>
           <button 
             onClick={() => navigate('/profile')} 
             className="w-full bg-brand-dark hover:bg-brand-red text-white py-4 rounded-full font-bold uppercase tracking-widest transition-all"

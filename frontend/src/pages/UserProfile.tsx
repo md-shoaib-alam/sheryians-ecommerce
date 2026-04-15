@@ -1,6 +1,7 @@
 import { useUser, useClerk, useAuth } from "@clerk/react"
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   User, LogOut, Package, MapPin, Plus, Trash2, CheckCircle2, AlertCircle, ChevronRight, Loader2, Settings, Calendar, Phone
 } from 'lucide-react'
@@ -153,25 +154,18 @@ const PersonalInfoTab = () => {
 const OrderHistoryTab = () => {
   const { getToken } = useAuth()
   const navigate = useNavigate()
-  const [orders, setOrders] = useState<Order[]>([])
-  const [loading, setLoading] = useState(true)
 
+  const { data, isLoading } = useQuery({
+    queryKey: ['orders'],
+    queryFn: async () => {
+      const token = await getToken()
+      return api('/api/orders', { token })
+    },
+  })
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const token = await getToken()
-        const data = await api('/api/orders', { token })
-        setOrders((data.orders || []).filter((o: Order) => o.status !== 'PENDING'))
-      } catch {
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchOrders()
-  }, [getToken])
+  const orders = (data?.orders || []).filter((o: Order) => o.status !== 'PENDING')
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="bg-white rounded-[48px] p-24 border border-primary/5 flex items-center justify-center shadow-soft">
         <Loader2 className="w-12 h-12 text-accent animate-spin" />
@@ -208,7 +202,7 @@ const OrderHistoryTab = () => {
 
   return (
     <div className="space-y-6">
-      {orders.map((order) => (
+      {orders.map((order: any) => (
         <div 
           key={order.id} 
           onClick={() => navigate(`/profile/order/${order.id}`)}
@@ -245,7 +239,7 @@ const OrderHistoryTab = () => {
           </div>
 
           <div className="flex flex-wrap gap-4 pt-4 border-t border-primary/5">
-            {order.items.map(item => (
+            {order.items.map((item: any) => (
               <div key={item.id} className="flex items-center gap-4 bg-secondary/5 text-primary text-[10px] font-black uppercase tracking-widest px-5 py-3 rounded-2xl border border-primary/5 group-hover:bg-white transition-colors">
                 <div className="w-10 h-10 rounded-xl bg-white border border-primary/5 overflow-hidden">
                    <img src={item.product?.imageUrl} className="w-full h-full object-cover" />
@@ -264,8 +258,14 @@ const OrderHistoryTab = () => {
 // Saved Addresses Tab
 const SavedAddressesTab = () => {
   const { getToken } = useAuth()
-  const [addresses, setAddresses] = useState<Address[]>([])
-  const [loading, setLoading] = useState(true)
+  const queryClient = useQueryClient()
+  const { data: addresses = [], isLoading } = useQuery({
+    queryKey: ['addresses'],
+    queryFn: async () => {
+      const token = await getToken()
+      return api('/api/users/addresses', { token })
+    },
+  })
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ 
     label: '', 
@@ -287,19 +287,6 @@ const SavedAddressesTab = () => {
     setTimeout(() => setBanner(null), 4000)
   }
 
-  const fetchAddresses = useCallback(async () => {
-    try {
-      const token = await getToken()
-      const data = await api('/api/users/addresses', { token })
-      setAddresses(data)
-    } catch {
-    } finally {
-      setLoading(false)
-    }
-  }, [getToken])
-
-  useEffect(() => { fetchAddresses() }, [fetchAddresses])
-
   const handleAdd = async () => {
     if (!form.label || !form.firstName || !form.lastName || !form.line1 || !form.city || !form.state || !form.zip || !form.phone) {
       showBannerMsg('error', 'Please fill all required fields.')
@@ -312,7 +299,7 @@ const SavedAddressesTab = () => {
       setForm({ label: '', firstName: '', lastName: '', line1: '', line2: '', city: '', state: '', zip: '', country: 'India', phone: '' })
       setShowForm(false)
       showBannerMsg('success', 'Address curated successfully!')
-      fetchAddresses()
+      queryClient.invalidateQueries({ queryKey: ['addresses'] })
     } catch (err: any) {
       showBannerMsg('error', err.message || 'Failed to curate address.')
     } finally {
@@ -324,13 +311,13 @@ const SavedAddressesTab = () => {
     try {
       const token = await getToken()
       await api(`/api/users/addresses/${id}`, { method: 'DELETE', token })
-      setAddresses(prev => prev.filter(a => a.id !== id))
+      queryClient.invalidateQueries({ queryKey: ['addresses'] })
     } catch {
       showBannerMsg('error', 'Failed to remove address.')
     }
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="bg-white rounded-[48px] p-24 shadow-soft border border-primary/5 flex items-center justify-center">
         <Loader2 className="w-12 h-12 text-accent animate-spin" />
@@ -354,7 +341,7 @@ const SavedAddressesTab = () => {
         </div>
       )}
 
-      {addresses.map(addr => (
+      {addresses.map((addr: any) => (
         <div key={addr.id} className="bg-white border border-primary/5 rounded-[40px] p-8 flex items-start justify-between group hover:shadow-2xl hover:translate-y-[-4px] transition-all shadow-soft overflow-hidden">
           <div className="flex items-start gap-8">
             <div className="w-14 h-14 bg-secondary/10 rounded-2xl flex items-center justify-center shrink-0 border border-primary/5 group-hover:bg-accent group-hover:text-white transition-all duration-500">
@@ -491,7 +478,6 @@ const AccountSettingsTab = ({ onSignOut }: { onSignOut: () => void }) => {
 }
 
 // Main Page
-// Main Profile Page
 type Tab = 'personal' | 'orders' | 'addresses' | 'settings'
 
 const tabs: { id: Tab; label: string; icon: typeof User }[] = [

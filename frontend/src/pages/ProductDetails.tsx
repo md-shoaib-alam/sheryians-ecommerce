@@ -1,6 +1,7 @@
-import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useQuery } from '@tanstack/react-query'
 import { Star, Check, ShoppingBag, ArrowLeft, ShieldCheck, Zap, Leaf, Loader2 } from 'lucide-react'
 import { api } from '../lib/api'
 import { useCart } from '../context/CartContext'
@@ -11,40 +12,37 @@ const ProductDetails = () => {
     const { addToCart } = useCart()
     const navigate = useNavigate()
     const scrollContainerRef = useRef<HTMLDivElement>(null)
-    const [product, setProduct] = useState<any>(null)
-    const [recommendations, setRecommendations] = useState<any[]>([])
-    const [loading, setLoading] = useState(true)
     const [selectedImage, setSelectedImage] = useState<string>('')
     const [isAdded, setIsAdded] = useState(false)
+
+    // Fetch Product Data
+    const { data: product, isLoading: isProductLoading } = useQuery({
+        queryKey: ['product', id],
+        queryFn: () => api(`/api/products/${id}`),
+    })
+
+    // Fetch Recommendations (Latest products by category)
+    const { data: recData, isLoading: isRecLoading } = useQuery({
+        queryKey: ['recommendations', product?.category, id],
+        queryFn: () => api(`/api/products?category=${product?.category}&limit=5`),
+        enabled: !!product?.category,
+    })
+
+    const recommendations = recData?.products?.filter((p: any) => p.id !== id).slice(0, 4) || []
 
     // Scroll to top on id change
     useEffect(() => {
         window.scrollTo(0, 0)
     }, [id])
 
-    // Fetch Product Data
+    // Update selected image when product changes
     useEffect(() => {
-        const fetchProductData = async () => {
-            setLoading(true)
-            try {
-                // Fetch product details
-                const data = await api(`/api/products/${id}`)
-                setProduct(data)
-                setSelectedImage(data.imageUrl)
-
-                // Fetch Recommendations (Latest products by category)
-                const recData = await api(`/api/products?category=${data.category}&limit=5`)
-                if (recData && recData.products) {
-                    setRecommendations(recData.products.filter((p: any) => p.id !== id).slice(0, 4))
-                }
-            } catch (err) {
-                console.error("Discovery error:", err)
-            } finally {
-                setLoading(false)
-            }
+        if (product?.imageUrl) {
+            setSelectedImage(product.imageUrl)
         }
-        fetchProductData()
-    }, [id])
+    }, [product])
+
+    const isLoading = isProductLoading || (isRecLoading && !recommendations.length)
 
     const handleAddToCart = () => {
         if (!product) return
@@ -73,7 +71,7 @@ const ProductDetails = () => {
         })
     }
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-white">
                 <Loader2 className="w-10 h-10 text-primary animate-spin" />

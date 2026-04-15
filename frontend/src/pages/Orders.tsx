@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useAuth, useUser } from "@clerk/react"
 import { useNavigate, Link } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { Package, Calendar, ChevronRight, Loader2, ShoppingBag, ArrowLeft } from 'lucide-react'
 import { api } from '../lib/api'
 
@@ -24,8 +25,6 @@ const Orders = () => {
   const { isLoaded, isSignedIn } = useUser()
   const { getToken } = useAuth()
   const navigate = useNavigate()
-  const [orders, setOrders] = useState<Order[]>([])
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -33,34 +32,28 @@ const Orders = () => {
     }
   }, [isLoaded, isSignedIn, navigate])
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      if (!isSignedIn) return
-      try {
-        const token = await getToken()
-        const data = await api('/api/orders', { token })
-        // Standard e-commerce practice: don't show internal/pending orders to users
-        setOrders((data.orders || []).filter((o: Order) => o.status !== 'PENDING'))
-      } catch (err) {
-        console.error('Failed to fetch orders:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchOrders()
-  }, [getToken, isSignedIn])
+  const { data, isLoading } = useQuery<{ orders: Order[] }>({
+    queryKey: ['orders'],
+    queryFn: async () => {
+      const token = await getToken()
+      return api('/api/orders', { token })
+    },
+    enabled: !!isSignedIn,
+  })
+
+  const orders = (data?.orders || []).filter((o: Order) => o.status !== 'PENDING')
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'DELIVERED': return 'bg-green-500 text-white border-green-200'
-      case 'SHIPPED': return 'bg-brand-red text-white border-brand-red/20'
+      case 'SHIPPED': return 'bg-primary text-white border-primary/20'
       case 'CANCELLED': return 'bg-primary/20 text-primary border-primary/10'
       case 'PROCESSING': return 'bg-secondary text-primary border-primary/5'
       default: return 'bg-secondary/20 text-primary/40'
     }
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center pt-32 bg-white">
         <Loader2 className="w-10 h-10 text-primary animate-spin" />
@@ -104,7 +97,7 @@ const Orders = () => {
             </div>
         ) : (
             <div className="space-y-6">
-                {orders.map((order) => (
+                {orders.map((order: Order) => (
                     <div 
                         key={order.id} 
                         onClick={() => navigate(`/profile/order/${order.id}`)}

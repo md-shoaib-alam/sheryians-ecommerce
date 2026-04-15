@@ -1,12 +1,17 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useQuery } from '@tanstack/react-query'
 import ProductCard from '../components/ProductCard'
 import { api } from '../lib/api'
 import { Loader2, SlidersHorizontal, ChevronDown, X } from 'lucide-react'
 
 const Products = () => {
-    const [products, setProducts] = useState<any[]>([])
-    const [loading, setLoading] = useState(true)
+    const { data, isLoading } = useQuery({
+        queryKey: ['products', 'all'],
+        queryFn: () => api('/api/products'),
+    })
+
+    const products = data?.products || []
     const [sortBy, setSortBy] = useState('featured')
 
     // Active applied filters
@@ -21,33 +26,19 @@ const Products = () => {
     const [tempPrice, setTempPrice] = useState(1000)
     const [tempCategory, setTempCategory] = useState('All')
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const data = await api('/api/products')
-                setProducts(data.products || [])
-            } catch (err) {
-                console.error('Failed to fetch products:', err)
-            } finally {
-                setLoading(false)
-            }
-        }
-        fetchProducts()
-    }, [])
-
     const filteredAndSortedProducts = useMemo(() => {
-        let result = products.filter(p =>
+        let result = products.filter((p: any) =>
             (p.rating || 5) >= filterRating &&
             (p.price || 0) <= priceRange &&
             (activeCategory === 'All' || p.category === activeCategory)
         )
 
         if (sortBy === 'price-low') {
-            result.sort((a, b) => (a.price || 0) - (b.price || 0))
+            result.sort((a: any, b: any) => (a.price || 0) - (b.price || 0))
         } else if (sortBy === 'price-high') {
-            result.sort((a, b) => (b.price || 0) - (a.price || 0))
+            result.sort((a: any, b: any) => (b.price || 0) - (a.price || 0))
         } else if (sortBy === 'bestselling') {
-            result.sort((a, b) => (b.ordersCount || 0) - (a.ordersCount || 0))
+            result.sort((a: any, b: any) => (b.ordersCount || 0) - (a.ordersCount || 0))
         }
         return result
     }, [products, sortBy, filterRating, priceRange, activeCategory])
@@ -69,7 +60,7 @@ const Products = () => {
         setIsFilterOpen(false)
     }
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center pt-32">
                 <Loader2 className="w-10 h-10 text-primary animate-spin" />

@@ -81,13 +81,13 @@ const SignUpPage = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-600/10 blur-[200px] -z-10 rounded-full animate-pulse-slow"></div>
         
         <div className="w-full max-w-md relative">
-            <div className="bg-white/5 border border-white/10 backdrop-blur-3xl shadow-3xl rounded-[40px] md:rounded-[60px] p-8 md:p-12 overflow-hidden flex flex-col transition-all duration-700">
+            <div className="bg-secondary border border-primary/10 shadow-xl rounded-[40px] md:rounded-[60px] p-8 md:p-12 overflow-hidden flex flex-col transition-all duration-700">
                 {/* Brand Header */}
                 <div className="mb-10 text-center">
-                    <h1 className="text-3xl md:text-4xl font-black italic tracking-tighter text-white uppercase font-syne mb-2">
+                    <h1 className="text-3xl md:text-4xl font-black italic tracking-tighter text-brand-dark uppercase font-syne mb-2">
                         {verifying ? "Verify Email" : "Create Account"}
                     </h1>
-                    <p className="text-white/40 font-poppins text-[10px] md:text-xs tracking-widest uppercase font-bold">
+                    <p className="text-brand-dark/40 font-poppins text-[10px] md:text-xs tracking-widest uppercase font-bold">
                         {verifying ? "Check your inbox for a magic code" : "Sign up to start shopping"}
                     </p>
                 </div>
@@ -103,11 +103,11 @@ const SignUpPage = () => {
                         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                             {/* Username Input - Optional Discovery */}
                             <div className="relative group">
-                                <User className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-white transition-colors" />
+                                <User className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dark/20 group-focus-within:text-primary transition-colors" />
                                 <input 
                                     type="text" 
                                     placeholder="Username (optional)"
-                                    className="w-full bg-white/5 border border-white/10 focus:border-white/40 text-white placeholder:text-white/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm uppercase tracking-widest [&:-webkit-autofill]:[filter:none] [&:-webkit-autofill]:[transition:background-color_5000000s_ease-in-out_0s] [&:-webkit-autofill]:[-webkit-text-fill-color:white]"
+                                    className="w-full bg-white border border-primary/10 focus:border-primary/40 text-brand-dark placeholder:text-brand-dark/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm uppercase tracking-widest [&:-webkit-autofill]:[filter:none] [&:-webkit-autofill]:[transition:background-color_5000000s_ease-in-out_0s] [&:-webkit-autofill]:[-webkit-text-fill-color:#2A0D0E]"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                 />
@@ -115,11 +115,11 @@ const SignUpPage = () => {
 
                             {/* Email Input */}
                             <div className="relative group">
-                                <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-white transition-colors" />
+                                <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dark/20 group-focus-within:text-primary transition-colors" />
                                 <input 
                                     type="email" 
                                     placeholder="Email address"
-                                    className="w-full bg-white/5 border border-white/10 focus:border-white/40 text-white placeholder:text-white/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm lowercase tracking-widest [&:-webkit-autofill]:[filter:none] [&:-webkit-autofill]:[transition:background-color_5000000s_ease-in-out_0s] [&:-webkit-autofill]:[-webkit-text-fill-color:white]"
+                                    className="w-full bg-white border border-primary/10 focus:border-primary/40 text-brand-dark placeholder:text-brand-dark/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm lowercase tracking-widest [&:-webkit-autofill]:[filter:none] [&:-webkit-autofill]:[transition:background-color_5000000s_ease-in-out_0s] [&:-webkit-autofill]:[-webkit-text-fill-color:#2A0D0E]"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -128,11 +128,11 @@ const SignUpPage = () => {
 
                             {/* Password Input */}
                             <div className="relative group">
-                                <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-white transition-colors" />
+                                <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dark/20 group-focus-within:text-primary transition-colors" />
                                 <input 
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Password"
-                                    className="w-full bg-white/5 border border-white/10 focus:border-white/40 text-white placeholder:text-white/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm uppercase tracking-widest [&:-webkit-autofill]:[filter:none] [&:-webkit-autofill]:[transition:background-color_5000000s_ease-in-out_0s] [&:-webkit-autofill]:[-webkit-text-fill-color:white]"
+                                    className="w-full bg-white border border-primary/10 focus:border-primary/40 text-brand-dark placeholder:text-brand-dark/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm uppercase tracking-widest [&:-webkit-autofill]:[filter:none] [&:-webkit-autofill]:[transition:background-color_5000000s_ease-in-out_0s] [&:-webkit-autofill]:[-webkit-text-fill-color:#2A0D0E]"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
@@ -140,7 +140,7 @@ const SignUpPage = () => {
                                 <button 
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 hover:text-white transition-colors"
+                                    className="absolute right-6 top-1/2 -translate-y-1/2 text-brand-dark/20 hover:text-primary transition-colors"
                                 >
                                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                 </button>
@@ -149,7 +149,7 @@ const SignUpPage = () => {
                             <button 
                                 type="submit" 
                                 disabled={loading}
-                                className="w-full bg-white text-black hover:bg-amber-400 py-5 rounded-full font-black uppercase tracking-[0.3em] font-syne text-xs shadow-2xl transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                                className="w-full bg-primary text-white hover:bg-brand-dark py-5 rounded-full font-black uppercase tracking-[0.3em] font-syne text-xs shadow-xl transition-all flex items-center justify-center gap-3 disabled:opacity-50"
                             >
                                 {loading ? "Creating account..." : "Sign Up"}
                                 {!loading && <ArrowRight className="w-4 h-4" />}
@@ -157,16 +157,16 @@ const SignUpPage = () => {
                         </form>
 
                         <div className="my-8 flex items-center gap-4">
-                            <div className="flex-1 h-[1px] bg-white/10"></div>
-                            <span className="text-white/20 font-black uppercase text-[10px] tracking-widest">or join with</span>
-                            <div className="flex-1 h-[1px] bg-white/10"></div>
+                            <div className="flex-1 h-[1px] bg-primary/10"></div>
+                            <span className="text-brand-dark/20 font-black uppercase text-[10px] tracking-widest">or join with</span>
+                            <div className="flex-1 h-[1px] bg-primary/10"></div>
                         </div>
 
                         {/* Social Logins - Styled as premium colorful capsules */}
                         <div className="grid grid-cols-2 gap-4">
                             <button 
                                 onClick={() => handleSocialLogin('oauth_google')}
-                                className="flex items-center justify-center gap-3 py-3 px-6 bg-white/5 border border-white/10 hover:bg-white hover:border-white rounded-full transition-all group"
+                                className="flex items-center justify-center gap-3 py-3 px-6 bg-white border border-primary/20 hover:bg-primary rounded-full transition-all group"
                             >
                                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -174,27 +174,27 @@ const SignUpPage = () => {
                                     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
                                     <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                                 </svg>
-                                <span className="text-white group-hover:text-black font-syne font-black uppercase text-[10px] tracking-widest">Google</span>
+                                <span className="text-brand-dark group-hover:text-white font-syne font-black uppercase text-[10px] tracking-widest transition-colors">Google</span>
                             </button>
                             <button 
                                 onClick={() => handleSocialLogin('oauth_apple')}
-                                className="flex items-center justify-center gap-3 py-3 px-6 bg-white/5 border border-white/10 hover:bg-white hover:border-white rounded-full transition-all group"
+                                className="flex items-center justify-center gap-3 py-3 px-6 bg-white border border-primary/20 hover:bg-primary rounded-full transition-all group"
                             >
-                                <svg className="w-4 h-4 fill-white group-hover:fill-black transition-colors" viewBox="0 0 384 512">
+                                <svg className="w-4 h-4 fill-brand-dark group-hover:fill-white transition-all" viewBox="0 0 384 512">
                                     <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-31.4-79-115.3-17.7-153.1V268.7zM249.3 90.5c16.3-20.1 27.2-48 24.2-75.9-24 1-52.9 15.6-70.1 35.7-15.4 18.1-28.9 46.2-25.2 73.5 26.6 2.1 55.4-12.8 71.1-33.3V90.5z"/>
                                 </svg>
-                                <span className="text-white group-hover:text-black font-syne font-black uppercase text-[10px] tracking-widest">Apple</span>
+                                <span className="text-brand-dark group-hover:text-white font-syne font-black uppercase text-[10px] tracking-widest transition-colors">Apple</span>
                             </button>
                         </div>
                     </>
                 ) : (
                     <form onSubmit={handleVerify} className="flex flex-col gap-6">
                         <div className="relative group">
-                            <CheckCircle2 className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-white transition-colors" />
+                            <CheckCircle2 className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dark/20 group-focus-within:text-primary transition-colors" />
                             <input 
                                 type="text" 
                                 placeholder="6-digit verification code"
-                                className="w-full bg-white/5 border border-white/10 focus:border-white focus:bg-white text-white focus:text-black placeholder:text-white/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm uppercase tracking-widest text-center"
+                                className="w-full bg-white border border-primary/10 focus:border-primary focus:bg-white text-brand-dark placeholder:text-brand-dark/20 px-14 py-4 rounded-full transition-all outline-none font-syne font-black text-sm uppercase tracking-widest text-center"
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
                                 maxLength={6}
@@ -205,7 +205,7 @@ const SignUpPage = () => {
                         <button 
                             type="submit" 
                             disabled={loading}
-                            className="w-full bg-amber-400 text-black hover:bg-white py-5 rounded-full font-black uppercase tracking-[0.3em] font-syne text-xs shadow-2xl transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                            className="w-full bg-primary text-white hover:bg-brand-dark py-5 rounded-full font-black uppercase tracking-[0.3em] font-syne text-xs shadow-xl transition-all flex items-center justify-center gap-3 disabled:opacity-50"
                         >
                             {loading ? "Verifying..." : "Verify & Start Tasting"}
                             {!loading && <CheckCircle2 className="w-4 h-4" />}
@@ -214,7 +214,7 @@ const SignUpPage = () => {
                         <button 
                             type="button"
                             onClick={() => setVerifying(false)}
-                            className="text-white/20 hover:text-white transition-colors font-syne font-black uppercase text-[10px] tracking-widest text-center"
+                            className="text-brand-dark/20 hover:text-primary transition-colors font-syne font-black uppercase text-[10px] tracking-widest text-center"
                         >
                             Change Email address
                         </button>
@@ -223,8 +223,8 @@ const SignUpPage = () => {
 
                 {!verifying && (
                     <div className="mt-10 text-center">
-                        <p className="text-white/40 font-poppins text-[10px] tracking-[0.2em] font-bold uppercase">
-                            Already part of us? <Link to="/sign-in" className="text-white hover:text-amber-400 underline underline-offset-4 transition-colors font-black">Login Back</Link>
+                        <p className="text-brand-dark/40 font-poppins text-[10px] tracking-[0.2em] font-bold uppercase">
+                            Already part of us? <Link to="/sign-in" className="text-primary hover:text-brand-dark underline underline-offset-4 transition-colors font-black">Login Back</Link>
                         </p>
                     </div>
                 )}

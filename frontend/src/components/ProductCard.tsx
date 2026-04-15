@@ -13,6 +13,8 @@ interface ProductCardProps {
   currentPrice: string
 }
 
+import CachedImage from './CachedImage'
+
 const ProductCard = ({ id, image, name, rating, reviews, oldPrice, currentPrice }: ProductCardProps) => {
   const { addToCart } = useCart()
   const [isAdded, setIsAdded] = useState(false)
@@ -36,18 +38,11 @@ const ProductCard = ({ id, image, name, rating, reviews, oldPrice, currentPrice 
       >
         <div className="absolute inset-0 p-2">
           <div className="w-full h-full relative overflow-hidden flex items-center justify-center rounded-[30px] bg-white">
-            {image ? (
-              <img 
-                src={image} 
-                alt={name} 
-                className="w-full h-full object-cover transition-transform duration-700 md:group-hover:scale-110"
-                loading="lazy"
-              />
-            ) : (
-              <div className="w-full h-full bg-secondary/10 flex items-center justify-center">
-                 <span className="text-primary/10 font-serif italic text-[10px] tracking-widest">Premium Collection</span>
-              </div>
-            )}
+            <CachedImage 
+              src={image} 
+              alt={name} 
+              className="w-full h-full"
+            />
             <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
         </div>
