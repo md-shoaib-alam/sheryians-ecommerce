@@ -99,7 +99,7 @@ const Contact = () => {
 
           {/* Contact Form */}
           <div className="lg:col-span-7">
-            <div className="bg-white p-6 md:p-16 rounded-[32px] md:rounded-[60px] border border-primary/5 shadow-soft h-full">
+            <div className="bg-white p-6 md:p-16 rounded-[32px] md:rounded-[60px] border border-primary/5 shadow-soft">
               {success ? (
                 <div className="h-full flex flex-col items-center justify-center text-center py-12">
                    <div className="bg-green-100 p-6 rounded-full mb-6">

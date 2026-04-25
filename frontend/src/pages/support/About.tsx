@@ -46,11 +46,11 @@ const About = () => {
               <div className="absolute -inset-4 bg-accent/5 rounded-[32px] md:rounded-[60px] blur-2xl group-hover:bg-accent/10 transition-all"></div>
               <div className="relative aspect-square bg-white p-2 rounded-[32px] md:rounded-[60px] shadow-soft border border-primary/5 overflow-hidden">
                  <div className="w-full h-full bg-secondary/10 rounded-[28px] md:rounded-[48px] overflow-hidden">
-                    {/* <img 
-                      src="https://ik.imagekit.io/damienknights/SLS%20Products/Peri%20Peri%20S.jpeg" 
+                    <img 
+                      src="https://ik.imagekit.io/eh5y1ltnw/signal-2026-04-19-152512.jpeg" 
                       alt="Premium Shriyans Makhana" 
                       className="w-full h-full object-cover"
-                    /> */}
+                    />
                  </div>
               </div>
           </div>
